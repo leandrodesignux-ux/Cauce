@@ -9,6 +9,8 @@ export type LeadIndice = {
   sector: Sector;
   estado: Estado;
   score: number;
+  /** Para los días sin atención de los fantasmas del home. */
+  ultimaActividad: string;
   fugaId?: string;
 };
 

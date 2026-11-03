@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo } from "react";
-import { FilterBar } from "@/components/filtros/FilterBar";
+import { useCallback, useMemo } from "react";
 import { useDatos } from "@/components/Proveedores";
 import { ETAPAS, ORDEN_ETAPAS, TRANSICIONES } from "@/config/etapas";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
@@ -23,7 +22,7 @@ import {
 import { ContenidoPanel, encabezadoPanel } from "@/components/panel/ContenidoPanel";
 import { StagePanel } from "@/components/panel/StagePanel";
 import { useMedia } from "@/hooks/useMedia";
-import { useInterfaz, useRescatadosHoy, useSesion } from "@/lib/stores";
+import { useRescatadosHoy, useSesion } from "@/lib/stores";
 import { DataTableCauce } from "./DataTableCauce";
 import { RiverChart, type Activo, type PozaRio } from "./RiverChart";
 import type { ContenidoTooltip } from "./TooltipCauce";
@@ -42,16 +41,9 @@ export function VistaCauce() {
   const { estado, filtros, restablecer } = useFiltros();
   const { seleccion, seleccionar } = useSeleccion();
   const rescatadosHoy = useRescatadosHoy();
-  const escritorio = useMedia("(min-width: 1280px)", true);
   const tactil = useMedia("(hover: none)");
   const accion = tactil ? "Toque" : "Clic o Enter";
-  const fijarPanelAbierto = useInterfaz((s) => s.fijarPanelAbierto);
 
-  // En escritorio el panel empuja el río: la nav se compacta para dejarle lugar.
-  useEffect(() => {
-    fijarPanelAbierto(escritorio && seleccion !== null);
-    return () => fijarPanelAbierto(false);
-  }, [escritorio, seleccion, fijarPanelAbierto]);
 
   const anteriorFiltros = useMemo(() => ({ ...filtros, periodo: periodoAnterior(filtros.periodo) }), [filtros]);
 
@@ -186,9 +178,6 @@ export function VistaCauce() {
     <div className="flex flex-1">
       <div className="flex min-w-0 flex-1 flex-col">
         <h1 className="sr-only">El cauce: journey de adquisición</h1>
-        <div className="border-b border-linea px-4 py-3 md:px-6 xl:px-8">
-          <FilterBar />
-        </div>
   
         <section aria-label="Contexto del período" className="flex flex-wrap items-end gap-x-10 gap-y-4 px-4 pt-6 md:px-6 xl:px-8">
           <Cifra etiqueta="Valor en riesgo" valor={formatearMxnCorto(datos.valorEnRiesgo)} tono="text-tinta" />

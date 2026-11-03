@@ -3,36 +3,38 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { COLOR } from "@/config/colores";
 import { useMontado } from "@/hooks/useMontado";
+import { BotonRedondo } from "./BotonRedondo";
 
-/** Switch claro/oscuro. La elección persiste (next-themes la guarda en localStorage). */
-export function SwitchTema({ className, lado = "right" }: { className?: string; lado?: "right" | "bottom" }) {
+function useTema() {
   const { resolvedTheme, setTheme } = useTheme();
   const montado = useMontado();
-  const oscuro = montado && resolvedTheme === "dark";
-  const etiqueta = oscuro ? "Cambiar a modo claro" : "Cambiar a modo oscuro";
+  return { oscuro: montado && resolvedTheme === "dark", setTheme };
+}
 
+/** Rail: el par luna/sol. El modo vigente queda en pill negra (blanca en oscuro). La elección persiste. */
+export function ParTema() {
+  const { oscuro, setTheme } = useTema();
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          type="button"
-          variant="sutil"
-          size="icon-lg"
-          aria-label={etiqueta}
-          onClick={() => setTheme(oscuro ? "light" : "dark")}
-          className={className}
-        >
-          {oscuro ? <Sun aria-hidden /> : <Moon aria-hidden />}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent side={lado} sideOffset={8}>
-        {etiqueta}
-      </TooltipContent>
-    </Tooltip>
+    <div role="group" aria-label="Tema" className="flex flex-col gap-3">
+      <BotonRedondo etiqueta="Modo oscuro" presionado={oscuro} onClick={() => setTheme("dark")}>
+        <Moon aria-hidden />
+      </BotonRedondo>
+      <BotonRedondo etiqueta="Modo claro" presionado={!oscuro} onClick={() => setTheme("light")}>
+        <Sun aria-hidden />
+      </BotonRedondo>
+    </div>
+  );
+}
+
+/** Barra móvil: un solo botón que alterna el tema. */
+export function SwitchTema({ lado = "top" }: { lado?: "top" | "right" | "bottom" }) {
+  const { oscuro, setTheme } = useTema();
+  return (
+    <BotonRedondo etiqueta={oscuro ? "Cambiar a modo claro" : "Cambiar a modo oscuro"} lado={lado} onClick={() => setTheme(oscuro ? "light" : "dark")}>
+      {oscuro ? <Sun aria-hidden /> : <Moon aria-hidden />}
+    </BotonRedondo>
   );
 }
 

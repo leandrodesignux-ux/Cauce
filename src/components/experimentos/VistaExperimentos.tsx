@@ -2,15 +2,13 @@
 
 import { FlaskConical, GanttChart, Table2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, type ReactNode } from "react";
+import { useCallback, useMemo, type ReactNode } from "react";
 import { StagePanel } from "@/components/panel/StagePanel";
 import { useDatos } from "@/components/Proveedores";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { nombreEtapa } from "@/config/etapas";
 import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
-import { useMedia } from "@/hooks/useMedia";
-import { useInterfaz } from "@/lib/stores";
 import type { EstadoExperimento } from "@/lib/tipos";
 import { reemplazarUrl } from "@/lib/url";
 import { DetalleExperimento } from "./DetalleExperimento";
@@ -23,8 +21,6 @@ export function VistaExperimentos() {
   const { experimentos } = useDatos();
   const params = useSearchParams();
   const pathname = usePathname();
-  const escritorio = useMedia("(min-width: 1280px)", true);
-  const fijarPanelAbierto = useInterfaz((s) => s.fijarPanelAbierto);
 
   const vista = params.get("vista") === "timeline" ? "timeline" : "tabla";
   const estado = ESTADOS.find((e) => e === params.get("estado")) ?? null;
@@ -42,10 +38,6 @@ export function VistaExperimentos() {
     [pathname],
   );
 
-  useEffect(() => {
-    fijarPanelAbierto(escritorio && exp !== null);
-    return () => fijarPanelAbierto(false);
-  }, [escritorio, exp, fijarPanelAbierto]);
 
   const ordenados = useMemo(() => [...experimentos].sort((a, b) => a.despliegue.localeCompare(b.despliegue)), [experimentos]);
   const visibles = estado ? ordenados.filter((e) => e.estado === estado) : ordenados;

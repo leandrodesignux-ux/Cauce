@@ -1,25 +1,18 @@
 "use client";
 
 import { X } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, type ComponentType, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useMedia } from "@/hooks/useMedia";
 
-const SALIDA = [0.22, 1, 0.36, 1] as const;
-
 type Titulo = ComponentType<{ children: ReactNode; className?: string }>;
 
-const TituloAside: Titulo = ({ children, className }) => <h2 className={className}>{children}</h2>;
-
 /**
- * Panel lateral de etapa o transición.
- * Escritorio (≥1280 px): entra desde la derecha y empuja el contenido (420 px).
- * Tablet: Sheet del 60 % del ancho. Móvil (<768 px): Drawer desde abajo. En ambos es modal y atrapa el foco.
- * Se abre desde el río o la tabla, sin Trigger. Escritorio: el foco lo devuelve quien llama en `onCerrar`.
- * Modal: la trampa de foco sigue activa durante la salida, así que el panel lo devuelve al elemento que lo abrió.
+ * Panel de etapa, transición o experimento. ≥768 px: Sheet a la derecha (440 px en escritorio, 60 % en tablet).
+ * Móvil (<768 px): Drawer desde abajo. Es modal y atrapa el foco; se abre sin Trigger (desde una fila del
+ * board o de la tabla), así que al cerrar devuelve el foco al elemento que lo tenía al abrir.
  */
 export function StagePanel({
   abierto,
@@ -37,9 +30,7 @@ export function StagePanel({
   onCerrar: () => void;
   children: ReactNode;
 }) {
-  const escritorio = useMedia("(min-width: 1280px)", true);
   const tablet = useMedia("(min-width: 768px)", true);
-  const reducir = useReducedMotion() ?? false;
   const encabezado = useRef<HTMLHeadingElement>(null);
   const previo = useRef<HTMLElement | null>(null);
 
@@ -49,7 +40,7 @@ export function StagePanel({
 
   const contenido = (Titulo: Titulo) => (
     <div className="flex min-h-0 flex-1 flex-col">
-      <header className="flex items-start gap-3 border-b border-linea px-5 pb-4 pt-5">
+      <header className="flex items-start gap-3 border-b border-linea px-6 pb-4 pt-6">
         <div className="min-w-0 flex-1">
           <Titulo className="font-cifra text-xl font-semibold leading-tight">
             <span ref={encabezado} tabIndex={-1} className="outline-none">
@@ -62,7 +53,7 @@ export function StagePanel({
           <X className="size-5" />
         </Button>
       </header>
-      <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-5">{children}</div>
+      <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-5">{children}</div>
     </div>
   );
 
@@ -84,37 +75,10 @@ export function StagePanel({
     if (!abrir) onCerrar();
   };
 
-  if (escritorio) {
-    return (
-      <AnimatePresence initial={false}>
-        {abierto && (
-          <motion.aside
-            key="panel"
-            aria-label={`Detalle: ${titulo}`}
-            initial={{ width: 0 }}
-            animate={{ width: "auto" }}
-            exit={{ width: 0 }}
-            transition={{ duration: reducir ? 0 : 0.2, ease: SALIDA }}
-            className="sticky top-0 h-dvh shrink-0 overflow-hidden"
-            onKeyDown={(e) => {
-              if (e.key !== "Escape") return;
-              e.stopPropagation();
-              onCerrar();
-            }}
-          >
-            <div className="flex h-full w-(--ancho-panel) flex-col rounded-l-panel border-l border-linea bg-tarjeta shadow-flotante">
-              {contenido(TituloAside)}
-            </div>
-          </motion.aside>
-        )}
-      </AnimatePresence>
-    );
-  }
-
   if (tablet) {
     return (
       <Sheet open={abierto} onOpenChange={alCambiar}>
-        <SheetContent side="right" showCloseButton={false} className="gap-0 rounded-l-panel data-[side=right]:w-[60%] data-[side=right]:sm:max-w-none" {...foco}>
+        <SheetContent side="right" showCloseButton={false} className="gap-0 data-[side=right]:w-[60%] data-[side=right]:sm:max-w-none data-[side=right]:xl:w-(--ancho-panel)" {...foco}>
           {contenido(SheetTitle)}
         </SheetContent>
       </Sheet>
