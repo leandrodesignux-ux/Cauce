@@ -1,0 +1,130 @@
+[
+  {
+    "id": "busqueda-guiada",
+    "nombre": "Búsqueda guiada en Browse Pages de pago",
+    "palanca": "Producto · Browse Pages",
+    "transicion": {
+      "desde": "exploracion",
+      "hacia": "evaluacion"
+    },
+    "prediccionPp": 2,
+    "despliegue": "2026-08-24",
+    "ventanaSemanas": [
+      6,
+      8
+    ],
+    "estado": "leyendo",
+    "hipotesis": "+2.0 pp en Exploración → Evaluación entre las semanas 6 y 8 después del despliegue",
+    "metrica": "Tasa semanal Exploración → Evaluación",
+    "observadoPp": 0.26
+  },
+  {
+    "id": "spots-no-disponibles",
+    "nombre": "Flujo de spots no disponibles",
+    "palanca": "Producto · Ficha de espacio",
+    "transicion": {
+      "desde": "evaluacion",
+      "hacia": "contacto"
+    },
+    "prediccionPp": 0.3,
+    "despliegue": "2026-10-05",
+    "ventanaSemanas": [
+      6,
+      8
+    ],
+    "estado": "en_curso",
+    "hipotesis": "+0.3 pp en Evaluación → Contacto entre las semanas 6 y 8 después del despliegue",
+    "metrica": "Tasa semanal Evaluación → Contacto"
+  },
+  {
+    "id": "panel-contacto",
+    "nombre": "Rediseño del panel de contacto (desktop)",
+    "palanca": "Producto · Panel de contacto",
+    "transicion": {
+      "desde": "evaluacion",
+      "hacia": "contacto"
+    },
+    "prediccionPp": 0.5,
+    "despliegue": "2026-07-06",
+    "ventanaSemanas": [
+      6,
+      8
+    ],
+    "estado": "validado",
+    "hipotesis": "+0.5 pp en Evaluación → Contacto entre las semanas 6 y 8 después del despliegue",
+    "metrica": "Tasa semanal Evaluación → Contacto",
+    "observadoPp": 0.63
+  },
+  {
+    "id": "templates-ficha",
+    "nombre": "Templates de ficha por sector",
+    "palanca": "Contenido · Fichas",
+    "transicion": {
+      "desde": "evaluacion",
+      "hacia": "contacto"
+    },
+    "prediccionPp": 0.4,
+    "despliegue": "2026-11-30",
+    "ventanaSemanas": [
+      6,
+      8
+    ],
+    "estado": "diseno",
+    "hipotesis": "+0.4 pp en Evaluación → Contacto entre las semanas 6 y 8 después del despliegue",
+    "metrica": "Tasa semanal Evaluación → Contacto"
+  },
+  {
+    "id": "ficha-complejo-seo",
+    "nombre": "Ficha de complejo con jerarquía SEO",
+    "palanca": "SEO · Fichas de complejo",
+    "transicion": {
+      "desde": "descubrimiento",
+      "hacia": "exploracion"
+    },
+    "prediccionPp": 1.5,
+    "despliegue": "2026-09-21",
+    "ventanaSemanas": [
+      8,
+      12
+    ],
+    "estado": "en_curso",
+    "hipotesis": "+1.5 pp en Descubrimiento → Exploración entre las semanas 8 y 12 después del despliegue",
+    "metrica": "Tasa semanal Descubrimiento → Exploración"
+  },
+  {
+    "id": "rescate-fantasmas",
+    "nombre": "Rescate de fantasmas",
+    "palanca": "Operación · Asignación",
+    "transicion": {
+      "desde": "calificacion",
+      "hacia": "asignacion"
+    },
+    "prediccionPp": 6,
+    "despliegue": "2026-10-12",
+    "ventanaSemanas": [
+      4,
+      6
+    ],
+    "estado": "en_curso",
+    "hipotesis": "+6.0 pp en Calificación → Asignación entre las semanas 4 y 6 después del despliegue",
+    "metrica": "Tasa semanal Calificación → Asignación"
+  },
+  {
+    "id": "validacion-disponibilidad",
+    "nombre": "Validación de disponibilidad en el bot",
+    "palanca": "Operación · Bot",
+    "transicion": {
+      "desde": "visita",
+      "hacia": "cierre"
+    },
+    "prediccionPp": 2,
+    "despliegue": "2026-12-07",
+    "ventanaSemanas": [
+      8,
+      10
+    ],
+    "estado": "diseno",
+    "hipotesis": "+2.0 pp en Visita → Cierre entre las semanas 8 y 10 después del despliegue",
+    "metrica": "Tasa semanal Visita → Cierre"
+  }
+]

@@ -1,0 +1,49 @@
+[
+  {
+    "id": "rebote-browse",
+    "desde": "exploracion",
+    "hacia": "evaluacion",
+    "causa": "Rebote en Browse Page sin interacción",
+    "experimentoId": "busqueda-guiada",
+    "proporcionCaida": 0.25
+  },
+  {
+    "id": "no-disponible",
+    "desde": "evaluacion",
+    "hacia": "contacto",
+    "causa": "Espacio no disponible",
+    "experimentoId": "spots-no-disponibles",
+    "proporcionCaida": 0.04
+  },
+  {
+    "id": "friccion-contacto",
+    "desde": "evaluacion",
+    "hacia": "contacto",
+    "causa": "Fricción en el panel de contacto (desktop)",
+    "experimentoId": "panel-contacto",
+    "proporcionCaida": 0.03
+  },
+  {
+    "id": "sin-datos",
+    "desde": "contacto",
+    "hacia": "calificacion",
+    "causa": "Conversación sin datos mínimos",
+    "proporcionCaida": 0.6
+  },
+  {
+    "id": "fantasmas",
+    "desde": "calificacion",
+    "hacia": "asignacion",
+    "causa": "Fantasmas: intención sin broker asignado",
+    "experimentoId": "rescate-fantasmas",
+    "proporcionCaida": 0.75
+  },
+  {
+    "id": "visita-cancelada",
+    "desde": "visita",
+    "hacia": "cierre",
+    "causa": "Visita cancelada por disponibilidad no validada",
+    "experimentoId": "validacion-disponibilidad",
+    "proporcionCaida": 0.08
+  }
+]
