@@ -8,6 +8,7 @@ import { formatearEntero } from "@/lib/formato";
 import { type LeadFeed, DIAS_VENTANA_CRITICA, diasSinActividad, textoAntiguedad } from "@/lib/leads";
 import { Badge } from "@/components/ui/badge";
 import { ScoreBadge } from "./ScoreBadge";
+import { Button } from "@/components/ui/button";
 
 export type EstadoLead = "pendiente" | "rescatado" | "descartado";
 export type Accion = "rescatar" | "descartar" | "restaurar";
@@ -123,34 +124,22 @@ export function LeadFeedItem({
       <div className="col-start-2 flex gap-2 md:col-start-auto md:justify-end">
         {estado === "pendiente" ? (
           <>
-            <button
-              type="button"
-              onClick={() => onAccion("rescatar")}
-              className="inline-flex h-8 items-center rounded-control border border-azul bg-azul-relleno px-3 text-sm font-medium text-sobre-relleno hover:opacity-90"
-            >
+            <Button variant="coral" onClick={() => onAccion("rescatar")}>
               Rescatar lead
-            </button>
-            <button
-              type="button"
-              onClick={() => onAccion("descartar")}
-              className="inline-flex h-8 items-center rounded-control border border-linea-fuerte px-3 text-sm text-tinta-2 hover:border-tenue hover:text-tinta"
-            >
+            </Button>
+            <Button variant="outline" onClick={() => onAccion("descartar")}>
               Descartar
-            </button>
+            </Button>
           </>
         ) : (
           <>
             <span className={`inline-flex h-8 items-center text-sm ${estado === "rescatado" ? "text-azul-texto" : "text-tinta-2"}`}>
               {estado === "rescatado" ? "Rescatado" : "Descartado"}
             </span>
-            <button
-              type="button"
-              onClick={() => onAccion("restaurar")}
-              className="inline-flex h-8 items-center gap-1.5 rounded-control border border-linea-fuerte px-3 text-sm hover:border-tenue"
-            >
-              {estado === "rescatado" ? <Undo2 className="size-3.5" aria-hidden /> : <RotateCcw className="size-3.5" aria-hidden />}
+            <Button variant="outline" onClick={() => onAccion("restaurar")}>
+              {estado === "rescatado" ? <Undo2 data-icon="inline-start" /> : <RotateCcw data-icon="inline-start" />}
               Devolver a la poza
-            </button>
+            </Button>
           </>
         )}
       </div>

@@ -15,6 +15,9 @@ const toggleVariants = cva(
         // Chips y alternadores de Cauce: pill vidriada en reposo, pill negra (blanca en oscuro) si está activa.
         outline:
           "rounded-full vidrio text-tinta-2 hover:bg-tarjeta hover:text-tinta data-[state=on]:border-activo data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",
+        // Chip de alerta (ventana crítica): borde coral en reposo, pill coral sólida si está activa.
+        alerta:
+          "rounded-full border border-coral bg-tarjeta text-tinta hover:bg-coral-suave data-[state=on]:border-coral-relleno data-[state=on]:bg-coral-relleno data-[state=on]:text-sobre-relleno",
         // Control segmentado (vistas, período, tabla/timeline): pill negra para el activo dentro de una pill vidriada.
         segmentado:
           "h-full rounded-full px-4 text-tinta-2 hover:text-tinta data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",

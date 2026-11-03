@@ -3,6 +3,7 @@
 import { RotateCcw } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useId, useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { PARAMETROS_PERDIDA_INICIALES as P } from "@/config/modelo";
 import { useTween } from "@/hooks/useTween";
@@ -32,7 +33,7 @@ export function LossModel() {
   const cambiado = CONTROLES.some((c) => p[c.clave] !== iniciales[c.clave]);
 
   return (
-    <section aria-labelledby={`${id}-titulo`} className="grid gap-8 rounded-panel border border-linea bg-tarjeta p-5 md:p-6 lg:grid-cols-[1fr_1.1fr]">
+    <section aria-labelledby={`${id}-titulo`} className="vidrio grid gap-8 rounded-tarjeta p-4 shadow-tarjeta md:rounded-panel md:p-7 lg:grid-cols-[1fr_1.1fr]">
       <div className="flex flex-col gap-5">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -42,14 +43,10 @@ export function LossModel() {
             <p className="mt-1 text-sm text-tinta-2">Cuánto vale lo que se queda en la poza de fantasmas. Mueva los parámetros.</p>
           </div>
           {cambiado && (
-            <button
-              type="button"
-              onClick={() => setP(iniciales)}
-              className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-control px-2 text-sm text-tinta-2 hover:bg-neutro-suave hover:text-tinta"
-            >
-              <RotateCcw className="size-3.5" aria-hidden />
+            <Button variant="sutil" onClick={() => setP(iniciales)}>
+              <RotateCcw data-icon="inline-start" />
               Valores iniciales
-            </button>
+            </Button>
           )}
         </div>
 
@@ -79,16 +76,16 @@ export function LossModel() {
         ))}
       </div>
 
-      <div className="flex flex-col justify-between gap-6 rounded-panel bg-neutro-suave p-5">
+      <div className="flex flex-col justify-between gap-6 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-5 shadow-tarjeta md:p-6">
         <ol className="flex flex-col gap-3 text-sm" aria-label="Fórmula paso a paso">
           <Paso operador="" valor={formatearEntero(p.fantasmas)} detalle="fantasmas" />
           <Paso operador="×" valor={CONTROLES[1].formato(p.leadACita)} detalle="lead → cita" resultado={`${decimales(r.citas, 1)} citas`} />
           <Paso operador="×" valor={CONTROLES[2].formato(p.citaAContrato)} detalle="cita → contrato" resultado={`${decimales(r.contratos, 2)} contratos`} />
           <Paso operador="×" valor={`$${formatearEntero(p.comisionMxn)}`} detalle="comisión promedio" />
         </ol>
-        <div className="border-t border-linea-fuerte pt-4">
+        <div className="border-t border-linea pt-4">
           <p className="text-sm text-tinta-2">Valor en riesgo en la poza de fantasmas</p>
-          <p className="cifra mt-1 text-3xl font-semibold text-tinta" aria-live="polite">
+          <p className="cifra mt-1 text-2xl font-semibold text-tinta md:text-3xl" aria-live="polite">
             {formatearMxn(Math.round(montoAnimado))}
           </p>
           <p className="mt-2 text-xs text-tinta-2">Mismo monto que muestra la poza de fantasmas en el cauce con los valores iniciales.</p>
