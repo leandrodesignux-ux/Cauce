@@ -94,7 +94,7 @@ export function VistaCauce() {
           subtitulo: `${ETAPAS[p.desde].nombre} → ${ETAPAS[p.desde + 1].nombre}`,
           filas: [
             { etiqueta: "Perdidos en el período", valor: formatearEntero(p.volumen) },
-            { etiqueta: "Valor estimado", valor: formatearMxn(p.valor), tono: "laton" },
+            { etiqueta: "Valor estimado", valor: formatearMxn(p.valor), tono: "monto" },
           ],
           pie:
             p.id === FUGA_MODELO_PERDIDA
@@ -116,11 +116,11 @@ export function VistaCauce() {
           subtitulo: etapa.definicion,
           filas: [
             { etiqueta: "Volumen", valor: formatearEntero(actual) },
-            { etiqueta: "Período anterior", valor: formatearEntero(previo), tono: "niebla" },
+            { etiqueta: "Período anterior", valor: formatearEntero(previo), tono: "tenue" },
             {
               etiqueta: "Cambio",
               valor: cambio === null ? "—" : `${cambio > 0 ? "↑ +" : cambio < 0 ? "↓ −" : ""}${Math.abs(cambio).toFixed(1)} %`,
-              tono: cambio === null || Math.abs(cambio) < 0.05 ? "niebla" : cambio > 0 ? "cauce" : "oxido",
+              tono: cambio === null || Math.abs(cambio) < 0.05 ? "tenue" : cambio > 0 ? "azul" : "coral",
             },
           ],
           serie: { valores: serie, etiqueta: "Volumen semanal, últimas 12 semanas" },
@@ -134,13 +134,13 @@ export function VistaCauce() {
         titulo: `${ETAPAS[a.indice].nombre} → ${ETAPAS[a.indice + 1].nombre}`,
         filas: [
           { etiqueta: "Conversión", valor: formatearPct(datos.tasas[a.indice]) },
-          { etiqueta: "Período anterior", valor: formatearPct(datos.tasasAnteriores[a.indice]), tono: "niebla" },
+          { etiqueta: "Período anterior", valor: formatearPct(datos.tasasAnteriores[a.indice]), tono: "tenue" },
           {
             etiqueta: "Delta",
             valor: `${delta === null || Math.abs(delta) < 0.05 ? "" : delta > 0 ? "↑ " : "↓ "}${formatearPp(delta)}`,
-            tono: delta === null || Math.abs(delta) < 0.05 ? "niebla" : delta > 0 ? "cauce" : "oxido",
+            tono: delta === null || Math.abs(delta) < 0.05 ? "tenue" : delta > 0 ? "azul" : "coral",
           },
-          { etiqueta: "No avanzan", valor: formatearEntero(perdidos), tono: "oxido" },
+          { etiqueta: "No avanzan", valor: formatearEntero(perdidos), tono: "coral" },
         ],
         serie: {
           valores: serieSemanal(flujo, filtros, t, SEMANAS_SERIE).map((p) => (p.tasa === null ? null : p.tasa * 100)),
@@ -191,9 +191,9 @@ export function VistaCauce() {
         </div>
   
         <section aria-label="Contexto del período" className="flex flex-wrap items-end gap-x-10 gap-y-4 px-4 pt-6 md:px-6 xl:px-8">
-          <Cifra etiqueta="Valor en riesgo" valor={formatearMxnCorto(datos.valorEnRiesgo)} tono="text-laton-texto" />
-          <Cifra etiqueta="Rescatados hoy" valor={formatearEntero(rescatadosHoy)} tono="text-cauce-texto" />
-          <p className="hidden text-sm text-niebla md:ml-auto md:block">
+          <Cifra etiqueta="Valor en riesgo" valor={formatearMxnCorto(datos.valorEnRiesgo)} tono="text-tinta" />
+          <Cifra etiqueta="Rescatados hoy" valor={formatearEntero(rescatadosHoy)} tono="text-azul-texto" />
+          <p className="hidden text-sm text-tinta-2 md:ml-auto md:block">
             {formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)} · {semanas} {semanas === 1 ? "semana" : "semanas"}
           </p>
         </section>
@@ -202,13 +202,13 @@ export function VistaCauce() {
           {datos.volumen[0] === 0 ? (
             <div className="flex flex-col items-center gap-3 rounded-panel border border-dashed border-linea-fuerte px-6 py-16 text-center">
               <p className="font-cifra text-lg font-semibold">El cauce está seco con estos filtros</p>
-              <p className="max-w-md text-sm text-niebla">
+              <p className="max-w-md text-sm text-tinta-2">
                 No hay sesiones para esta combinación de canal, sector y estado en el período. Pruebe ampliar a 90 días o quitar un filtro.
               </p>
               <button
                 type="button"
                 onClick={restablecer}
-                className="mt-2 inline-flex h-9 items-center rounded-control border border-cauce bg-cauce px-4 text-sm font-medium text-sobre-cauce"
+                className="mt-2 inline-flex h-9 items-center rounded-control border border-azul bg-azul-relleno px-4 text-sm font-medium text-sobre-relleno"
               >
                 Restablecer filtros
               </button>
@@ -257,7 +257,7 @@ export function VistaCauce() {
 function Cifra({ etiqueta, valor, tono }: { etiqueta: string; valor: string; tono: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-sm text-niebla">{etiqueta}</span>
+      <span className="text-sm text-tinta-2">{etiqueta}</span>
       <span className={`cifra text-2xl font-semibold ${tono}`}>{valor}</span>
     </div>
   );
@@ -265,28 +265,28 @@ function Cifra({ etiqueta, valor, tono }: { etiqueta: string; valor: string; ton
 
 function Leyenda({ comparar, retorno }: { comparar: boolean; retorno: boolean }) {
   return (
-    <ul aria-label="Leyenda" className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-t border-linea pt-4 text-xs text-niebla">
+    <ul aria-label="Leyenda" className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-t border-linea pt-4 text-xs text-tinta-2">
       <li className="flex items-center gap-2">
-        <span aria-hidden className="h-2.5 w-6 rounded-full bg-cauce" />
+        <span aria-hidden className="h-2.5 w-6 rounded-full bg-azul-relleno" />
         Volumen que avanza (ancho según el volumen, escala de raíz cuadrada)
       </li>
       <li className="flex items-center gap-2">
-        <span aria-hidden className="h-4 w-0.5 rounded-full bg-oxido" />
+        <span aria-hidden className="h-4 w-0.5 rounded-full bg-coral-relleno" />
         Fuga hacia una poza
       </li>
       <li className="flex items-center gap-2">
-        <span aria-hidden className="cifra font-semibold text-laton-texto">$</span>
+        <span aria-hidden className="cifra font-semibold text-tinta">$</span>
         Valor estimado en MXN
       </li>
       {retorno && (
         <li className="flex items-center gap-2">
-          <span aria-hidden className="h-1 w-6 rounded-full bg-cauce" />
+          <span aria-hidden className="h-1 w-6 rounded-full bg-azul-relleno" />
           Leads rescatados que vuelven al cauce
         </li>
       )}
       {comparar && (
         <li className="flex items-center gap-2">
-          <span aria-hidden className="h-0 w-6 border-t border-dashed border-niebla" />
+          <span aria-hidden className="h-0 w-6 border-t border-dashed border-tenue" />
           Período anterior
         </li>
       )}

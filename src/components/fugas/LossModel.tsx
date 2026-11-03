@@ -32,20 +32,20 @@ export function LossModel() {
   const cambiado = CONTROLES.some((c) => p[c.clave] !== iniciales[c.clave]);
 
   return (
-    <section aria-labelledby={`${id}-titulo`} className="grid gap-8 rounded-panel border border-linea bg-papel p-5 md:p-6 lg:grid-cols-[1fr_1.1fr]">
+    <section aria-labelledby={`${id}-titulo`} className="grid gap-8 rounded-panel border border-linea bg-tarjeta p-5 md:p-6 lg:grid-cols-[1fr_1.1fr]">
       <div className="flex flex-col gap-5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 id={`${id}-titulo`} className="font-cifra text-lg font-semibold">
               Modelo de pérdida
             </h2>
-            <p className="mt-1 text-sm text-niebla">Cuánto vale lo que se queda en la poza de fantasmas. Mueva los parámetros.</p>
+            <p className="mt-1 text-sm text-tinta-2">Cuánto vale lo que se queda en la poza de fantasmas. Mueva los parámetros.</p>
           </div>
           {cambiado && (
             <button
               type="button"
               onClick={() => setP(iniciales)}
-              className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-control px-2 text-sm text-niebla hover:bg-concreto hover:text-tinta"
+              className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-control px-2 text-sm text-tinta-2 hover:bg-neutro-suave hover:text-tinta"
             >
               <RotateCcw className="size-3.5" aria-hidden />
               Valores iniciales
@@ -72,14 +72,14 @@ export function LossModel() {
               thumbProps={{ id: `${id}-${c.clave}`, "aria-labelledby": `${id}-${c.clave}-etiqueta`, "aria-valuetext": c.formato(p[c.clave]) }}
               className="py-1.5"
             />
-            <p className="text-xs text-niebla">
+            <p className="text-xs text-tinta-2">
               {p[c.clave] === iniciales[c.clave] ? `Origen: ${c.origen}` : `Ajustado · inicial ${c.formato(iniciales[c.clave])} (${c.origen})`}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-col justify-between gap-6 rounded-panel bg-concreto p-5">
+      <div className="flex flex-col justify-between gap-6 rounded-panel bg-neutro-suave p-5">
         <ol className="flex flex-col gap-3 text-sm" aria-label="Fórmula paso a paso">
           <Paso operador="" valor={formatearEntero(p.fantasmas)} detalle="fantasmas" />
           <Paso operador="×" valor={CONTROLES[1].formato(p.leadACita)} detalle="lead → cita" resultado={`${decimales(r.citas, 1)} citas`} />
@@ -87,11 +87,11 @@ export function LossModel() {
           <Paso operador="×" valor={`$${formatearEntero(p.comisionMxn)}`} detalle="comisión promedio" />
         </ol>
         <div className="border-t border-linea-fuerte pt-4">
-          <p className="text-sm text-niebla">Valor en riesgo en la poza de fantasmas</p>
-          <p className="cifra mt-1 text-3xl font-semibold text-laton-texto" aria-live="polite">
+          <p className="text-sm text-tinta-2">Valor en riesgo en la poza de fantasmas</p>
+          <p className="cifra mt-1 text-3xl font-semibold text-tinta" aria-live="polite">
             {formatearMxn(Math.round(montoAnimado))}
           </p>
-          <p className="mt-2 text-xs text-niebla">Mismo monto que muestra la poza de fantasmas en el cauce con los valores iniciales.</p>
+          <p className="mt-2 text-xs text-tinta-2">Mismo monto que muestra la poza de fantasmas en el cauce con los valores iniciales.</p>
         </div>
       </div>
     </section>
@@ -101,11 +101,11 @@ export function LossModel() {
 function Paso({ operador, valor, detalle, resultado }: { operador: string; valor: string; detalle: string; resultado?: string }) {
   return (
     <li className="grid grid-cols-[1.25rem_auto_1fr_auto] items-baseline gap-2">
-      <span className="cifra text-niebla" aria-hidden>
+      <span className="cifra text-tinta-2" aria-hidden>
         {operador}
       </span>
       <span className="cifra font-semibold">{valor}</span>
-      <span className="text-niebla">{detalle}</span>
+      <span className="text-tinta-2">{detalle}</span>
       <span className="cifra text-right">{resultado ? `= ${resultado}` : ""}</span>
     </li>
   );

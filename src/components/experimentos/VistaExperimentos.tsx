@@ -66,7 +66,7 @@ export function VistaExperimentos() {
       <div className="flex min-w-0 flex-1 flex-col gap-6 px-4 py-6 md:px-6 xl:px-8">
         <header>
           <h1 className="font-cifra text-xl font-semibold md:text-2xl">Registro de hipótesis</h1>
-          <p className="mt-1 max-w-2xl text-sm text-niebla">
+          <p className="mt-1 max-w-2xl text-sm text-tinta-2">
             Cada iniciativa declara antes de desplegarse qué espera mover y cuándo se va a poder leer. Así se sabe si lo que se dijo que iba a pasar,
             pasó.
           </p>
@@ -89,7 +89,7 @@ export function VistaExperimentos() {
           <ToggleGroup
             type="single"
             variant="segmentado"
-            spacing={0}
+            spacing={1}
             aria-label="Vista"
             value={vista}
             onValueChange={(v) => v && poner({ vista: v === "timeline" ? "timeline" : null })}
@@ -113,7 +113,7 @@ export function VistaExperimentos() {
               </EmptyMedia>
               <EmptyDescription>
                 No hay experimentos {estado ? `en estado «${ETIQUETA_ESTADO_EXPERIMENTO[estado]}»` : ""} todavía.{" "}
-                <button type="button" onClick={() => poner({ estado: null })} className="text-cauce-texto underline underline-offset-2">
+                <button type="button" onClick={() => poner({ estado: null })} className="text-azul-texto underline underline-offset-2">
                   Ver todos
                 </button>
               </EmptyDescription>
@@ -146,7 +146,7 @@ function Chip({ activo, onClick, children }: { activo: boolean; onClick: () => v
       aria-pressed={activo}
       onClick={onClick}
       className={`inline-flex h-8 items-center gap-1.5 rounded-control border px-3 text-sm motion-safe:transition-colors ${
-        activo ? "border-cauce bg-cauce-suave text-cauce-texto" : "border-linea-fuerte hover:border-niebla hover:bg-papel"
+        activo ? "border-azul bg-azul-suave text-azul-texto" : "border-linea-fuerte hover:border-tenue hover:bg-tarjeta"
       }`}
     >
       {children}

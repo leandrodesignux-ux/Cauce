@@ -4,8 +4,8 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 /**
- * Tablas de Cauce: encabezados en niebla, cifras alineadas a la derecha con .cifra,
- * caption arriba a la izquierda. `marco` la envuelve en un panel de papel (sin sombra).
+ * Tablas de Cauce: encabezados en tinta-2, cifras alineadas a la derecha con .cifra,
+ * caption arriba a la izquierda. `marco` la envuelve en una tarjeta.
  */
 function Table({
   className,
@@ -16,7 +16,7 @@ function Table({
     <div
       data-slot="table-container"
       data-marco={marco || undefined}
-      className="relative w-full overflow-x-auto data-marco:rounded-panel data-marco:border data-marco:border-border data-marco:bg-card"
+      className="relative w-full overflow-x-auto data-marco:rounded-tarjeta data-marco:border data-marco:border-tarjeta-borde data-marco:bg-tarjeta data-marco:shadow-tarjeta"
     >
       <table
         data-slot="table"

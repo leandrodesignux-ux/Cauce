@@ -56,7 +56,7 @@ export function NavRail() {
             type="button"
             onClick={abrirPaleta}
             aria-label="Buscar o saltar a…"
-            className="flex h-9 w-full items-center gap-2 rounded-control border border-linea px-2.5 text-sm text-niebla hover:border-linea-fuerte hover:text-tinta"
+            className="flex h-9 w-full items-center gap-2 rounded-control border border-linea px-2.5 text-sm text-tinta-2 hover:border-linea-fuerte hover:text-tinta"
           >
             <Search className="size-4 shrink-0" aria-hidden />
             <span className={`${conEtiqueta} flex-1 text-left`}>Buscar</span>
@@ -78,7 +78,7 @@ export function NavRail() {
                   aria-current={activa ? "page" : undefined}
                   aria-label={nombre}
                   className={`relative flex h-9 items-center gap-3 rounded-control px-2.5 text-sm font-medium ${
-                    activa ? "bg-cauce-suave text-cauce-texto" : "text-niebla hover:bg-papel hover:text-tinta"
+                    activa ? "bg-azul-suave text-azul-texto" : "text-tinta-2 hover:bg-tarjeta hover:text-tinta"
                   }`}
                 >
                   <Icono className="size-[18px] shrink-0" aria-hidden />
@@ -98,7 +98,7 @@ export function NavRail() {
               type="button"
               onClick={alternar}
               aria-label={compacta ? "Expandir navegación" : "Colapsar navegación"}
-              className={`hidden h-9 flex-1 items-center gap-3 rounded-control px-2.5 text-sm text-niebla hover:bg-papel hover:text-tinta ${panelAbierto ? "" : "xl:flex"}`}
+              className={`hidden h-9 flex-1 items-center gap-3 rounded-control px-2.5 text-sm text-tinta-2 hover:bg-tarjeta hover:text-tinta ${panelAbierto ? "" : "xl:flex"}`}
             >
               {compacta ? <PanelLeftOpen className="size-[18px] shrink-0" aria-hidden /> : <PanelLeftClose className="size-[18px] shrink-0" aria-hidden />}
               <span className={conEtiqueta}>Colapsar</span>

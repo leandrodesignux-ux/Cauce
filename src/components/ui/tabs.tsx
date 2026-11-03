@@ -31,15 +31,15 @@ const tabsListVariants = cva(
         default: "bg-muted",
         line: "gap-1 border-b border-border bg-transparent",
       },
-      // Color del subrayado de la pestaña activa (variante line): cauce por defecto, óxido para pozas.
+      // Color del subrayado de la pestaña activa (variante line): azul por defecto, coral para pozas.
       tono: {
-        cauce: "[--tabs-indicador:var(--cauce)]",
-        oxido: "[--tabs-indicador:var(--oxido)]",
+        azul: "[--tabs-indicador:var(--azul-relleno)]",
+        coral: "[--tabs-indicador:var(--coral)]",
       },
     },
     defaultVariants: {
       variant: "default",
-      tono: "cauce",
+      tono: "azul",
     },
   }
 )
@@ -47,7 +47,7 @@ const tabsListVariants = cva(
 function TabsList({
   className,
   variant = "default",
-  tono = "cauce",
+  tono = "azul",
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.List> &
   VariantProps<typeof tabsListVariants>) {

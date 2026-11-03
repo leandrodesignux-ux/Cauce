@@ -2,156 +2,158 @@
 
 ## Dirección
 
-El tema es agua que se canaliza y se escapa. El río es lo único con personalidad fuerte; todo lo demás (navegación, tablas, filtros, paneles) es sobrio, plano y disciplinado para que el cauce mande. Nada de grillas de tarjetas idénticas con sombra: la jerarquía se arma con espacio, peso tipográfico y líneas de 1 px.
+Referencia visual obligatoria: [`docs/referencia/cauce-home-referencia.html`](referencia/cauce-home-referencia.html). Si algo de este documento no alcanza para decidir, la referencia manda.
+
+El home es un **journey board**: el recorrido del lead en tres tarjetas (Atraer, Convertir, Cerrar) con las etapas en filas, las fugas colgando debajo de su etapa y conectores que dibujan el flujo. La interfaz es clara y táctil: fondo con un degradé frío, paneles de vidrio, tarjetas blancas muy redondeadas, el estado activo como una pill negra y acciones en botones circulares. Dos colores con significado fijo: **azul** para lo que avanza y **coral** para lo que se pierde. Todo lo demás es neutro.
 
 ## Color
 
-Base fría tipo concreto (no crema), un verde de cauce, latón para el dinero y óxido para lo que se pierde.
-
 | Token | Claro | Oscuro | Uso |
 |---|---|---|---|
-| `--concreto` | `#E9EBE8` | `#18211D` | Fondo de la app |
-| `--papel` | `#F7F8F6` | `#1F2A25` | Panel lateral, tablas, popovers |
-| `--tinta` | `#142019` | `#E4E9E6` | Texto principal, ejes |
-| `--niebla` | `#5A6862` | `#95A39D` | Texto secundario, período anterior, líneas guía |
-| `--niebla-texto` | `#4C5953` | `#A7B4AE` | Texto de badges neutros sobre `--niebla-suave` (niebla daba 4.1:1) |
-| `--cauce` | `#2E6B52` | `#409673` | Volumen que avanza, acciones primarias, foco |
-| `--laton` | `#A9822F` | `#CCA249` | Montos en MXN, valor en riesgo, comisiones |
-| `--oxido` | `#B4472F` | `#D1674F` | Fugas, pozas, deltas negativos |
-| `--cauce-texto` | `#24573F` | `#5CB58F` | Texto en tono cauce (deltas positivos, links, estado activo) |
-| `--laton-texto` | `#7A5A1F` | `#D9B35F` | Texto en tono latón (montos en MXN, ventana crítica) |
-| `--oxido-texto` | `#9A3A24` | `#E8846D` | Texto en tono óxido (deltas negativos, perdidos, urgente) |
-| `--linea` | `#D3D8D4` | `#2E3A34` | Separadores de 1 px |
-| `--linea-fuerte` | `#B9C1BC` | `#3C4943` | Bordes de controles, ejes marcados |
-| `--sobre-cauce` | `#F7F8F6` | `#0E1411` | Texto sobre fondo `--cauce` (botones, chips activos): 5.9:1 y 5.2:1 |
-| `--sobre-laton` | `#142019` | `#0E1411` | Texto sobre fondo `--laton` (papel daba 3.3:1) |
-| `--sobre-oxido` | `#F7F8F6` | `#0E1411` | Texto sobre fondo `--oxido` (`text-white` de shadcn) |
-| `--tinta-profunda` | `#142019` | `#142019` | Velo de overlays (Dialog, Sheet, Drawer, ⌘K) al 40 %: `bg-black/50` |
-| `--sombra-flotante` | `0 8px 24px rgb(20 32 25 / 0.10)` | `0 8px 24px rgb(0 0 0 / 0.40)` | Popovers, menús, tooltips del río, dialog, sheet, drawer, avisos y panel lateral |
+| `--fondo-a` · `-b` · `-c` | `#E4E8EF` · `#D3DAE7` · `#C9D1E2` | `#14171E` · `#171B24` · `#1B2030` | Degradé del fondo (155°, fijo) |
+| `--panel` | `rgb(255 255 255 / .42)` | `rgb(255 255 255 / .035)` | Paneles, nav, chips y botones vidriados (con `backdrop-filter: blur(18px)`) |
+| `--panel-borde` | `rgb(255 255 255 / .75)` | `rgb(255 255 255 / .07)` | Borde de 1 px de lo vidriado |
+| `--tarjeta` | `#F8F9FB` | `#20242E` | Tarjetas de fase, tiles, tablas, popovers, sheet |
+| `--tarjeta-borde` | `#FFFFFF` | `#2A2F3B` | Borde de tarjetas y tiles |
+| `--tinta` | `#111318` | `#EEF0F4` | Texto principal, cifras |
+| `--tinta-2` | `#4B5160` | `#C3C8D2` | Texto secundario, etiquetas, encabezados de tabla |
+| `--tenue` | `#5F6576` | `#A3AAB8` | Bordes en hover, trazos neutros (nunca texto chico) |
+| `--linea` · `--linea-fuerte` | `#DDE2EA` · `#C3CAD7` | `#2C3240` · `#3A4152` | Separadores; bordes de inputs y botones "ir" |
+| `--azul` | `#7E95DA` | `#8EA3E6` | Espina del board, conectores, arcos, bordes de resaltado |
+| `--azul-texto` | `#3651A8` | `#9DB0EE` | Texto en azul: deltas positivos, links, iniciales de avatar |
+| `--azul-relleno` | `#3D5BC0` | `#3D5BC0` | Pills sólidas con texto blanco (score alto, días dentro de la ventana) |
+| `--azul-suave` | `#E3E8F7` | `#2A3350` | Fondo de íconos de etapa, hover de filas, pills suaves |
+| `--coral` | `#E26A61` | `#EE7F76` | Fugas punteadas, borde de íconos de fuga, arcos |
+| `--coral-texto` | `#B23A32` | `#F08A80` | Texto en coral: deltas negativos |
+| `--coral-relleno` | `#C2453C` | `#C2453C` | Botón Rescatar, pills de más de 3 días sin atención |
+| `--coral-suave` | `#F7E2DF` | `#3D2A2D` | Hover de filas de fuga, pills suaves |
+| `--neutro-suave` | tinta-2 al 10 % | tinta-2 al 10 % | Pills neutras, hover de botones sutiles |
+| `--activo` · `--sobre-activo` | `#0F1014` · `#FFFFFF` | `#F2F3F6` · `#0F1014` | Estado activo: pill negra en claro, blanca en oscuro (nav, chips, tile más reciente, toasts) |
+| `--sobre-relleno` | `#FFFFFF` | `#FFFFFF` | Texto sobre `-relleno` |
+| `--tinta-profunda` | `#0F1014` | `#0F1014` | Velo de overlays al 40 % (`bg-black/50`) |
 
-Derivados con `color-mix()` sobre el token base, así siguen al modo oscuro: `--cauce-suave` (cauce al 14 %), `--laton-suave` (latón al 14 %), `--oxido-suave` (óxido al 12 %), `--niebla-suave` (niebla al 14 %) y `--cauce-fuerte` (cauce al 18 %, solo el badge Validado). Son los fondos de chips, badges y filas seleccionadas. Deltas positivos en cauce, negativos en óxido; nunca el color solo: siempre con signo y flecha.
+**Reglas de color:**
 
-**Regla de uso:** `--cauce`, `--laton` y `--oxido` base son solo para rellenos y trazos (el río, hilos, pozas, barras, bordes, íconos de forma). Todo **texto** en esos tonos usa su variante `-texto` (`text-cauce-texto`, `fill-laton-texto` en SVG…). `npm run contraste` verifica cada par texto/fondo en ambos modos y falla por debajo de 4.5:1.
+- `--azul` y `--coral` base: **solo líneas y trazos** (espina, fugas, conectores, arcos de medidores, bordes de resaltado, contorno de íconos de fuga).
+- `-texto`: para letras en ese tono, y siempre sobre `--tarjeta`, `--muted` o su propio `-suave`.
+- `-relleno`: para pills y botones sólidos, siempre con texto blanco (`--sobre-relleno`).
+- **Nunca texto de color directo sobre el degradé** ni sobre un panel vidriado: ahí solo va `--tinta` o `--tinta-2`.
+- Montos en MXN en `--tinta` con peso semibold: el dinero no tiene color propio.
+- Deltas: azul si sube, coral si baja, siempre con flecha y signo; nunca el color solo.
 
-**Semántica de shadcn/ui:** sus tokens apuntan a los de Cauce, nunca al revés: `background` = concreto, `foreground` = tinta, `card` y `popover` = papel, `primary` = cauce, `primary-foreground` = sobre-cauce, `muted` y `secondary` = niebla al 10 % sobre papel, `muted-foreground` = niebla, `accent` = cauce-suave, `destructive` = óxido, `border` e `input` = linea, `ring` = cauce, `chart-1…5` = cauce, latón, óxido, niebla, tinta. `--radius` = 6 px (sm 2, md 4, lg 6, xl 10; `rounded-control` y `rounded-panel` siguen existiendo). Sombras por token: `shadow-xs` y `shadow-sm` no proyectan; `shadow-md`, `shadow-lg` y `shadow-flotante` = `--sombra-flotante`.
+`npm run contraste` verifica cada par en claro y oscuro (texto neutro sobre las tres paradas del degradé, sobre los paneles, tarjetas y `-suave`; `-texto` sobre tarjeta y `-suave`; blanco sobre `-relleno`; `sobre-activo` sobre `activo`; semántica de shadcn) y falla por debajo de 4.5:1.
 
-**Modo oscuro por switch:** la app arranca siempre en claro (`defaultTheme="light"`, `enableSystem={false}`: no sigue la preferencia del sistema). El switch sol/luna del pie de la navegación y de la barra móvil pone la clase `.dark` en `<html>` (next-themes) y la elección persiste. El `theme-color` de la barra del navegador se actualiza con el tema. En oscuro, cauce, latón y óxido suben +12 de L en HSL; `--niebla` pasa a `#95A39D` (+4 de L sobre el `#8A9A93` original, que daba 4.3:1 sobre `muted`); las líneas bajan a verdes casi negros para seguir siendo sutiles.
+**Semántica de shadcn/ui:** sus tokens apuntan a los de Cauce, nunca al revés: `background` = fondo-b (el `body` pinta el degradé encima), `foreground` = tinta, `card` y `popover` = tarjeta, `primary` = activo, `primary-foreground` = sobre-activo, `muted` y `secondary` = tinta-2 al 8 % sobre tarjeta, `muted-foreground` = tinta-2, `accent` = azul-suave, `destructive` = coral-relleno, `border` = linea, `input` = linea-fuerte, `ring` = azul-texto, `chart-1…5` = azul, coral, azul-relleno, coral-relleno, tenue.
+
+**Modo oscuro por switch:** la app arranca en claro (`defaultTheme="light"`, `enableSystem={false}`). El par luna/sol del rail (y el botón de tema de la barra móvil) pone `.dark` en `<html>`; la elección persiste y el `theme-color` acompaña.
 
 ## Tipografía
 
-- **Space Grotesk** (500/600): títulos de vista y todas las cifras grandes, con `font-variant-numeric: tabular-nums`.
-- **Geist** (400/500): interfaz, cuerpo, tablas, etiquetas.
-- Escala (rem): 0.75 · 0.875 · 1 · 1.25 · 1.75 · 2.5 · 3.5, que reemplaza la escala de Tailwind como `text-xs` · `text-sm` · `text-base` · `text-lg` · `text-xl` · `text-2xl` · `text-3xl`. Todos los tamaños usan interlineado 1.5.
-- Cifras y KPIs: utilidad `.cifra` (Space Grotesk, `tabular-nums`, interlineado 1.1). El interlineado no está atado al tamaño: `.cifra` se combina con cualquier `text-*`.
-- Etiquetas en sentence case, sin mayúsculas sostenidas ni tracking exagerado. Sin monoespaciada para datos chicos: Geist con cifras tabulares.
-- Montos: `$1.29 M MXN` en resúmenes, `$1,287,400 MXN` en detalle. Porcentajes con un decimal en tasas (`23.4 %`), deltas en puntos porcentuales (`+1.8 pp`).
+- **Space Grotesk** (500/600/700): título de vista (700, 40 px; 30 px en móvil), títulos de panel (600, 20 px) y todas las cifras, con `tabular-nums`.
+- **Geist** (400/500/600): interfaz, cuerpo (14 px), tablas, etiquetas.
+- Escala (rem): 0.75 · 0.875 · 1 · 1.25 · 1.75 · 2.5 · 3.5 = `text-xs` … `text-3xl`. Interlineado de cuerpo 1.45; `.cifra` lo baja a 1.1.
+- Sentence case, sin mayúsculas sostenidas.
+- Montos: `$2.31 M MXN` en resúmenes, `$352 K` en filas del board, `$1,287,400 MXN` en detalle. Tasas con un decimal (`61.5 %`), deltas en puntos porcentuales (`↑ 0.2 pp`).
 
-## Espaciado
+## Radios, superficies y sombras
 
-Escala por defecto de Tailwind (base 4 px: `p-1` = 4 px, `p-2` = 8 px, `p-4` = 16 px…). No se definen tokens propios de espaciado; si hace falta un valor fuera de la escala, se agrega como token en `tokens.css`.
+| Pieza | Radio | Superficie | Sombra |
+|---|---|---|---|
+| Panel (journey, tabla de fantasmas, medidores, secciones de /fugas y /experimentos) | 32 px (`rounded-panel`; 26 px en móvil) | `vidrio` | `shadow-tarjeta` |
+| Tarjeta de fase, tabla con `marco` | 26 px (`rounded-tarjeta`) | tarjeta | `shadow-tarjeta` |
+| Tile de experimento | 22 px (`rounded-tile`) | tarjeta (o `activo`) | `shadow-tarjeta` |
+| Fila de etapa o de fuga | 18 px (`rounded-fila`) | transparente; hover en `-suave` | — |
+| Nav de vistas, chips, toggles, pills, botones | `rounded-full` | `vidrio` o `activo` | — |
+| Botón de acción | círculo de 48 px (`Button variant="vidrio" size="redondo"`) | `vidrio` | — |
+| Inputs, selects | 12 px (`--radius`) | tarjeta | — |
+| Popovers, menús, dialog, ⌘K | 20 px (`rounded-2xl`) | popover | `shadow-flotante` |
+| Sheet y drawer | 32 px en el borde visible | popover | `shadow-flotante` |
+| Avisos | 18 px | activo | `shadow-flotante` |
+
+`vidrio` es una utilidad propia (`globals.css`): `--panel` + borde `--panel-borde` + `backdrop-filter: blur(var(--vidrio))`.
 
 ## Layout
 
-Escritorio (≥1280 px):
-
 ```
-┌────────┬──────────────────────────────────────────────────────────┐
-│ Cauce  │ Período ▾  Canal ▾  Sector ▾  Estado ▾      [Comparar] [Tabla] │
-│ Fugas  ├──────────────────────────────────────────────────────────┤
-│ Exper. │ Valor en riesgo $2.4 M MXN      Rescatados hoy 12          │
-│        │                                                          │
-│        │ Descub. ══════╗Explor.════╗Evalua.═══╗Contac.══╗ … Cierre  │
-│        │        23.4%  ║   41.0%   ║  8.2%    ║  …                  │
-│        │               ╿           ╿          ╿                     │
-│        │            ( poza )    ( poza )   ( fantasmas )            │
-│        │                                                          │
-│ Demo   │                                   ┌──── panel lateral ────┐│
-└────────┴───────────────────────────────────┴───────────────────────┘
+┌────┬─────────────────────────────────────────────────────────────────────┐
+│ ◖  │ (Cauce) Fugas  Experimentos           Período 30 días  Canal Todos …  │
+│ ⌕  │ Journey de adquisición                                               │
+│ ☰  │ 5 oct – 1 nov 2026. De la primera visita al contrato…                │
+│ ⇄  │ ╭─ Recorrido del lead ── $2.31 M en riesgo ── (RI)(MR)(PG)… +143 ⇄ ▦ ─╮│
+│ ▦  │ │ ╭ Atraer ─────╮   ╭ Convertir ──╮   ╭ Cerrar ─────╮                ││
+│ ⇪  │ │ │ ● Descub.   │○─○│ ● Contacto  │○─○│ ● Visita    │                ││
+│    │ │ │ │           │   │ ┊ ◌ fuga    │   │ ┊ ◌ fuga    │                ││
+│    │ │ │ ● Explor.   │   │ ● Calific.  │   │ ● Cierre    │                ││
+│    │ │ │ ┊ ◌ fuga    │   │ ┊ ◌ Fantasmas [Rescatar]      │                ││
+│    │ │ ╰─────────────╯   ╰─────────────╯   ╰─────────────╯                ││
+│    │ │ Experimentos: [■ leyendo] [ ] [ ] [ ] [ ] [ ]                         ││
+│ ☾  │ ╰──────────────────────────────────────────────────────────────────────╯│
+│ ☀  │ ╭ Fantasmas por rescatar ──────────╮ ╭ Valor en riesgo ───────────╮    │
+└────┴─────────────────────────────────────────────────────────────────────┘
 ```
 
-- Navegación lateral fija de 200 px, colapsable a íconos.
-- El cauce ocupa todo el ancho disponible y ~55 % del alto visible. Las pozas viven en la franja inferior.
-- El panel lateral entra desde la derecha (420 px) y empuja el cauce, no lo tapa.
-- Contenido alineado a la izquierda; cifras alineadas a la derecha en tablas.
+**Escritorio (≥768 px):** rail izquierdo de 88 px, fijo, con la marca y botones circulares: buscar (⌘K), filtros, comparar con período anterior, ver como tabla y exportar (los tres últimos solo en el home); abajo, el par luna/sol (el modo vigente en pill negra) y el sello de datos demo. Arriba del contenido: la nav de vistas como pill vidriada (el activo en pill negra) y, en el home, los filtros como chips a la derecha (`Período 30 días`, `Canal Todos`…).
 
-Tablet (768–1279 px): navegación colapsada a íconos, panel lateral como hoja de 60 % del ancho.
+**Board:** tres columnas iguales con 40 px de separación; los experimentos en una fila completa debajo (en ≥1500 px pasan a una cuarta columna). Entre 768 y 1180 px, dos columnas y la fila inferior apilada.
 
-Móvil (<768 px): el cauce se vuelve vertical, de arriba hacia abajo; las pozas cuelgan a la derecha de cada transición. Filtros en una hoja inferior. Panel lateral a pantalla completa.
+**Móvil (<768 px):** sin rail. Nav de vistas a todo el ancho, chips con scroll horizontal, board en una columna con la etiqueta de fase arriba de cada tarjeta, y una barra flotante abajo (buscar, filtros, comparar, tema) en `vidrio`, a 16 px de los bordes. El contenido deja 96 px abajo para la barra.
 
-## Radios y bordes (por jerarquía, no uno para todo)
+## Journey board
 
-- Controles (botones, inputs, chips): 6 px.
-- Panel lateral y popovers: 10 px en el borde visible.
-- Regiones de visualización: sin radio, sin borde; las separa el espacio.
-- Sombras: solo en popovers, panel lateral, sheet y drawer, y se cumple por token (`shadow-md`/`shadow-lg` = `--sombra-flotante`; `xs` y `sm` no proyectan).
+- Cada **fila de etapa**: ícono en círculo (`--azul-suave`, trazo `--azul-texto`), nombre en `tinta-2`, volumen en cifra de 20 px, tasa de avance a la etapa siguiente y delta en pp contra el período anterior (Cierre muestra su porcentaje del total), y un círculo "ir". Abre el panel de la etapa.
+- Cada **fila de fuga**: indentada 22 px debajo de su etapa de origen, ícono de gota con contorno coral punteado, causa, perdidos y monto. Abre `/fugas?poza=…`. La de Fantasmas trae el botón **Rescatar** (pill coral) que va a la poza.
+- **Conectores** (`components/cauce/conectores.ts`, SVG superpuesto sin eventos): espina azul de 2 px entre íconos de etapa de la misma tarjeta; entre tarjetas, una curva (o una recta vertical si están apiladas) con puntos de 4 px en los bordes; fugas en coral punteado (1.5 px, `4 4`) que caen verticales 10 px a la derecha de la espina y se encadenan si hay varias. Se miden con `ResizeObserver` y se recalculan al cambiar tema, filtros o tamaño.
+- **Experimentos**: tiles con nombre, estado y la predicción en pp (`prediccionPp`). Hover o foco resaltan la fila de la etapa que atacan (borde azul y fondo `--azul-suave`); clic lleva al detalle. El tile en pill negra es el experimento más reciente en estado "Leyendo".
+- **Por rescatar**: avatares con las iniciales de los 7 fantasmas pendientes con mayor score; el badge son los días sin atención (coral si son más de 3). Clic abre el lead en /fugas.
 
-## El cauce (componente estrella)
+## Medidores
 
-- SVG propio con d3-scale y d3-shape (curvas `curveBasis`). No usar un sankey de librería.
-- Ancho del cauce en cada etapa = escala de raíz cuadrada del volumen (d3 `scaleSqrt`), con un mínimo visible de 6 px. Con escala lineal, de Contacto en adelante todo quedaba en el mínimo (Contacto es el 1.6 % de Descubrimiento). El grosor máximo corresponde al volumen total del período sin filtros, así que filtrar angosta el río.
-- Relleno `--cauce` con un leve degradé de opacidad hacia la derecha (de 100 % a 80 %): el agua pierde fuerza.
-- Fugas: hilos de 1–8 px (según volumen) en `--oxido` que bajan desde el borde inferior hacia la poza. La poza es una elipse plana con la cifra en latón.
-- Período anterior: contorno en `--niebla`, 1 px, punteado, detrás del río.
-- Retorno de rescatados: hilo en `--cauce` que sube desde la poza de fantasmas hasta Asignación.
-- Etiquetas de etapa arriba del cauce; tasa de la transición en el hueco entre etapas.
+Semicírculos SVG propios (no shadcn) de 22 px de grosor sobre un arco en `--linea`. Valor en riesgo por fase: tres tramos (Atraer en coral-relleno, Convertir en coral, Cerrar en azul) con leyenda en porcentaje. Rescatados hoy: un tramo en azul-relleno sobre los fantasmas del día. Cada medidor lleva `role="img"` y un `aria-label` con las cifras.
 
 ## Motion
 
-Un solo momento orquestado: en la primera carga el agua llena el cauce de izquierda a derecha (1.2 s, ease-out) y recién después caen los hilos de las fugas (0.4 s, escalonado). Nada más se anima solo.
-
-Motion como respuesta a acciones:
-- Cambiar filtros: el ancho del cauce interpola en 300 ms.
-- Rescatar: la tarjeta sale del feed y el contador sube; en el cauce aparece el hilo de retorno.
-- Abrir panel: deslizamiento de 200 ms.
-
-Con `prefers-reduced-motion`: todo aparece en su estado final, sin interpolación. Las animaciones de tw-animate-css (`animate-in`, `animate-out`, acordeones), las de vaul (Drawer) y sonner (avisos) y la barra de tiempo del aviso se anulan con una regla global en `globals.css`.
+Nada se anima solo. Respuestas a acciones: hover de filas, tiles y botones (150 ms de color), apertura del panel (Sheet/Drawer) y de popovers. Con `prefers-reduced-motion` todo aparece en su estado final: una regla global anula las animaciones de tw-animate-css, vaul y sonner, y la barra de tiempo del aviso.
 
 ## Componentes
 
-`AppShell`, `NavRail`, `FilterBar`, `RiverChart`, `StagePanel`, `LeakPool`, `LossModel` (sliders + fórmula), `LeadFeedItem`, `ScoreBadge`, `ExperimentTable`, `ExperimentTimeline`, `CalibrationPlot`, `LeadTimeline`, `MiniRiver`, `CommandPalette`, `Toast`, `DataTable` (alternativa accesible de cada gráfico).
-
 ### Piezas de shadcn/ui
 
-Las primitivas de interacción salen de shadcn/ui (`src/components/ui`); los colores y variantes se ajustan **dentro** de esos archivos. En las llamadas, `className` es solo layout (ancho, márgenes, alineación, tipografía del contenido), nunca para pisar el color de un componente.
+Las primitivas salen de shadcn/ui (`src/components/ui`); colores y variantes se ajustan **dentro** de esos archivos. En las llamadas, `className` es solo layout.
 
 | Necesidad | Componente | Notas |
 |---|---|---|
-| Filtro multiselección (canal, sector, estado) | `DropdownMenu` + `CheckboxItem` | El menú queda abierto al marcar; disparador `Button variant="filtro"` con `data-activo`. |
-| Formulario corto flotante (rango de semanas) | `Popover` + `Select` | |
-| Opción única visible (período, flujo/tabla, tabla/timeline) | `ToggleGroup variant="segmentado"` | Activo invertido en tinta. Valor vacío ignorado: nunca queda sin opción. |
-| Alternador suelto (comparar) y chips en móvil | `Toggle` / `ToggleGroup variant="outline"` | Activo en cauce tintado. |
-| Hoja de filtros en móvil | `Drawer` (vaul) con `DrawerTrigger` | |
-| Panel de etapa | ≥1280 px: `aside` propio que empuja; 768–1279: `Sheet` al 60 %; <768: `Drawer` | Sin Trigger: el panel devuelve el foco a quien lo abrió. |
-| Paleta ⌘K | `CommandDialog` (Command dentro de Dialog) | Devuelve el foco a donde estaba. |
-| Pestañas (pozas, desglose) | `Tabs` con `TabsList variant="line"` | `tono="oxido"` en pozas, `cauce` por defecto. |
-| Parámetros numéricos | `Slider` | `thumbProps` para id, `aria-labelledby` y `aria-valuetext`. |
-| Datos tabulares | `Table` (`marco` para el panel de papel), `TableRowHead` para `<th scope="row">` | Cifras con `.cifra` y alineadas a la derecha. |
-| Avisos con deshacer | `sonner` (`toast()`) | Abajo al centro, invertido en tinta, 5 s, uno por vez, barra de latón que se pausa con hover. |
-| Ayuda sobre íconos | `Tooltip` | En la NavRail solo cuando está en íconos. |
-| Sin resultados | `Empty` | Ícono + texto con dirección, borde punteado, sin sombra. |
+| Acción circular (rail, barra móvil, encabezado de panel) | `Button variant="vidrio" size="redondo"` | `aria-pressed` o `data-activo` la vuelve pill negra. |
+| Chip de filtro | `Button variant="filtro" size="lg"` + `DropdownMenu` / `Popover` | Etiqueta en tinta-2, valor en `<b>`. |
+| Nav de vistas, tabla/timeline, pozas | `ToggleGroup variant="segmentado"` / links con el mismo estilo / `Tabs variant="pill"` | Activo en pill negra. |
+| Alternadores sueltos y chips de /fugas y /experimentos | `Toggle` / `ToggleGroup variant="outline"` | Pill vidriada; activa en negro. |
+| Hoja de filtros (móvil) | `Drawer` | El rail abre la misma hoja en un `Popover`. |
+| Panel de etapa y de experimento | ≥768 px: `Sheet` a la derecha (440 px en ≥1280, 60 % en tablet); <768: `Drawer` | Devuelve el foco a la fila que lo abrió. |
+| Paleta ⌘K | `CommandDialog` | |
+| Parámetros numéricos | `Slider` | |
+| Datos tabulares | `Table` (`marco` = tarjeta de 26 px) | Cifras con `.cifra`, a la derecha. |
+| Avisos con deshacer | `sonner` | Abajo al centro, pill activa, 5 s, uno por vez. |
+| Pills de estado | `Badge` | Ver tabla abajo. |
+| Ayuda sobre íconos | `Tooltip` | En todos los botones circulares. |
+| Sin resultados | `Empty` | |
 
-**El río no es shadcn:** `RiverChart` sigue siendo SVG propio y no va dentro de una `Card`. No se usan `Card`: la jerarquía es espacio y líneas de 1 px.
+**No son shadcn:** el journey board (grillas, filas y el SVG de conectores), los medidores y el `RiverChart` (fuera del home; se conserva hasta nuevo aviso).
 
 ### Badges
 
-`Badge` con variantes propias: **relleno tintado** (12–18 %), **texto en la variante `-texto`** y **borde del mismo tono al 40 %**. Nunca solo contorno ni relleno sólido. El texto siempre nombra el estado: el color nunca va solo.
-
-| Variante | Tono | Relleno | Uso |
-|---|---|---|---|
-| `alto` | cauce | 14 % | Score ≥70 |
-| `medio` | latón | 14 % | Score 40–69 |
-| `bajo` | niebla | 14 % | Score <40 |
-| `diseno` | niebla | 14 % | Experimento en diseño |
-| `en_curso` | cauce | 14 % + punto | Experimento desplegado |
-| `leyendo` | latón | 14 % | En ventana de lectura |
-| `validado` | cauce | 18 % + ✓ | Hipótesis cumplida |
-| `refutado` | óxido | 12 % | Hipótesis no cumplida |
-| `urgente` | óxido | 12 % | Lead con urgencia declarada |
-| `critica` | latón | 14 % | Ventana crítica (≤3 días) |
-| `pendientes` / `neutro` | óxido / niebla | | Contador de la pestaña de poza activa / inactiva |
+| Variante | Estilo | Uso |
+|---|---|---|
+| `alto` | azul-relleno + blanco | Score ≥70 |
+| `medio` | azul-suave + azul-texto | Score 40–69 |
+| `bajo`, `neutro`, `diseno` | neutro-suave + tinta-2 | Score <40, contadores, experimento en diseño |
+| `en_curso` | azul-suave + punto | Experimento desplegado |
+| `leyendo` | activo | En ventana de lectura |
+| `validado` | azul-relleno + ✓ | Hipótesis cumplida |
+| `refutado` | coral-suave + coral-texto | Hipótesis no cumplida |
+| `critica` | coral-suave + coral-texto | ≤3 días sin atención |
+| `atrasado`, `urgente`, `pendientes` | coral-relleno + blanco | >3 días sin atención, urgencia declarada, pendientes en la poza activa |
 
 ## Copy
 
-- Español de México, impersonal o "usted". Verbos concretos: "Rescatar lead", "Descartar", "Comparar con período anterior", "Ver como tabla".
-- Vacíos con dirección: "No hay fantasmas con score alto en este período. Pruebe ampliar a 90 días."
-- Sin títulos con una sola palabra resaltada, sin eyebrows decorativos, sin flechas `→` pegadas a botones.
+- Español de México, impersonal o "usted". Verbos concretos: "Rescatar", "Descartar", "Comparar con período anterior", "Ver como tabla", "Exportar".
+- Vacíos con dirección: "No hay fantasmas pendientes. Pruebe otra poza."
+- Sin eyebrows decorativos ni flechas pegadas a botones.

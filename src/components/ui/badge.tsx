@@ -4,37 +4,44 @@ import { cn } from "@/lib/utils"
 import { Slot } from "radix-ui"
 
 /*
- * Badges de Cauce (docs/DESIGN.md): relleno tintado, texto en la variante -texto
- * y borde del mismo tono al 40 %. Nunca solo contorno ni relleno sólido.
+ * Pills de Cauce (docs/DESIGN.md): tres intensidades por tono.
+ * - relleno: fondo -relleno con texto blanco (lo más fuerte: score alto, más de 3 días sin atención).
+ * - suave: fondo -suave con texto -texto.
+ * - activo: pill negra (blanca en oscuro), como el estado activo del resto de la UI.
+ * El texto siempre nombra el estado: el color nunca va solo.
  */
 const TONO = {
-  cauce: "border-cauce/40 bg-cauce-suave text-cauce-texto",
-  laton: "border-laton/40 bg-laton-suave text-laton-texto",
-  oxido: "border-oxido/40 bg-oxido-suave text-oxido-texto",
-  niebla: "border-niebla/40 bg-niebla-suave text-niebla-texto",
+  azulRelleno: "bg-azul-relleno text-sobre-relleno",
+  azulSuave: "bg-azul-suave text-azul-texto",
+  coralRelleno: "bg-coral-relleno text-sobre-relleno",
+  coralSuave: "bg-coral-suave text-coral-texto",
+  neutro: "bg-neutro-suave text-tinta-2",
+  activo: "bg-activo text-sobre-activo",
 } as const
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-6 w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-control border px-2 text-xs font-medium whitespace-nowrap focus-visible:ring-[3px] focus-visible:ring-ring/50 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "group/badge inline-flex h-6.5 w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full px-3 text-xs font-semibold whitespace-nowrap focus-visible:ring-[3px] focus-visible:ring-ring/50 [&>svg]:pointer-events-none [&>svg]:size-3!",
   {
     variants: {
       variant: {
-        neutro: TONO.niebla,
+        neutro: TONO.neutro,
         // Score de intención
-        alto: TONO.cauce,
-        medio: TONO.laton,
-        bajo: TONO.niebla,
+        alto: TONO.azulRelleno,
+        medio: TONO.azulSuave,
+        bajo: TONO.neutro,
         // Estados de experimento
-        diseno: TONO.niebla,
-        en_curso: TONO.cauce,
-        leyendo: TONO.laton,
-        validado: "border-cauce/40 bg-cauce-fuerte text-cauce-texto",
-        refutado: TONO.oxido,
+        diseno: TONO.neutro,
+        en_curso: TONO.azulSuave,
+        leyendo: TONO.activo,
+        validado: TONO.azulRelleno,
+        refutado: TONO.coralSuave,
         // Señales de un lead
-        urgente: TONO.oxido,
+        urgente: TONO.coralRelleno,
+        // Días sin atención: dentro de la ventana crítica (≤3) o ya fuera (>3)
+        critica: TONO.coralSuave,
+        atrasado: TONO.coralRelleno,
         // Contador de pendientes en la pestaña activa de una poza
-        pendientes: TONO.oxido,
-        critica: TONO.laton,
+        pendientes: TONO.coralRelleno,
       },
     },
     defaultVariants: {

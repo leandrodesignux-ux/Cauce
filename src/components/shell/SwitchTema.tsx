@@ -41,7 +41,7 @@ export function ColorDeBarra() {
   const { resolvedTheme } = useTheme();
   useEffect(() => {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-    meta?.setAttribute("content", resolvedTheme === "dark" ? COLOR.concretoOscuro : COLOR.concreto);
+    meta?.setAttribute("content", resolvedTheme === "dark" ? COLOR.fondoOscuro : COLOR.fondoB);
   }, [resolvedTheme]);
   return null;
 }

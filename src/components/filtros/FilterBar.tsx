@@ -70,7 +70,7 @@ export function FilterBar() {
             <Button variant="filtro" size="lg" data-activo={activos > 0} className="h-10">
               <SlidersHorizontal data-icon="inline-start" />
               Filtros
-              {activos > 0 && <span className="cifra rounded-full bg-cauce px-1.5 text-xs text-sobre-cauce">{activos}</span>}
+              {activos > 0 && <span className="cifra rounded-full bg-azul-relleno px-1.5 text-xs text-sobre-relleno">{activos}</span>}
             </Button>
           </DrawerTrigger>
           <DrawerContent className="data-[vaul-drawer-direction=bottom]:max-h-[88dvh]">
@@ -139,7 +139,7 @@ export function FilterBar() {
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
-        <span className="truncate text-sm text-niebla">{formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}</span>
+        <span className="truncate text-sm text-tinta-2">{formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}</span>
       </div>
     </>
   );
@@ -152,7 +152,7 @@ function SelectorPeriodo({ estado, actualizar }: { estado: EstadoFiltros; actual
       <ToggleGroup
         type="single"
         variant="segmentado"
-        spacing={0}
+        spacing={1}
         aria-label="Período"
         value={estado.preset === "personalizado" ? "" : estado.preset}
         onValueChange={(v) => v && actualizar({ preset: v as PeriodoElegido })}
@@ -196,10 +196,10 @@ function RangoPersonalizado({ estado, actualizar, alTerminar }: { estado: Estado
         alTerminar();
       }}
     >
-      <p className="text-xs text-niebla">Semanas completas, de lunes a domingo.</p>
+      <p className="text-xs text-tinta-2">Semanas completas, de lunes a domingo.</p>
       <CampoSemana etiqueta="Desde la semana del" valor={desde} onCambiar={setDesde} semanas={semanas} />
       <CampoSemana etiqueta="Hasta la semana del" valor={hasta} onCambiar={setHasta} semanas={semanas} />
-      {!valido && <p className="text-xs text-oxido-texto">La semana inicial tiene que ser anterior a la final.</p>}
+      {!valido && <p className="text-xs text-coral-texto">La semana inicial tiene que ser anterior a la final.</p>}
       <Button type="submit" disabled={!valido}>
         Aplicar período
       </Button>
@@ -284,7 +284,7 @@ function SelectorVista({ estado, actualizar }: { estado: EstadoFiltros; actualiz
     <ToggleGroup
       type="single"
       variant="segmentado"
-      spacing={0}
+      spacing={1}
       aria-label="Vista"
       value={estado.tabla ? "tabla" : "flujo"}
       onValueChange={(v) => v && actualizar({ tabla: v === "tabla" })}
@@ -308,7 +308,7 @@ function Flecha() {
 function Seccion({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-2.5">
-      <h3 className="text-sm font-medium text-niebla">{titulo}</h3>
+      <h3 className="text-sm font-medium text-tinta-2">{titulo}</h3>
       {children}
     </section>
   );

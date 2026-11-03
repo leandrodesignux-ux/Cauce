@@ -99,7 +99,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
     cifras.push(
       { etiqueta: "Conversión", valor: formatearPct(tasa) },
       { etiqueta: "Vs. período anterior", valor: `${flecha(delta)}${formatearPp(delta)}`, tono: tonoDelta(delta) },
-      { etiqueta: "No avanzan", valor: formatearEntero(d.actual[transicion.desde] - d.actual[transicion.hacia]), tono: "text-oxido-texto" },
+      { etiqueta: "No avanzan", valor: formatearEntero(d.actual[transicion.desde] - d.actual[transicion.hacia]), tono: "text-coral-texto" },
     );
   } else {
     const v = d.actual[etapa];
@@ -128,7 +128,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
       <dl className="grid grid-cols-3 items-end gap-3">
         {cifras.map((c) => (
           <div key={c.etiqueta} className="flex flex-col gap-1">
-            <dt className="text-xs text-niebla">{c.etiqueta}</dt>
+            <dt className="text-xs text-tinta-2">{c.etiqueta}</dt>
             <dd className={`cifra whitespace-nowrap text-lg font-semibold ${c.tono ?? ""}`}>{c.valor}</dd>
           </div>
         ))}
@@ -140,7 +140,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
             {[...NIVELES_LEAD, ...PRIORIDADES].map((n) => (
               <li key={n.id} className="flex gap-3">
                 <span className="cifra w-10 font-medium">{n.id}</span>
-                <span className="text-niebla">{n.definicion}</span>
+                <span className="text-tinta-2">{n.definicion}</span>
               </li>
             ))}
           </ul>
@@ -190,17 +190,17 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
           <ul className="flex flex-col divide-y divide-linea rounded-panel border border-linea">
             {d.fugasAqui.map((f) => (
               <li key={f.id}>
-                <Link href={`/fugas?poza=${f.id}`} className="group flex items-center gap-3 px-3 py-3 hover:bg-concreto">
-                  <Droplet className="size-4 shrink-0 text-oxido-texto" aria-hidden />
+                <Link href={`/fugas?poza=${f.id}`} className="group flex items-center gap-3 px-3 py-3 hover:bg-neutro-suave">
+                  <Droplet className="size-4 shrink-0 text-coral-texto" aria-hidden />
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm">{f.causa}</span>
-                    <span className="cifra text-xs text-niebla">
+                    <span className="cifra text-xs text-tinta-2">
                       {formatearEntero(f.poza.volumen)} perdidos
                       {f.id === FUGA_MODELO_PERDIDA ? " · modelo de pérdida" : ""}
                     </span>
                   </span>
-                  <span className="cifra text-sm font-semibold text-laton-texto">{formatearMxn(f.poza.valorMxn)}</span>
-                  <ArrowUpRight className="size-4 shrink-0 text-niebla group-hover:text-tinta" aria-hidden />
+                  <span className="cifra text-sm font-semibold text-tinta">{formatearMxn(f.poza.valorMxn)}</span>
+                  <ArrowUpRight className="size-4 shrink-0 text-tinta-2 group-hover:text-tinta" aria-hidden />
                   <span className="sr-only">Abrir en Fugas</span>
                 </Link>
               </li>
@@ -213,7 +213,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
         {d.expAqui.length === 0 ? (
           <Vacio icono={<FlaskConical />} titulo="Sin experimentos">
             Ningún experimento apunta aquí todavía.{" "}
-            <Link href="/experimentos" className="text-cauce-texto underline underline-offset-2">
+            <Link href="/experimentos" className="text-azul-texto underline underline-offset-2">
               Ver el registro de hipótesis
             </Link>
           </Vacio>
@@ -221,24 +221,24 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
           <ul className="flex flex-col gap-3">
             {d.expAqui.map((e) => (
               <li key={e.id}>
-                <Link href={`/experimentos?exp=${e.id}`} className="group block rounded-panel border border-linea p-3 hover:border-linea-fuerte hover:bg-concreto">
+                <Link href={`/experimentos?exp=${e.id}`} className="group block rounded-panel border border-linea p-3 hover:border-linea-fuerte hover:bg-neutro-suave">
                   <span className="flex items-start gap-2">
                     <span className="flex-1 text-sm font-medium">{e.nombre}</span>
                     <ChipEstado estado={e.estado} />
                   </span>
-                  <span className="mt-1 block text-xs text-niebla">{e.hipotesis}</span>
+                  <span className="mt-1 block text-xs text-tinta-2">{e.hipotesis}</span>
                   <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
                     <span className="whitespace-nowrap">
-                      <span className="text-niebla">Predicho </span>
+                      <span className="text-tinta-2">Predicho </span>
                       <span className="cifra font-medium">{formatearPp(e.prediccionPp)}</span>
                     </span>
                     <span className="whitespace-nowrap">
-                      <span className="text-niebla">Observado </span>
-                      <span className={`cifra font-medium ${e.observadoPp === undefined ? "text-niebla" : tonoDelta(e.observadoPp)}`}>
+                      <span className="text-tinta-2">Observado </span>
+                      <span className={`cifra font-medium ${e.observadoPp === undefined ? "text-tinta-2" : tonoDelta(e.observadoPp)}`}>
                         {e.observadoPp === undefined ? "sin lectura" : formatearPp(e.observadoPp)}
                       </span>
                     </span>
-                    <span className="whitespace-nowrap text-niebla">Despliegue {formatearSemanaCorta(e.despliegue)}</span>
+                    <span className="whitespace-nowrap text-tinta-2">Despliegue {formatearSemanaCorta(e.despliegue)}</span>
                   </span>
                 </Link>
               </li>
@@ -255,7 +255,7 @@ function Seccion({ titulo, nota, children }: { titulo: string; nota?: string; ch
     <section className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="text-sm font-medium">{titulo}</h3>
-        {nota && <span className="text-xs text-niebla">{nota}</span>}
+        {nota && <span className="text-xs text-tinta-2">{nota}</span>}
       </div>
       {children}
     </section>
@@ -275,8 +275,8 @@ function Vacio({ icono, titulo, children }: { icono: ReactNode; titulo: string; 
 }
 
 function tonoDelta(v: number | null): string {
-  if (v === null || Math.abs(v) < 0.05) return "text-niebla";
-  return v > 0 ? "text-cauce-texto" : "text-oxido-texto";
+  if (v === null || Math.abs(v) < 0.05) return "text-tinta-2";
+  return v > 0 ? "text-azul-texto" : "text-coral-texto";
 }
 
 function flecha(v: number | null): string {

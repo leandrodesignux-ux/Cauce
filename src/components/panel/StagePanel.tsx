@@ -56,7 +56,7 @@ export function StagePanel({
               {titulo}
             </span>
           </Titulo>
-          {subtitulo && <p className="mt-1 text-sm text-niebla">{subtitulo}</p>}
+          {subtitulo && <p className="mt-1 text-sm text-tinta-2">{subtitulo}</p>}
         </div>
         <Button variant="sutil" size="icon-lg" onClick={onCerrar} aria-label="Cerrar panel">
           <X className="size-5" />
@@ -102,7 +102,7 @@ export function StagePanel({
               onCerrar();
             }}
           >
-            <div className="flex h-full w-(--ancho-panel) flex-col rounded-l-panel border-l border-linea bg-papel shadow-flotante">
+            <div className="flex h-full w-(--ancho-panel) flex-col rounded-l-panel border-l border-linea bg-tarjeta shadow-flotante">
               {contenido(TituloAside)}
             </div>
           </motion.aside>

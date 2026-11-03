@@ -26,11 +26,13 @@ function hex(valor: string): Rgba {
   return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16), 1];
 }
 
-/** Resuelve un valor de color: hex, var(--x), transparent o color-mix(in srgb, A p%, B). */
+/** Resuelve un valor de color: hex, rgb(r g b / a), var(--x), transparent o color-mix(in srgb, A p%, B). */
 function resolver(valor: string, vars: Record<string, string>): Rgba {
   valor = valor.trim();
   if (valor === "transparent") return [0, 0, 0, 0];
   if (valor.startsWith("#")) return hex(valor);
+  const rgb = valor.match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*(?:\/\s*([\d.]+))?\s*\)$/);
+  if (rgb) return [Number(rgb[1]), Number(rgb[2]), Number(rgb[3]), rgb[4] === undefined ? 1 : Number(rgb[4])];
   const ref = valor.match(/^var\(--([\w-]+)\)$/);
   if (ref) return resolver(vars[ref[1]], vars);
   const mezcla = valor.match(/^color-mix\(in srgb,\s*(.+?)\s+(\d+(?:\.\d+)?)%,\s*(.+)\)$/);
@@ -65,39 +67,33 @@ function contraste(a: Rgba, b: Rgba): number {
   return (x + 0.05) / (y + 0.05);
 }
 
-/** Fondo: un token o una pila de capas translúcidas sobre un token opaco ("cauce-suave/papel"). */
+/** Fondo: un token o una pila de capas translúcidas sobre un token opaco ("panel/fondo-c"). */
 function fondo(spec: string, vars: Record<string, string>): Rgba {
   const capas = spec.split("/").map((t) => resolver(`var(--${t})`, vars));
   return capas.reduceRight((abajo, arriba) => sobre(arriba, abajo));
 }
 
-const TEXTOS_UI = ["tinta", "niebla", "cauce-texto", "laton-texto", "oxido-texto"];
-const FONDOS_UI = ["concreto", "papel", "muted", "secondary"];
+// Texto neutro: va sobre cualquier superficie, incluido el degradé y los paneles vidriados.
+const TEXTOS_NEUTROS = ["tinta", "tinta-2"];
+const FONDOS_NEUTROS = [
+  "fondo-a", "fondo-b", "fondo-c", // degradé
+  "panel/fondo-a", "panel/fondo-c", // paneles vidriados sobre los extremos del degradé
+  "tarjeta", "muted",
+  "neutro-suave/tarjeta", "azul-suave/tarjeta", "coral-suave/tarjeta", // filas en hover y pills suaves
+];
+// Texto de color (-texto): solo sobre tarjeta o sobre un -suave, nunca sobre el degradé.
+const TEXTOS_COLOR = ["azul-texto", "coral-texto"];
+const FONDOS_COLOR = ["tarjeta", "muted", "azul-suave/tarjeta", "coral-suave/tarjeta"];
 
 const pares: [texto: string, fondo: string][] = [
-  // Texto de la UI sobre las superficies.
-  ...TEXTOS_UI.flatMap((t) => FONDOS_UI.map((f) => [t, f] as [string, string])),
-  // Variantes del Badge: texto sobre su relleno tintado, apoyado en papel y en concreto.
-  ...([
-    ["cauce-texto", "cauce-suave"],
-    ["laton-texto", "laton-suave"],
-    ["oxido-texto", "oxido-suave"],
-    ["niebla-texto", "niebla-suave"],
-    ["cauce-texto", "cauce-fuerte"],
-  ] as const).flatMap(([t, f]) => [
-    [t, `${f}/papel`] as [string, string],
-    [t, `${f}/concreto`] as [string, string],
-  ]),
-  // Elementos seleccionados: filas y tarjetas en cauce-suave sobre papel; tasa y nav activa sobre concreto.
-  ...TEXTOS_UI.map((t) => [t, "cauce-suave/papel"] as [string, string]),
-  ...["tinta", "cauce-texto", "oxido-texto"].map((t) => [t, "cauce-suave/concreto"] as [string, string]),
-  // Chip de ventana crítica y badges de antigüedad: latón translúcido.
-  ["laton-texto", "laton-suave/papel"],
-  // Texto sobre acentos sólidos.
-  ["sobre-cauce", "cauce"],
-  ["sobre-laton", "laton"],
-  ["sobre-oxido", "oxido"],
-  ["concreto", "tinta"], // controles invertidos (segmentado activo, toast)
+  ...TEXTOS_NEUTROS.flatMap((t) => FONDOS_NEUTROS.map((f) => [t, f] as [string, string])),
+  ...TEXTOS_COLOR.flatMap((t) => FONDOS_COLOR.map((f) => [t, f] as [string, string])),
+  // Pills: -relleno con texto blanco, activo invertido. Las suaves ya están arriba (-texto sobre -suave/tarjeta).
+  ["sobre-relleno", "azul-relleno"],
+  ["sobre-relleno", "coral-relleno"],
+  ["sobre-activo", "activo"],
+  // Avatares de fantasmas: iniciales en azul-texto sobre azul-suave.
+  ["azul-texto", "azul-suave"],
   // Semántica de shadcn.
   ["foreground", "background"],
   ["card-foreground", "card"],

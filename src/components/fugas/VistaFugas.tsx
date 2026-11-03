@@ -190,17 +190,17 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-cifra text-xl font-semibold md:text-2xl">Pozas y rescate</h1>
-          <p className="mt-1 max-w-xl text-sm text-niebla">
+          <p className="mt-1 max-w-xl text-sm text-tinta-2">
             Lo que se escapa del cauce, cuánto vale y qué leads con intención conviene rescatar primero.
           </p>
         </div>
         <dl className="flex gap-8">
           <div>
-            <dt className="text-sm text-niebla">Rescatados hoy</dt>
-            <dd className="cifra text-2xl font-semibold text-cauce-texto">{formatearEntero(rescatadosHoy)}</dd>
+            <dt className="text-sm text-tinta-2">Rescatados hoy</dt>
+            <dd className="cifra text-2xl font-semibold text-azul-texto">{formatearEntero(rescatadosHoy)}</dd>
           </div>
           <div>
-            <dt className="text-sm text-niebla">Pendientes en pozas</dt>
+            <dt className="text-sm text-tinta-2">Pendientes en pozas</dt>
             <dd className="cifra text-2xl font-semibold">{formatearEntero(Object.values(pendientesPorPoza).reduce((s, n) => s + n, 0))}</dd>
           </div>
         </dl>
@@ -210,7 +210,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
 
       <section aria-label="Pozas" className="flex flex-col gap-4">
         <Tabs value={filtros.poza} onValueChange={cambiarPoza}>
-          <TabsList variant="line" tono="oxido" aria-label="Pozas" className="-mx-4 w-[calc(100%+2rem)] justify-start overflow-x-auto px-4 md:mx-0 md:w-full md:px-0">
+          <TabsList variant="line" tono="coral" aria-label="Pozas" className="-mx-4 w-[calc(100%+2rem)] justify-start overflow-x-auto px-4 md:mx-0 md:w-full md:px-0">
             {fugas.map((f) => {
               const pendientes = pendientesPorPoza[f.id] ?? null;
               return (
@@ -229,14 +229,14 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
               <p className="text-sm">
                 <span className="font-medium">{poza.causa}</span>
-                <span className="text-niebla">
+                <span className="text-tinta-2">
                   {" "}
                   · {nombreEtapa(poza.desde)} → {nombreEtapa(poza.hacia)}
                 </span>
               </p>
-              <p className="cifra text-sm text-niebla">
+              <p className="cifra text-sm text-tinta-2">
                 Últimos 30 días: {formatearEntero(valorPoza.volumen)} perdidos ·{" "}
-                <span className="font-semibold text-laton-texto">{formatearMxn(valorPoza.valorMxn)}</span>
+                <span className="font-semibold text-tinta">{formatearMxn(valorPoza.valorMxn)}</span>
               </p>
             </div>
 
@@ -247,7 +247,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                   <>
                     {" "}
                     El experimento{" "}
-                    <Link href={`/experimentos?exp=${experimento.id}`} className="text-cauce-texto underline underline-offset-2">
+                    <Link href={`/experimentos?exp=${experimento.id}`} className="text-azul-texto underline underline-offset-2">
                       {experimento.nombre}
                     </Link>{" "}
                     ataca esta fuga.
@@ -288,7 +288,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                   </div>
                 </div>
 
-                <p className="hidden items-center gap-2 text-xs text-niebla md:flex">
+                <p className="hidden items-center gap-2 text-xs text-tinta-2 md:flex">
                   <Keyboard className="size-3.5" aria-hidden />
                   <Tecla>J</Tecla>
                   <Tecla>K</Tecla> para moverse · <Tecla>R</Tecla> rescatar · <Tecla>D</Tecla> descartar · <Tecla>Shift</Tecla> para seleccionar
@@ -301,18 +301,18 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                       ? `No hay ${filtrosActivos ? "leads con esos filtros" : "leads pendientes"} en esta poza.`
                       : `Todavía no hay leads ${filtros.bandeja} en esta poza.`}{" "}
                     {filtrosActivos ? (
-                      <button type="button" onClick={() => actualizar({ banda: null, antiguedad: null })} className="text-cauce-texto underline underline-offset-2">
+                      <button type="button" onClick={() => actualizar({ banda: null, antiguedad: null })} className="text-azul-texto underline underline-offset-2">
                         Quitar filtros de score y antigüedad
                       </button>
                     ) : filtros.bandeja !== "pendientes" ? (
-                      <button type="button" onClick={() => actualizar({ bandeja: "pendientes" })} className="text-cauce-texto underline underline-offset-2">
+                      <button type="button" onClick={() => actualizar({ bandeja: "pendientes" })} className="text-azul-texto underline underline-offset-2">
                         Ver pendientes
                       </button>
                     ) : null}
                   </Vacio>
                 ) : (
                   <div className="relative">
-                    <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? poza.causa}`} className="overflow-hidden rounded-panel border border-linea bg-papel">
+                    <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? poza.causa}`} className="overflow-hidden rounded-panel border border-linea bg-tarjeta">
                       <AnimatePresence initial={false} custom={ultimaAccion}>
                         {visibles.map((l) => (
                           <LeadFeedItem
@@ -333,26 +333,26 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                       <div
                         role="region"
                         aria-label="Acciones para la selección"
-                        className="sticky bottom-[calc(var(--alto-barra-movil)+12px)] z-10 mt-3 flex flex-wrap items-center gap-3 rounded-panel bg-tinta px-4 py-3 text-sm text-concreto shadow-flotante md:bottom-4"
+                        className="sticky bottom-[calc(var(--alto-barra-movil)+12px)] z-10 mt-3 flex flex-wrap items-center gap-3 rounded-panel bg-activo px-4 py-3 text-sm text-sobre-activo shadow-flotante md:bottom-4"
                       >
                         <span className="cifra flex-1">
                           {seleccion.size} seleccionado{seleccion.size === 1 ? "" : "s"}
                         </span>
                         {filtros.bandeja === "pendientes" ? (
                           <>
-                            <button type="button" onClick={() => aplicar("rescatar", [...seleccion])} className="rounded-control bg-cauce px-3 py-1.5 font-medium text-sobre-cauce">
+                            <button type="button" onClick={() => aplicar("rescatar", [...seleccion])} className="rounded-control bg-azul-relleno px-3 py-1.5 font-medium text-sobre-relleno">
                               Rescatar {seleccion.size} lead{seleccion.size === 1 ? "" : "s"}
                             </button>
-                            <button type="button" onClick={() => aplicar("descartar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-concreto/10">
+                            <button type="button" onClick={() => aplicar("descartar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-sobre-activo/10">
                               Descartar
                             </button>
                           </>
                         ) : (
-                          <button type="button" onClick={() => aplicar("restaurar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-concreto/10">
+                          <button type="button" onClick={() => aplicar("restaurar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-sobre-activo/10">
                             Devolver a la poza
                           </button>
                         )}
-                        <button type="button" onClick={() => setSeleccion(new Set())} className="rounded-control px-3 py-1.5 text-concreto/70 hover:bg-concreto/10">
+                        <button type="button" onClick={() => setSeleccion(new Set())} className="rounded-control px-3 py-1.5 text-sobre-activo/70 hover:bg-sobre-activo/10">
                           Limpiar
                         </button>
                       </div>
@@ -371,7 +371,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
 function GrupoChips({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {
   return (
     <div role="group" aria-label={etiqueta} className="flex flex-wrap items-center gap-2">
-      <span className="mr-1 text-xs text-niebla">{etiqueta}</span>
+      <span className="mr-1 text-xs text-tinta-2">{etiqueta}</span>
       {children}
     </div>
   );
@@ -386,11 +386,11 @@ function Chip({ activo, destacado, onClick, children }: { activo: boolean; desta
       className={`inline-flex h-8 items-center gap-1.5 rounded-control border px-3 text-sm motion-safe:transition-colors ${
         activo
           ? destacado
-            ? "border-laton bg-laton text-sobre-laton"
-            : "border-cauce bg-cauce-suave text-cauce-texto"
+            ? "border-coral bg-coral-relleno text-sobre-relleno"
+            : "border-azul bg-azul-suave text-azul-texto"
           : destacado
-            ? "border-laton text-laton-texto hover:bg-laton-suave"
-            : "border-linea-fuerte hover:border-niebla hover:bg-papel"
+            ? "border-coral text-tinta hover:bg-coral-suave"
+            : "border-linea-fuerte hover:border-tenue hover:bg-tarjeta"
       }`}
     >
       {children}

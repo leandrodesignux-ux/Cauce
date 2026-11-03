@@ -12,6 +12,6 @@ export function TeclaAtajo() {
     () => true,
   );
   return (
-    <kbd className="rounded border border-linea px-1.5 font-sans text-xs text-niebla">{esMac ? "⌘K" : "Ctrl K"}</kbd>
+    <kbd className="rounded border border-linea px-1.5 font-sans text-xs text-tinta-2">{esMac ? "⌘K" : "Ctrl K"}</kbd>
   );
 }

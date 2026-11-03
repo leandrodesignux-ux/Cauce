@@ -12,18 +12,18 @@ import { VISTAS, vistaActiva } from "./vistas";
 export function BarraSuperiorMovil() {
   const abrirPaleta = usePaleta((s) => s.abrir);
   return (
-    <header className="sticky top-0 z-20 flex h-(--alto-barra-movil) items-center justify-between border-b border-linea bg-concreto px-4 md:hidden">
+    <header className="sticky top-0 z-20 flex h-(--alto-barra-movil) items-center justify-between border-b border-linea bg-fondo-a px-4 md:hidden">
       <Link href="/" aria-label="Cauce, inicio" className="rounded-control">
         <Marca />
       </Link>
       <div className="flex items-center gap-2">
-        <span className="rounded-control border border-dashed border-linea-fuerte px-2 py-0.5 text-xs text-niebla">Datos demo</span>
+        <span className="rounded-control border border-dashed border-linea-fuerte px-2 py-0.5 text-xs text-tinta-2">Datos demo</span>
         <SwitchTema lado="bottom" />
         <button
           type="button"
           onClick={abrirPaleta}
           aria-label="Buscar o saltar a…"
-          className="grid size-10 place-items-center rounded-control text-niebla hover:text-tinta"
+          className="grid size-10 place-items-center rounded-control text-tinta-2 hover:text-tinta"
         >
           <Search className="size-5" aria-hidden />
         </button>
@@ -38,7 +38,7 @@ export function BarraInferiorMovil() {
   return (
     <nav
       aria-label="Principal"
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-linea bg-papel pb-[env(safe-area-inset-bottom)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-linea bg-tarjeta pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul className="grid h-(--alto-barra-movil) grid-cols-3">
         {VISTAS.map(({ href, nombre, Icono }) => {
@@ -49,7 +49,7 @@ export function BarraInferiorMovil() {
                 href={href}
                 aria-current={activa ? "page" : undefined}
                 className={`flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium ${
-                  activa ? "text-cauce-texto" : "text-niebla"
+                  activa ? "text-azul-texto" : "text-tinta-2"
                 }`}
               >
                 <Icono className="size-5" aria-hidden />

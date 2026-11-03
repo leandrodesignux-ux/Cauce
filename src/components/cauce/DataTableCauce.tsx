@@ -37,7 +37,7 @@ export function DataTableCauce({
               <TableRow key={e.id}>
                 <TableRowHead>{e.nombre}</TableRowHead>
                 <TableCell className="cifra text-right">{formatearEntero(volumen[i])}</TableCell>
-                {anterior && <TableCell className={`cifra text-right text-niebla`}>{formatearEntero(anterior[i])}</TableCell>}
+                {anterior && <TableCell className={`cifra text-right text-tinta-2`}>{formatearEntero(anterior[i])}</TableCell>}
                 <TableCell className="cifra text-right">{i > 0 ? formatearPct(tasas[i - 1]) : "—"}</TableCell>
                 <TableCell className={`cifra text-right ${tonoDelta(delta)}`}>{i > 0 ? `${flechaDelta(delta)}${formatearPp(delta)}` : "—"}</TableCell>
               </TableRow>
@@ -60,11 +60,11 @@ export function DataTableCauce({
           {pozas.map((p) => (
             <TableRow key={p.id}>
               <TableRowHead>{p.causa}</TableRowHead>
-              <TableCell className="text-niebla">
+              <TableCell className="text-tinta-2">
                 {ETAPAS[p.desde].nombre} → {ETAPAS[p.desde + 1].nombre}
               </TableCell>
               <TableCell className="cifra text-right">{formatearEntero(p.volumen)}</TableCell>
-              <TableCell className="cifra text-right text-laton-texto">{formatearMxn(p.valor)}</TableCell>
+              <TableCell className="cifra text-right text-tinta">{formatearMxn(p.valor)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -73,7 +73,7 @@ export function DataTableCauce({
             <TableRowHead colSpan={3} className="font-medium">
               Valor en riesgo
             </TableRowHead>
-            <TableCell className="cifra text-right font-semibold text-laton-texto">{formatearMxn(pozas.reduce((s, p) => s + p.valor, 0))}</TableCell>
+            <TableCell className="cifra text-right font-semibold text-tinta">{formatearMxn(pozas.reduce((s, p) => s + p.valor, 0))}</TableCell>
           </TableRow>
         </TableFooter>
       </Table>
@@ -82,8 +82,8 @@ export function DataTableCauce({
 }
 
 export function tonoDelta(delta: number | null): string {
-  if (delta === null || Math.abs(delta) < 0.05) return "text-niebla";
-  return delta > 0 ? "text-cauce-texto" : "text-oxido-texto";
+  if (delta === null || Math.abs(delta) < 0.05) return "text-tinta-2";
+  return delta > 0 ? "text-azul-texto" : "text-coral-texto";
 }
 
 export function flechaDelta(delta: number | null): string {

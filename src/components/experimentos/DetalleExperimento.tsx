@@ -14,10 +14,10 @@ import { ChipEstado, PredichoObservado, tonoObservado } from "./comunes";
 
 // El relleno de la barra usa el tono base (no la variante de texto).
 const RELLENO_OBSERVADO: Record<string, string> = {
-  "text-cauce-texto": "bg-cauce",
-  "text-laton-texto": "bg-laton",
-  "text-oxido-texto": "bg-oxido",
-  "text-niebla": "bg-niebla",
+  "text-azul-texto": "bg-azul-relleno",
+  "text-tinta": "bg-coral-relleno",
+  "text-coral-texto": "bg-coral-relleno",
+  "text-tinta-2": "bg-tenue",
 };
 
 /** Detalle de un experimento: hipótesis, métrica, resultado y la transición en el cauce. */
@@ -41,22 +41,22 @@ export function DetalleExperimento({ e }: { e: Experimento }) {
     <div className="flex flex-col gap-7">
       <div className="flex flex-wrap items-center gap-2">
         <ChipEstado estado={e.estado} />
-        <span className="text-sm text-niebla">{s.texto}</span>
+        <span className="text-sm text-tinta-2">{s.texto}</span>
       </div>
 
       <Bloque titulo="Hipótesis">
         <p className="text-base">{e.hipotesis}</p>
         <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
-          <dt className="text-niebla">Palanca</dt>
+          <dt className="text-tinta-2">Palanca</dt>
           <dd>{e.palanca}</dd>
-          <dt className="text-niebla">Métrica</dt>
+          <dt className="text-tinta-2">Métrica</dt>
           <dd>{e.metrica}</dd>
-          <dt className="text-niebla">Despliegue</dt>
+          <dt className="text-tinta-2">Despliegue</dt>
           <dd className="cifra">{formatearSemana(e.despliegue)}</dd>
-          <dt className="text-niebla">Lectura</dt>
+          <dt className="text-tinta-2">Lectura</dt>
           <dd className="cifra">
             {formatearSemana(inicioLectura(e))} – {formatearSemana(finLectura(e))}{" "}
-            <span className="font-sans text-niebla">
+            <span className="font-sans text-tinta-2">
               (semanas {e.ventanaSemanas[0]}–{e.ventanaSemanas[1]})
             </span>
           </dd>
@@ -74,7 +74,7 @@ export function DetalleExperimento({ e }: { e: Experimento }) {
             texto={e.observadoPp === undefined ? "Sin lectura todavía" : formatearPp(e.observadoPp)}
           />
           <PredichoObservado e={e} compacto />
-          <p className="text-xs text-niebla">
+          <p className="text-xs text-tinta-2">
             Observado = conversión en la ventana de lectura menos la de las 6 semanas previas al despliegue, sobre todo el tráfico.
           </p>
         </div>
@@ -90,7 +90,7 @@ export function DetalleExperimento({ e }: { e: Experimento }) {
         />
         <Link
           href={`/?transicion=${e.transicion.desde}-${e.transicion.hacia}`}
-          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-cauce-texto hover:underline"
+          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-azul-texto hover:underline"
         >
           Ver la transición en el cauce
           <ArrowUpRight className="size-4" aria-hidden />
@@ -105,7 +105,7 @@ function Bloque({ titulo, nota, children }: { titulo: string; nota?: string; chi
     <section className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="text-sm font-medium">{titulo}</h3>
-        {nota && <span className="text-xs text-niebla">{nota}</span>}
+        {nota && <span className="text-xs text-tinta-2">{nota}</span>}
       </div>
       {children}
     </section>
@@ -115,8 +115,8 @@ function Bloque({ titulo, nota, children }: { titulo: string; nota?: string; chi
 function Barra({ etiqueta, valor, escala, clase, texto }: { etiqueta: string; valor: number; escala: number; clase: string; texto: string }) {
   return (
     <div className="grid grid-cols-[5.5rem_1fr_auto] items-center gap-3 text-sm">
-      <span className="text-niebla">{etiqueta}</span>
-      <span className="relative h-2.5 rounded-full bg-concreto" aria-hidden>
+      <span className="text-tinta-2">{etiqueta}</span>
+      <span className="relative h-2.5 rounded-full bg-neutro-suave" aria-hidden>
         <span className={`absolute inset-y-0 left-0 rounded-full ${clase}`} style={{ width: `${(Math.max(0, valor) / escala) * 100}%` }} />
       </span>
       <span className="cifra font-medium">{texto}</span>

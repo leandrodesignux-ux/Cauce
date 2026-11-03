@@ -70,8 +70,8 @@ export function LeadFeedItem({
       onClick={(e: MouseEvent) => {
         if (e.shiftKey) onSeleccionar(true);
       }}
-      className={`group grid grid-cols-[auto_1fr] gap-x-3 gap-y-3 border-b border-linea px-3 py-4 last:border-0 focus-visible:bg-concreto md:grid-cols-[auto_minmax(0,1.6fr)_minmax(0,1fr)_auto] md:items-center md:px-4 ${
-        seleccionado ? "bg-cauce-suave" : destacado ? "bg-laton-suave" : ""
+      className={`group grid grid-cols-[auto_1fr] gap-x-3 gap-y-3 border-b border-linea px-3 py-4 last:border-0 focus-visible:bg-neutro-suave md:grid-cols-[auto_minmax(0,1.6fr)_minmax(0,1fr)_auto] md:items-center md:px-4 ${
+        seleccionado ? "bg-azul-suave" : destacado ? "bg-coral-suave" : ""
       }`}
     >
       <input
@@ -83,18 +83,18 @@ export function LeadFeedItem({
           e.stopPropagation();
           onSeleccionar(e.shiftKey);
         }}
-        className="mt-1 size-4 cursor-pointer accent-cauce md:mt-0"
+        className="mt-1 size-4 cursor-pointer accent-azul-relleno md:mt-0"
       />
 
       <div className="min-w-0">
         <p className="flex flex-wrap items-baseline gap-x-2">
           <span className="font-medium">{lead.nombre}</span>
-          <span className="cifra inline-flex items-center gap-1 text-xs text-niebla">
+          <span className="cifra inline-flex items-center gap-1 text-xs text-tinta-2">
             <Phone className="size-3" aria-hidden />
             {lead.telefono}
           </span>
         </p>
-        <p className="mt-0.5 truncate text-xs text-niebla">
+        <p className="mt-0.5 truncate text-xs text-tinta-2">
           {sector} · {lead.estado}
           {senales.length > 0 && ` · ${senales.join(" · ")}`}
         </p>
@@ -112,9 +112,9 @@ export function LeadFeedItem({
         {critico ? (
           <Badge variant="critica">{textoAntiguedad(dias)}</Badge>
         ) : (
-          <span className="inline-flex h-6 items-center px-2 text-xs text-niebla">{textoAntiguedad(dias)}</span>
+          <span className="inline-flex h-6 items-center px-2 text-xs text-tinta-2">{textoAntiguedad(dias)}</span>
         )}
-        <span className="cifra inline-flex items-center gap-1 text-xs text-niebla" title={`${lead.mensajes} mensajes, ${lead.espaciosVistos} espacios vistos`}>
+        <span className="cifra inline-flex items-center gap-1 text-xs text-tinta-2" title={`${lead.mensajes} mensajes, ${lead.espaciosVistos} espacios vistos`}>
           <MessageSquare className="size-3" aria-hidden />
           {lead.mensajes} · {lead.espaciosVistos} espacios
         </span>
@@ -126,27 +126,27 @@ export function LeadFeedItem({
             <button
               type="button"
               onClick={() => onAccion("rescatar")}
-              className="inline-flex h-8 items-center rounded-control border border-cauce bg-cauce px-3 text-sm font-medium text-sobre-cauce hover:opacity-90"
+              className="inline-flex h-8 items-center rounded-control border border-azul bg-azul-relleno px-3 text-sm font-medium text-sobre-relleno hover:opacity-90"
             >
               Rescatar lead
             </button>
             <button
               type="button"
               onClick={() => onAccion("descartar")}
-              className="inline-flex h-8 items-center rounded-control border border-linea-fuerte px-3 text-sm text-niebla hover:border-niebla hover:text-tinta"
+              className="inline-flex h-8 items-center rounded-control border border-linea-fuerte px-3 text-sm text-tinta-2 hover:border-tenue hover:text-tinta"
             >
               Descartar
             </button>
           </>
         ) : (
           <>
-            <span className={`inline-flex h-8 items-center text-sm ${estado === "rescatado" ? "text-cauce-texto" : "text-niebla"}`}>
+            <span className={`inline-flex h-8 items-center text-sm ${estado === "rescatado" ? "text-azul-texto" : "text-tinta-2"}`}>
               {estado === "rescatado" ? "Rescatado" : "Descartado"}
             </span>
             <button
               type="button"
               onClick={() => onAccion("restaurar")}
-              className="inline-flex h-8 items-center gap-1.5 rounded-control border border-linea-fuerte px-3 text-sm hover:border-niebla"
+              className="inline-flex h-8 items-center gap-1.5 rounded-control border border-linea-fuerte px-3 text-sm hover:border-tenue"
             >
               {estado === "rescatado" ? <Undo2 className="size-3.5" aria-hidden /> : <RotateCcw className="size-3.5" aria-hidden />}
               Devolver a la poza
