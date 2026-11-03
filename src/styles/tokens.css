@@ -1,0 +1,69 @@
+/*
+ * Tokens de diseño de Cauce. Fuente de verdad: docs/DESIGN.md.
+ * Tailwind los expone como utilidades en src/app/globals.css (@theme inline).
+ */
+
+:root {
+  /* Color base */
+  --concreto: #e9ebe8;
+  --papel: #f7f8f6;
+  --tinta: #142019;
+  --niebla: #8a9a93;
+  --cauce: #2e6b52;
+  --laton: #a9822f;
+  --oxido: #b4472f;
+
+  /* Derivados */
+  --cauce-suave: color-mix(in srgb, var(--cauce) 14%, transparent);
+  --oxido-suave: color-mix(in srgb, var(--oxido) 12%, transparent);
+  --linea: #d3d8d4;
+  --linea-fuerte: #b9c1bc;
+
+  /* Tipografía (las variables --font-* las inyecta next/font en <html>) */
+  --fuente-cifra: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --fuente-ui: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+
+  --peso-regular: 400;
+  --peso-medio: 500;
+  --peso-semibold: 600;
+
+  --texto-xs: 0.75rem;
+  --texto-sm: 0.875rem;
+  --texto-base: 1rem;
+  --texto-lg: 1.25rem;
+  --texto-xl: 1.75rem;
+  --texto-2xl: 2.5rem;
+  --texto-3xl: 3.5rem;
+
+  --interlineado-cuerpo: 1.5;
+  --interlineado-cifra: 1.1;
+
+  /* Radios */
+  --radio-control: 6px;
+  --radio-panel: 10px;
+
+  /* Sombras (solo popovers y panel lateral) */
+  --sombra-flotante: 0 8px 24px rgb(20 32 25 / 0.1);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --concreto: #18211d;
+    --papel: #1f2a25;
+    --tinta: #e4e9e6;
+    --niebla: #8a9a93;
+    /* cauce, latón y óxido: +12 de L en HSL respecto del modo claro */
+    --cauce: #409673;
+    --laton: #cca249;
+    --oxido: #d1674f;
+
+    --linea: #2e3a34;
+    --linea-fuerte: #3c4943;
+
+    --sombra-flotante: 0 8px 24px rgb(0 0 0 / 0.4);
+
+    color-scheme: dark;
+  }
+}

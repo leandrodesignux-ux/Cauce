@@ -1,0 +1,83 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+/*
+ * Conecta los tokens con Tailwind. `inline` hace que las utilidades usen
+ * var(--token) directamente, así el modo oscuro se aplica sin duplicar nada.
+ * Se reinician las escalas por defecto de color, fuente, peso, texto, radio y
+ * sombra para que solo existan los valores de DESIGN.md. El espaciado queda con
+ * la escala por defecto de Tailwind (base 4 px).
+ */
+@theme inline {
+  --color-*: initial;
+  --color-concreto: var(--concreto);
+  --color-papel: var(--papel);
+  --color-tinta: var(--tinta);
+  --color-niebla: var(--niebla);
+  --color-cauce: var(--cauce);
+  --color-laton: var(--laton);
+  --color-oxido: var(--oxido);
+  --color-cauce-suave: var(--cauce-suave);
+  --color-oxido-suave: var(--oxido-suave);
+  --color-linea: var(--linea);
+  --color-linea-fuerte: var(--linea-fuerte);
+
+  --font-*: initial;
+  --font-sans: var(--fuente-ui);
+  --font-cifra: var(--fuente-cifra);
+
+  --font-weight-*: initial;
+  --font-weight-normal: var(--peso-regular);
+  --font-weight-medium: var(--peso-medio);
+  --font-weight-semibold: var(--peso-semibold);
+
+  /* Todos los tamaños comparten el interlineado de cuerpo; .cifra lo cambia. */
+  --text-*: initial;
+  --text-xs: var(--texto-xs);
+  --text-xs--line-height: var(--interlineado-cuerpo);
+  --text-sm: var(--texto-sm);
+  --text-sm--line-height: var(--interlineado-cuerpo);
+  --text-base: var(--texto-base);
+  --text-base--line-height: var(--interlineado-cuerpo);
+  --text-lg: var(--texto-lg);
+  --text-lg--line-height: var(--interlineado-cuerpo);
+  --text-xl: var(--texto-xl);
+  --text-xl--line-height: var(--interlineado-cuerpo);
+  --text-2xl: var(--texto-2xl);
+  --text-2xl--line-height: var(--interlineado-cuerpo);
+  --text-3xl: var(--texto-3xl);
+  --text-3xl--line-height: var(--interlineado-cuerpo);
+
+  --radius-*: initial;
+  --radius-control: var(--radio-control);
+  --radius-panel: var(--radio-panel);
+
+  --shadow-*: initial;
+  --shadow-flotante: var(--sombra-flotante);
+}
+
+/*
+ * Números y KPIs: Space Grotesk con cifras tabulares e interlineado 1.1.
+ * Setear --tw-leading hace que gane sobre el interlineado de text-*
+ * sin importar el orden de las clases.
+ */
+@utility cifra {
+  font-family: var(--fuente-cifra);
+  font-variant-numeric: tabular-nums;
+  --tw-leading: var(--interlineado-cifra);
+  line-height: var(--interlineado-cifra);
+}
+
+@layer base {
+  body {
+    background-color: var(--concreto);
+    color: var(--tinta);
+    font-family: var(--fuente-ui);
+    line-height: var(--interlineado-cuerpo);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--cauce);
+    outline-offset: 2px;
+  }
+}
