@@ -164,4 +164,12 @@
   [class*="animate-"] {
     animation: none !important;
   }
+
+  /* vaul (Drawer) y sonner (toasts) animan con keyframes y transiciones propias. */
+  [data-vaul-drawer],
+  [data-vaul-overlay],
+  [data-sonner-toast] {
+    animation: none !important;
+    transition: none !important;
+  }
 }

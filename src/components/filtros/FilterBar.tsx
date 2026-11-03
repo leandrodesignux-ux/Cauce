@@ -1,18 +1,39 @@
 "use client";
 
-import { ArrowRightLeft, CalendarRange, RotateCcw, SlidersHorizontal, Table2 } from "lucide-react";
+import { ArrowRightLeft, CalendarRange, ChevronDown, RotateCcw, SlidersHorizontal, Table2, Waves, X } from "lucide-react";
 import { useState } from "react";
 import { useDatos } from "@/components/Proveedores";
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Toggle } from "@/components/ui/toggle";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { alternarValor, useFiltros } from "@/hooks/useFiltros";
-import { contarFiltrosActivos, type EstadoFiltros } from "@/lib/filtros-url";
+import { contarFiltrosActivos, type EstadoFiltros, type PeriodoElegido } from "@/lib/filtros-url";
 import { formatearRangoSemanas, formatearSemana } from "@/lib/formato";
-import { HojaInferior } from "./HojaInferior";
 import { DIMENSIONES, OPCIONES_PERIODO, etiquetaDimension, type ClaveDimension } from "./opciones";
-import { Popover, claseControl, claseEstadoControl, useCerrarPopover } from "./Popover";
 
 type Actualizar = ReturnType<typeof useFiltros>["actualizar"];
 
-/** Filtros del cauce. Escritorio y tablet: fila de controles. Móvil: botón que abre una hoja inferior. */
+/** Filtros del cauce. Escritorio y tablet: fila de controles. Móvil: botón que abre un drawer. */
 export function FilterBar() {
   const { estado, actualizar, restablecer } = useFiltros();
   const [hoja, setHoja] = useState(false);
@@ -25,148 +46,149 @@ export function FilterBar() {
         <SelectorPeriodo estado={estado} actualizar={actualizar} />
         <span className="mx-1 h-5 w-px bg-linea" aria-hidden />
         {DIMENSIONES.map((d) => (
-          <Popover key={d.clave} activo={estado[d.clave].length > 0} etiqueta={etiquetaDimension(d.nombre, d.opciones, estado[d.clave])}>
-            <ListaOpciones clave={d.clave} estado={estado} actualizar={actualizar} />
-          </Popover>
+          <MenuDimension key={d.clave} clave={d.clave} estado={estado} actualizar={actualizar} />
         ))}
         {activos > 0 && (
-          <button type="button" onClick={restablecer} className={`${claseControl} border-transparent text-niebla hover:text-tinta`}>
-            <RotateCcw className="size-3.5" aria-hidden />
+          <Button variant="sutil" onClick={restablecer}>
+            <RotateCcw data-icon="inline-start" />
             Restablecer
-          </button>
+          </Button>
         )}
         <div className="ml-auto flex items-center gap-2">
-          <Alternar activo={estado.comparar} onClick={() => actualizar((a) => ({ comparar: !a.comparar }))} icono={<ArrowRightLeft className="size-3.5" aria-hidden />}>
+          <Toggle variant="outline" pressed={estado.comparar} onPressedChange={(comparar) => actualizar({ comparar })}>
+            <ArrowRightLeft data-icon="inline-start" />
             Comparar con período anterior
-          </Alternar>
-          <Alternar activo={estado.tabla} onClick={() => actualizar((a) => ({ tabla: !a.tabla }))} icono={<Table2 className="size-3.5" aria-hidden />}>
-            Ver como tabla
-          </Alternar>
+          </Toggle>
+          <SelectorVista estado={estado} actualizar={actualizar} />
         </div>
       </div>
 
       {/* Móvil */}
       <div className="flex items-center gap-2 md:hidden">
-        <button type="button" onClick={() => setHoja(true)} className={`${claseControl} ${claseEstadoControl(activos > 0)} h-10`}>
-          <SlidersHorizontal className="size-4" aria-hidden />
-          Filtros
-          {activos > 0 && <span className="rounded-full bg-cauce px-1.5 text-xs text-sobre-cauce">{activos}</span>}
-        </button>
+        <Drawer open={hoja} onOpenChange={setHoja}>
+          <DrawerTrigger asChild>
+            <Button variant="filtro" size="lg" data-activo={activos > 0} className="h-10">
+              <SlidersHorizontal data-icon="inline-start" />
+              Filtros
+              {activos > 0 && <span className="cifra rounded-full bg-cauce px-1.5 text-xs text-sobre-cauce">{activos}</span>}
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent className="data-[vaul-drawer-direction=bottom]:max-h-[88dvh]">
+            <DrawerHeader className="flex-row items-center justify-between text-left">
+              <div>
+                <DrawerTitle className="text-lg">Filtros</DrawerTitle>
+                <DrawerDescription className="sr-only">Período, dimensiones y forma de ver el cauce.</DrawerDescription>
+              </div>
+              <DrawerClose asChild>
+                <Button variant="sutil" size="icon-lg" aria-label="Cerrar">
+                  <X />
+                </Button>
+              </DrawerClose>
+            </DrawerHeader>
+            <div className="flex flex-col gap-6 overflow-y-auto px-4 pb-4">
+              <Seccion titulo="Período">
+                <ToggleGroup
+                  type="single"
+                  variant="outline"
+                  size="lg"
+                  className="flex-wrap"
+                  value={estado.preset === "personalizado" ? "" : estado.preset}
+                  onValueChange={(v) => v && actualizar({ preset: v as PeriodoElegido })}
+                >
+                  {OPCIONES_PERIODO.map((o) => (
+                    <ToggleGroupItem key={o.id} value={o.id} aria-label={o.largo}>
+                      {o.medio}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </Seccion>
+              {DIMENSIONES.map((d) => (
+                <Seccion key={d.clave} titulo={d.nombre}>
+                  <ToggleGroup
+                    type="multiple"
+                    variant="outline"
+                    size="lg"
+                    className="flex-wrap"
+                    value={estado[d.clave] as string[]}
+                    onValueChange={(v) => actualizar({ [d.clave]: v } as Partial<EstadoFiltros>)}
+                  >
+                    {d.opciones.map((o) => (
+                      <ToggleGroupItem key={o.id} value={o.id}>
+                        {o.nombre}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                </Seccion>
+              ))}
+              <Seccion titulo="Vista">
+                <div className="flex flex-wrap gap-2">
+                  <SelectorVista estado={estado} actualizar={actualizar} />
+                  <Toggle variant="outline" size="lg" pressed={estado.comparar} onPressedChange={(comparar) => actualizar({ comparar })}>
+                    Comparar con período anterior
+                  </Toggle>
+                </div>
+              </Seccion>
+            </div>
+            <DrawerFooter className="flex-row border-t border-linea pb-[max(1rem,env(safe-area-inset-bottom))]">
+              <Button variant="outline" className="h-11 flex-1" onClick={restablecer}>
+                Restablecer
+              </Button>
+              <DrawerClose asChild>
+                <Button className="h-11 flex-[2]">Ver resultados</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
         <span className="truncate text-sm text-niebla">{formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}</span>
       </div>
-
-      <HojaInferior
-        abierta={hoja}
-        onCerrar={() => setHoja(false)}
-        titulo="Filtros"
-        pie={
-          <div className="flex gap-2">
-            <button type="button" onClick={restablecer} className={`${claseControl} h-11 flex-1 justify-center border-linea-fuerte`}>
-              Restablecer
-            </button>
-            <button
-              type="button"
-              onClick={() => setHoja(false)}
-              className={`${claseControl} h-11 flex-[2] justify-center border-cauce bg-cauce font-medium text-sobre-cauce`}
-            >
-              Ver resultados
-            </button>
-          </div>
-        }
-      >
-        <div className="flex flex-col gap-6">
-          <Seccion titulo="Período">
-            <div className="flex flex-wrap gap-2">
-              {OPCIONES_PERIODO.map((o) => (
-                <Chip key={o.id} activo={estado.preset === o.id} onClick={() => actualizar({ preset: o.id })}>
-                  {o.medio}
-                </Chip>
-              ))}
-            </div>
-          </Seccion>
-          {DIMENSIONES.map((d) => (
-            <Seccion key={d.clave} titulo={d.nombre}>
-              <div className="flex flex-wrap gap-2">
-                {d.opciones.map((o) => {
-                  const elegidos = estado[d.clave] as string[];
-                  const activo = elegidos.includes(o.id);
-                  return (
-                    <Chip
-                      key={o.id}
-                      activo={activo}
-                      onClick={() => actualizar(alternarValor(d.clave, o.id as never))}
-                    >
-                      {o.nombre}
-                    </Chip>
-                  );
-                })}
-              </div>
-            </Seccion>
-          ))}
-          <Seccion titulo="Vista">
-            <div className="flex flex-wrap gap-2">
-              <Chip activo={estado.comparar} onClick={() => actualizar((a) => ({ comparar: !a.comparar }))}>
-                Comparar con período anterior
-              </Chip>
-              <Chip activo={estado.tabla} onClick={() => actualizar((a) => ({ tabla: !a.tabla }))}>
-                Ver como tabla
-              </Chip>
-            </div>
-          </Seccion>
-        </div>
-      </HojaInferior>
     </>
   );
 }
 
 function SelectorPeriodo({ estado, actualizar }: { estado: EstadoFiltros; actualizar: Actualizar }) {
+  const [abierto, setAbierto] = useState(false);
   return (
     <div className="flex items-center gap-2">
-      <div role="group" aria-label="Período" className="flex h-8 rounded-control border border-linea-fuerte p-0.5">
-        {OPCIONES_PERIODO.map((o) => {
-          const activo = estado.preset === o.id;
-          return (
-            <button
-              key={o.id}
-              type="button"
-              aria-pressed={activo}
-              aria-label={o.largo}
-              onClick={() => actualizar({ preset: o.id })}
-              className={`cifra rounded-[calc(var(--radio-control)-2px)] px-2.5 text-sm motion-safe:transition-colors ${
-                activo ? "bg-tinta text-concreto" : "text-niebla hover:text-tinta"
-              }`}
-            >
-              {o.corto}
-            </button>
-          );
-        })}
-      </div>
-      <Popover
-        activo={estado.preset === "personalizado"}
-        etiqueta={
-          <>
-            <CalendarRange className="size-3.5" aria-hidden />
-            <span className="cifra">{formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}</span>
-          </>
-        }
+      <ToggleGroup
+        type="single"
+        variant="segmentado"
+        spacing={0}
+        aria-label="Período"
+        value={estado.preset === "personalizado" ? "" : estado.preset}
+        onValueChange={(v) => v && actualizar({ preset: v as PeriodoElegido })}
       >
-        <RangoPersonalizado estado={estado} actualizar={actualizar} />
+        {OPCIONES_PERIODO.map((o) => (
+          <ToggleGroupItem key={o.id} value={o.id} aria-label={o.largo} className="cifra">
+            {o.corto}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+      <Popover open={abierto} onOpenChange={setAbierto}>
+        <PopoverTrigger asChild>
+          <Button variant="filtro" data-activo={estado.preset === "personalizado"}>
+            <CalendarRange data-icon="inline-start" />
+            <span className="cifra">{formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}</span>
+            <Flecha />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-68">
+          {/* Se monta al abrir: arranca siempre desde el período vigente. */}
+          <RangoPersonalizado estado={estado} actualizar={actualizar} alTerminar={() => setAbierto(false)} />
+        </PopoverContent>
       </Popover>
     </div>
   );
 }
 
-function RangoPersonalizado({ estado, actualizar }: { estado: EstadoFiltros; actualizar: Actualizar }) {
+function RangoPersonalizado({ estado, actualizar, alTerminar }: { estado: EstadoFiltros; actualizar: Actualizar; alTerminar: () => void }) {
   const { semanas } = useDatos();
-  const alTerminar = useCerrarPopover();
   const [desde, setDesde] = useState(estado.periodo.desde);
   const [hasta, setHasta] = useState(estado.periodo.hasta);
   const valido = desde <= hasta;
 
-  const select = "h-9 w-full rounded-control border border-linea-fuerte bg-papel px-2 text-sm";
   return (
     <form
-      className="flex w-64 flex-col gap-3 p-1"
+      className="flex flex-col gap-3"
       onSubmit={(e) => {
         e.preventDefault();
         if (!valido) return;
@@ -175,92 +197,112 @@ function RangoPersonalizado({ estado, actualizar }: { estado: EstadoFiltros; act
       }}
     >
       <p className="text-xs text-niebla">Semanas completas, de lunes a domingo.</p>
-      <label className="flex flex-col gap-1 text-sm">
-        Desde la semana del
-        <select className={select} value={desde} onChange={(e) => setDesde(e.target.value)}>
-          {semanas.map((s) => (
-            <option key={s} value={s}>
-              {formatearSemana(s)}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        Hasta la semana del
-        <select className={select} value={hasta} onChange={(e) => setHasta(e.target.value)}>
-          {semanas.map((s) => (
-            <option key={s} value={s}>
-              {formatearSemana(s)}
-            </option>
-          ))}
-        </select>
-      </label>
+      <CampoSemana etiqueta="Desde la semana del" valor={desde} onCambiar={setDesde} semanas={semanas} />
+      <CampoSemana etiqueta="Hasta la semana del" valor={hasta} onCambiar={setHasta} semanas={semanas} />
       {!valido && <p className="text-xs text-oxido-texto">La semana inicial tiene que ser anterior a la final.</p>}
-      <button type="submit" disabled={!valido} className={`${claseControl} justify-center border-cauce bg-cauce font-medium text-sobre-cauce disabled:opacity-50`}>
+      <Button type="submit" disabled={!valido}>
         Aplicar período
-      </button>
+      </Button>
     </form>
   );
 }
 
-function ListaOpciones({
-  clave,
-  estado,
-  actualizar,
+function CampoSemana({
+  etiqueta,
+  valor,
+  onCambiar,
+  semanas,
 }: {
-  clave: ClaveDimension;
-  estado: EstadoFiltros;
-  actualizar: Actualizar;
+  etiqueta: string;
+  valor: string;
+  onCambiar: (v: string) => void;
+  semanas: readonly string[];
 }) {
-  const alTerminar = useCerrarPopover();
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-sm">{etiqueta}</span>
+      <Select value={valor} onValueChange={onCambiar}>
+        <SelectTrigger aria-label={etiqueta} className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {semanas.map((s) => (
+            <SelectItem key={s} value={s}>
+              {formatearSemana(s)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+function MenuDimension({ clave, estado, actualizar }: { clave: ClaveDimension; estado: EstadoFiltros; actualizar: Actualizar }) {
   const dimension = DIMENSIONES.find((d) => d.clave === clave)!;
   const elegidos = estado[clave] as string[];
   return (
-    <fieldset className="flex flex-col">
-      <legend className="sr-only">{dimension.nombre}</legend>
-      {dimension.opciones.map((o) => (
-        <label key={o.id} className="flex h-9 cursor-pointer items-center gap-2.5 rounded-control px-2 text-sm hover:bg-concreto">
-          <input
-            type="checkbox"
-            className="size-4 accent-cauce"
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="filtro" data-activo={elegidos.length > 0}>
+          {etiquetaDimension(dimension.nombre, dimension.opciones, elegidos)}
+          <Flecha />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" aria-label={dimension.nombre} className="w-60">
+        {dimension.opciones.map((o) => (
+          <DropdownMenuCheckboxItem
+            key={o.id}
             checked={elegidos.includes(o.id)}
-            onChange={() => actualizar(alternarValor(clave, o.id as never))}
-          />
-          {o.nombre}
-        </label>
-      ))}
-      <div className="mt-1 flex justify-between border-t border-linea px-1 pt-2">
-        <button
-          type="button"
-          disabled={elegidos.length === 0}
-          onClick={() => actualizar({ [clave]: [] } as Partial<EstadoFiltros>)}
-          className="rounded-control px-1 text-sm text-niebla hover:text-tinta disabled:opacity-40"
-        >
-          Ver todos
-        </button>
-        <button type="button" onClick={alTerminar} className="rounded-control px-1 text-sm font-medium text-cauce-texto">
-          Listo
-        </button>
-      </div>
-    </fieldset>
+            // Multiselección: el menú queda abierto al marcar.
+            onSelect={(e) => e.preventDefault()}
+            onCheckedChange={() => actualizar(alternarValor(clave, o.id as never))}
+          >
+            {o.nombre}
+          </DropdownMenuCheckboxItem>
+        ))}
+        <DropdownMenuSeparator />
+        <div className="flex justify-between">
+          <DropdownMenuItem
+            disabled={elegidos.length === 0}
+            onSelect={(e) => {
+              e.preventDefault();
+              actualizar({ [clave]: [] } as Partial<EstadoFiltros>);
+            }}
+          >
+            Ver todos
+          </DropdownMenuItem>
+          <DropdownMenuItem>Listo</DropdownMenuItem>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
-function Alternar({ activo, onClick, icono, children }: { activo: boolean; onClick: () => void; icono: React.ReactNode; children: React.ReactNode }) {
+/** Flujo o tabla: la misma información en río o en tablas. */
+function SelectorVista({ estado, actualizar }: { estado: EstadoFiltros; actualizar: Actualizar }) {
   return (
-    <button type="button" aria-pressed={activo} onClick={onClick} className={`${claseControl} ${claseEstadoControl(activo)}`}>
-      {icono}
-      {children}
-    </button>
+    <ToggleGroup
+      type="single"
+      variant="segmentado"
+      spacing={0}
+      aria-label="Vista"
+      value={estado.tabla ? "tabla" : "flujo"}
+      onValueChange={(v) => v && actualizar({ tabla: v === "tabla" })}
+    >
+      <ToggleGroupItem value="flujo">
+        <Waves data-icon="inline-start" />
+        Flujo
+      </ToggleGroupItem>
+      <ToggleGroupItem value="tabla">
+        <Table2 data-icon="inline-start" />
+        Tabla
+      </ToggleGroupItem>
+    </ToggleGroup>
   );
 }
 
-function Chip({ activo, onClick, children }: { activo: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button type="button" aria-pressed={activo} onClick={onClick} className={`${claseControl} ${claseEstadoControl(activo)} h-9`}>
-      {children}
-    </button>
-  );
+function Flecha() {
+  return <ChevronDown data-icon="inline-end" className="size-3.5 opacity-70 motion-safe:transition-transform group-aria-expanded/button:rotate-180" />;
 }
 
 function Seccion({ titulo, children }: { titulo: string; children: React.ReactNode }) {
