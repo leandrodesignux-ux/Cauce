@@ -51,7 +51,7 @@ Lo primero que se ve es el río, no una fila de KPI cards.
 - Hover en etapa o transición: tooltip con volumen, tasa y tendencia (sparkline de 12 semanas).
 - Click en etapa o transición: abre el panel lateral (ver abajo).
 - Toggle "Ver como tabla": misma información en tabla accesible.
-- Una sola franja de contexto arriba: valor en riesgo del período (suma de pozas en MXN) y leads rescatados en esta sesión.
+- Una sola franja de contexto arriba: valor en riesgo del período (suma de pozas en MXN) y "Rescatados hoy": leads rescatados en la fecha actual (el store guarda la fecha de cada rescate).
 
 **Panel lateral de etapa/transición**
 - Desglose por canal, sector y estado (barras horizontales ordenadas).

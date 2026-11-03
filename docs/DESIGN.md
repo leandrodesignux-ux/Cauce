@@ -8,27 +8,35 @@ El tema es agua que se canaliza y se escapa. El río es lo único con personalid
 
 Base fría tipo concreto (no crema), un verde de cauce, latón para el dinero y óxido para lo que se pierde.
 
-| Token | Hex | Uso |
-|---|---|---|
-| `--concreto` | `#E9EBE8` | Fondo de la app |
-| `--papel` | `#F7F8F6` | Panel lateral, tablas, popovers |
-| `--tinta` | `#142019` | Texto principal, ejes |
-| `--niebla` | `#8A9A93` | Texto secundario, período anterior, líneas guía |
-| `--cauce` | `#2E6B52` | Volumen que avanza, acciones primarias, foco |
-| `--laton` | `#A9822F` | Montos en MXN, valor en riesgo, comisiones |
-| `--oxido` | `#B4472F` | Fugas, pozas, deltas negativos |
+| Token | Claro | Oscuro | Uso |
+|---|---|---|---|
+| `--concreto` | `#E9EBE8` | `#18211D` | Fondo de la app |
+| `--papel` | `#F7F8F6` | `#1F2A25` | Panel lateral, tablas, popovers |
+| `--tinta` | `#142019` | `#E4E9E6` | Texto principal, ejes |
+| `--niebla` | `#8A9A93` | `#8A9A93` | Texto secundario, período anterior, líneas guía |
+| `--cauce` | `#2E6B52` | `#409673` | Volumen que avanza, acciones primarias, foco |
+| `--laton` | `#A9822F` | `#CCA249` | Montos en MXN, valor en riesgo, comisiones |
+| `--oxido` | `#B4472F` | `#D1674F` | Fugas, pozas, deltas negativos |
+| `--linea` | `#D3D8D4` | `#2E3A34` | Separadores de 1 px |
+| `--linea-fuerte` | `#B9C1BC` | `#3C4943` | Bordes de controles, ejes marcados |
+| `--sombra-flotante` | `0 8px 24px rgb(20 32 25 / 0.10)` | `0 8px 24px rgb(0 0 0 / 0.40)` | Popovers y panel lateral |
 
-Derivados en `tokens.css`: `--cauce-suave` (cauce al 14 %), `--oxido-suave` (óxido al 12 %), `--linea` (`#D3D8D4`), `--linea-fuerte` (`#B9C1BC`). Deltas positivos en `--cauce`, negativos en `--oxido`; nunca el color solo: siempre con signo y flecha.
+Derivados con `color-mix()` sobre el token base, así siguen al modo oscuro: `--cauce-suave` (cauce al 14 %), `--oxido-suave` (óxido al 12 %). Deltas positivos en `--cauce`, negativos en `--oxido`; nunca el color solo: siempre con signo y flecha.
 
-Modo oscuro (secundario, vía `prefers-color-scheme`): fondo `#18211D`, papel `#1F2A25`, tinta `#E4E9E6`; cauce, latón y óxido suben un 12 % de luminosidad.
+Modo oscuro (secundario, solo vía `prefers-color-scheme`, sin toggle): cauce, latón y óxido suben +12 de L en HSL. `--niebla` se mantiene porque ya contrasta 5.6:1 sobre el fondo oscuro; las líneas bajan a verdes casi negros para seguir siendo sutiles.
 
 ## Tipografía
 
 - **Space Grotesk** (500/600): títulos de vista y todas las cifras grandes, con `font-variant-numeric: tabular-nums`.
 - **Geist** (400/500): interfaz, cuerpo, tablas, etiquetas.
-- Escala (rem): 0.75 · 0.875 · 1 · 1.25 · 1.75 · 2.5 · 3.5. Interlineado 1.5 en cuerpo, 1.1 en cifras.
+- Escala (rem): 0.75 · 0.875 · 1 · 1.25 · 1.75 · 2.5 · 3.5, que reemplaza la escala de Tailwind como `text-xs` · `text-sm` · `text-base` · `text-lg` · `text-xl` · `text-2xl` · `text-3xl`. Todos los tamaños usan interlineado 1.5.
+- Cifras y KPIs: utilidad `.cifra` (Space Grotesk, `tabular-nums`, interlineado 1.1). El interlineado no está atado al tamaño: `.cifra` se combina con cualquier `text-*`.
 - Etiquetas en sentence case, sin mayúsculas sostenidas ni tracking exagerado. Sin monoespaciada para datos chicos: Geist con cifras tabulares.
 - Montos: `$1.29 M MXN` en resúmenes, `$1,287,400 MXN` en detalle. Porcentajes con un decimal en tasas (`23.4 %`), deltas en puntos porcentuales (`+1.8 pp`).
+
+## Espaciado
+
+Escala por defecto de Tailwind (base 4 px: `p-1` = 4 px, `p-2` = 8 px, `p-4` = 16 px…). No se definen tokens propios de espaciado; si hace falta un valor fuera de la escala, se agrega como token en `tokens.css`.
 
 ## Layout
 

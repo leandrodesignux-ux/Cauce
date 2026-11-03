@@ -8,7 +8,7 @@ Prototipo con datos demo. Construido con Next.js + TypeScript + Tailwind, desple
 
 ```bash
 npm install
-npm run seed   # regenera src/data/*.json con la seed fija
+npm run seed   # regenera src/data/*.json con la seed fija (genera datos desde la Fase 1)
 npm run dev
 ```
 
