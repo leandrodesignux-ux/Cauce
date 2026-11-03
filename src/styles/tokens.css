@@ -24,11 +24,16 @@
   --cauce-texto: #24573f;
   --laton-texto: #7a5a1f;
   --oxido-texto: #9a3a24;
+  /* Niebla sobre su propio relleno (badges neutros): un paso más oscura que --niebla */
+  --niebla-texto: #4c5953;
 
   /* Derivados */
   --cauce-suave: color-mix(in srgb, var(--cauce) 14%, transparent);
   --laton-suave: color-mix(in srgb, var(--laton) 14%, transparent);
   --oxido-suave: color-mix(in srgb, var(--oxido) 12%, transparent);
+  --niebla-suave: color-mix(in srgb, var(--niebla) 14%, transparent);
+  /* Relleno más intenso para el estado de mayor certeza (badge Validado) */
+  --cauce-fuerte: color-mix(in srgb, var(--cauce) 18%, transparent);
   --linea: #d3d8d4;
   --linea-fuerte: #b9c1bc;
 
@@ -129,6 +134,7 @@
   --cauce-texto: #5cb58f;
   --laton-texto: #d9b35f;
   --oxido-texto: #e8846d;
+  --niebla-texto: #a7b4ae;
 
   --linea: #2e3a34;
   --linea-fuerte: #3c4943;

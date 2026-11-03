@@ -2,18 +2,24 @@
 
 import { X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
-import { createPortal } from "react-dom";
-import { useMontado } from "@/hooks/useMontado";
+import { useEffect, useRef, type ComponentType, type ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useMedia } from "@/hooks/useMedia";
 
-const ENFOCABLES = 'a[href], button:not([disabled]), input, select, [tabindex]:not([tabindex="-1"])';
 const SALIDA = [0.22, 1, 0.36, 1] as const;
+
+type Titulo = ComponentType<{ children: ReactNode; className?: string }>;
+
+const TituloAside: Titulo = ({ children, className }) => <h2 className={className}>{children}</h2>;
 
 /**
  * Panel lateral de etapa o transición.
  * Escritorio (≥1280 px): entra desde la derecha y empuja el contenido (420 px).
- * Tablet: hoja del 60 % del ancho. Móvil: pantalla completa. En ambos es modal y atrapa el foco.
+ * Tablet: Sheet del 60 % del ancho. Móvil (<768 px): Drawer desde abajo. En ambos es modal y atrapa el foco.
+ * Se abre desde el río o la tabla, sin Trigger. Escritorio: el foco lo devuelve quien llama en `onCerrar`.
+ * Modal: la trampa de foco sigue activa durante la salida, así que el panel lo devuelve al elemento que lo abrió.
  */
 export function StagePanel({
   abierto,
@@ -31,69 +37,52 @@ export function StagePanel({
   onCerrar: () => void;
   children: ReactNode;
 }) {
-  const montado = useMontado();
   const escritorio = useMedia("(min-width: 1280px)", true);
+  const tablet = useMedia("(min-width: 768px)", true);
   const reducir = useReducedMotion() ?? false;
   const encabezado = useRef<HTMLHeadingElement>(null);
-  const panel = useRef<HTMLDivElement>(null);
+  const previo = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (clave) encabezado.current?.focus({ preventScroll: true });
   }, [clave]);
 
-  // Modal (tablet y móvil): bloquea el scroll de la página.
-  useEffect(() => {
-    if (!abierto || escritorio) return;
-    const previo = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previo;
-    };
-  }, [abierto, escritorio]);
-
-  const alPresionar = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
-      e.stopPropagation();
-      onCerrar();
-      return;
-    }
-    if (escritorio || e.key !== "Tab" || !panel.current) return;
-    const enfocables = [...panel.current.querySelectorAll<HTMLElement>(ENFOCABLES)];
-    const primero = enfocables[0];
-    const ultimo = enfocables[enfocables.length - 1];
-    if (e.shiftKey && (document.activeElement === primero || document.activeElement === encabezado.current)) {
-      e.preventDefault();
-      ultimo?.focus();
-    } else if (!e.shiftKey && document.activeElement === ultimo) {
-      e.preventDefault();
-      primero?.focus();
-    }
-  };
-
-  const duracion = reducir ? 0 : 0.2;
-
-  const contenido = (
-    <div ref={panel} onKeyDown={alPresionar} className="flex h-full flex-col">
+  const contenido = (Titulo: Titulo) => (
+    <div className="flex min-h-0 flex-1 flex-col">
       <header className="flex items-start gap-3 border-b border-linea px-5 pb-4 pt-5">
         <div className="min-w-0 flex-1">
-          <h2 ref={encabezado} tabIndex={-1} className="font-cifra text-xl font-semibold leading-tight outline-none">
-            {titulo}
-          </h2>
+          <Titulo className="font-cifra text-xl font-semibold leading-tight">
+            <span ref={encabezado} tabIndex={-1} className="outline-none">
+              {titulo}
+            </span>
+          </Titulo>
           {subtitulo && <p className="mt-1 text-sm text-niebla">{subtitulo}</p>}
         </div>
-        <button
-          type="button"
-          onClick={onCerrar}
-          aria-label="Cerrar panel"
-          title="Cerrar (Esc)"
-          className="grid size-9 shrink-0 place-items-center rounded-control text-niebla hover:bg-concreto hover:text-tinta"
-        >
-          <X className="size-5" aria-hidden />
-        </button>
+        <Button variant="sutil" size="icon-lg" onClick={onCerrar} aria-label="Cerrar panel">
+          <X className="size-5" />
+        </Button>
       </header>
       <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-5">{children}</div>
     </div>
   );
+
+  // Modal: el foco entra al título y, al terminar de cerrar, vuelve a quien lo tenía al abrir.
+  const foco = {
+    onOpenAutoFocus: (e: Event) => {
+      e.preventDefault();
+      previo.current = document.activeElement as HTMLElement | null;
+      encabezado.current?.focus({ preventScroll: true });
+    },
+    onCloseAutoFocus: (e: Event) => {
+      e.preventDefault();
+      const destino = previo.current;
+      if (destino?.isConnected && destino !== document.body) destino.focus({ preventScroll: true });
+    },
+    "aria-describedby": undefined,
+  };
+  const alCambiar = (abrir: boolean) => {
+    if (!abrir) onCerrar();
+  };
 
   if (escritorio) {
     return (
@@ -105,44 +94,38 @@ export function StagePanel({
             initial={{ width: 0 }}
             animate={{ width: "auto" }}
             exit={{ width: 0 }}
-            transition={{ duration: duracion, ease: SALIDA }}
+            transition={{ duration: reducir ? 0 : 0.2, ease: SALIDA }}
             className="sticky top-0 h-dvh shrink-0 overflow-hidden"
+            onKeyDown={(e) => {
+              if (e.key !== "Escape") return;
+              e.stopPropagation();
+              onCerrar();
+            }}
           >
-            <div className="h-full w-(--ancho-panel) rounded-l-panel border-l border-linea bg-papel shadow-flotante">{contenido}</div>
+            <div className="flex h-full w-(--ancho-panel) flex-col rounded-l-panel border-l border-linea bg-papel shadow-flotante">
+              {contenido(TituloAside)}
+            </div>
           </motion.aside>
         )}
       </AnimatePresence>
     );
   }
 
-  if (!montado) return null;
-  return createPortal(
-    <AnimatePresence>
-      {abierto && (
-        <div className="fixed inset-0 z-40">
-          <motion.div
-            className="absolute inset-0 bg-black/50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: duracion }}
-            onClick={onCerrar}
-          />
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label={`Detalle: ${titulo}`}
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: duracion, ease: SALIDA }}
-            className="absolute inset-y-0 right-0 w-full bg-papel shadow-flotante md:w-[60%] md:rounded-l-panel md:border-l md:border-linea"
-          >
-            {contenido}
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>,
-    document.body,
+  if (tablet) {
+    return (
+      <Sheet open={abierto} onOpenChange={alCambiar}>
+        <SheetContent side="right" showCloseButton={false} className="gap-0 rounded-l-panel data-[side=right]:w-[60%] data-[side=right]:sm:max-w-none" {...foco}>
+          {contenido(SheetTitle)}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return (
+    <Drawer open={abierto} onOpenChange={alCambiar}>
+      <DrawerContent className="data-[vaul-drawer-direction=bottom]:h-[92dvh] data-[vaul-drawer-direction=bottom]:max-h-[92dvh]" {...foco}>
+        {contenido(DrawerTitle)}
+      </DrawerContent>
+    </Drawer>
   );
 }

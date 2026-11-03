@@ -1,10 +1,14 @@
 "use client";
 
-import { Keyboard } from "lucide-react";
+import { Inbox, Keyboard, SearchX } from "lucide-react";
 import Link from "next/link";
 import { AnimatePresence } from "motion/react";
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import { useDatos } from "@/components/Proveedores";
+import { Badge } from "@/components/ui/badge";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { nombreEtapa } from "@/config/etapas";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
 import { NOMBRE_CORTO_POZA } from "@/config/pozas";
@@ -14,7 +18,6 @@ import { periodoDesdePreset, valorEnRiesgoPorPoza } from "@/lib/selectors";
 import { useRescatadosHoy, useSesion } from "@/lib/stores";
 import { LeadFeedItem, type Accion, type EstadoLead } from "./LeadFeedItem";
 import { LossModel } from "./LossModel";
-import { Toast, type DatosToast } from "./Toast";
 import { type Bandeja, useFiltrosFugas } from "./useFiltrosFugas";
 
 const BANDAS: { id: Banda; nombre: string }[] = [
@@ -48,7 +51,6 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
   const [seleccion, setSeleccion] = useState<Set<string>>(new Set());
   const [enfocado, setEnfocado] = useState<string | null>(null);
   const [ultimaAccion, setUltimaAccion] = useState<Accion>("rescatar");
-  const [toast, setToast] = useState<DatosToast | null>(null);
   const ancla = useRef<string | null>(null);
 
   const estadoDe = useCallback(
@@ -78,8 +80,6 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
     [enBandeja, filtros.banda, filtros.antiguedad],
   );
 
-  const cerrarToast = useCallback(() => setToast(null), []);
-
   const enfocar = useCallback((id: string | undefined) => {
     if (!id) return;
     requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-lead="${id}"]`)?.focus());
@@ -104,7 +104,12 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
           : accion === "descartar"
             ? `${n} lead${plural} descartado${plural}.`
             : `${n} lead${plural} devuelto${plural} a la poza.`;
-      setToast({ id: Date.now(), mensaje, accion: accion === "restaurar" ? undefined : { etiqueta: "Deshacer", alHacer: () => restaurar(ids) } });
+      // Un aviso por vez: el nuevo reemplaza al anterior y reinicia los 5 s.
+      toast.dismiss();
+      toast(mensaje, {
+        duration: 5000,
+        action: accion === "restaurar" ? undefined : { label: "Deshacer", onClick: () => restaurar(ids) },
+      });
       enfocar(siguiente?.id);
     },
     [visibles, rescatar, descartar, restaurar, poza.hacia, enfocar],
@@ -135,7 +140,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
   useEffect(() => {
     const alPresionar = (e: KeyboardEvent) => {
       const destino = e.target as HTMLElement;
-      if (e.metaKey || e.ctrlKey || e.altKey || destino.closest("input, textarea, select, [role=dialog], [cmdk-root]")) return;
+      if (e.metaKey || e.ctrlKey || e.altKey || destino.closest("input, textarea, select, [role=slider], [role=dialog], [cmdk-root]")) return;
       const tecla = e.key.toLowerCase();
       const indice = visibles.findIndex((l) => l.id === enfocado);
       if (tecla === "j" || tecla === "k") {
@@ -204,192 +209,161 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
       <LossModel />
 
       <section aria-label="Pozas" className="flex flex-col gap-4">
-        <Pestanas
-          pozas={fugas.map((f) => ({ id: f.id, nombre: NOMBRE_CORTO_POZA[f.id] ?? f.causa, pendientes: pendientesPorPoza[f.id] ?? null }))}
-          activa={filtros.poza}
-          onCambiar={cambiarPoza}
-        />
-
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-          <p className="text-sm">
-            <span className="font-medium">{poza.causa}</span>
-            <span className="text-niebla">
-              {" "}
-              · {nombreEtapa(poza.desde)} → {nombreEtapa(poza.hacia)}
-            </span>
-          </p>
-          <p className="cifra text-sm text-niebla">
-            Últimos 30 días: {formatearEntero(valorPoza.volumen)} perdidos ·{" "}
-            <span className="font-semibold text-laton-texto">{formatearMxn(valorPoza.valorMxn)}</span>
-          </p>
-        </div>
-
-        {enPoza.length === 0 ? (
-          <Vacio>
-            Esta poza mide sesiones anónimas: no hay leads con datos de contacto para rescatar.
-            {experimento && (
-              <>
-                {" "}
-                El experimento{" "}
-                <Link href={`/experimentos?exp=${experimento.id}`} className="text-cauce-texto underline underline-offset-2">
-                  {experimento.nombre}
-                </Link>{" "}
-                ataca esta fuga.
-              </>
-            )}
-          </Vacio>
-        ) : (
-          <>
-            <div className="flex flex-col gap-3">
-              <GrupoChips etiqueta="Bandeja">
-                {BANDEJAS.map((b) => (
-                  <Chip key={b.id} activo={filtros.bandeja === b.id} onClick={() => actualizar({ bandeja: b.id })}>
-                    {b.nombre}
-                    <span className="cifra text-xs opacity-70">{enPoza.filter((l) => estadoDe(l.id) === ESTADO_DE_BANDEJA[b.id]).length}</span>
-                  </Chip>
-                ))}
-              </GrupoChips>
-              <div className="flex flex-wrap gap-x-6 gap-y-3">
-                <GrupoChips etiqueta="Score">
-                  {BANDAS.map((b) => (
-                    <Chip key={b.id} activo={filtros.banda === b.id} onClick={() => actualizar({ banda: filtros.banda === b.id ? null : b.id })}>
-                      {b.nombre}
-                    </Chip>
-                  ))}
-                </GrupoChips>
-                <GrupoChips etiqueta="Antigüedad">
-                  {RANGOS.map((r) => (
-                    <Chip
-                      key={r.id}
-                      activo={filtros.antiguedad === r.id}
-                      destacado={r.id === "critica"}
-                      onClick={() => actualizar({ antiguedad: filtros.antiguedad === r.id ? null : r.id })}
-                    >
-                      {r.nombre}
-                    </Chip>
-                  ))}
-                </GrupoChips>
-              </div>
+        <Tabs value={filtros.poza} onValueChange={cambiarPoza}>
+          <TabsList variant="line" tono="oxido" aria-label="Pozas" className="-mx-4 w-[calc(100%+2rem)] justify-start overflow-x-auto px-4 md:mx-0 md:w-full md:px-0">
+            {fugas.map((f) => {
+              const pendientes = pendientesPorPoza[f.id] ?? null;
+              return (
+                <TabsTrigger key={f.id} value={f.id} className="flex-none px-3">
+                  {NOMBRE_CORTO_POZA[f.id] ?? f.causa}
+                  {pendientes !== null && (
+                    <Badge variant={f.id === filtros.poza ? "pendientes" : "neutro"} className="cifra h-5 px-1.5">
+                      {pendientes}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
+          <TabsContent value={filtros.poza} className="flex flex-col gap-4 pt-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+              <p className="text-sm">
+                <span className="font-medium">{poza.causa}</span>
+                <span className="text-niebla">
+                  {" "}
+                  · {nombreEtapa(poza.desde)} → {nombreEtapa(poza.hacia)}
+                </span>
+              </p>
+              <p className="cifra text-sm text-niebla">
+                Últimos 30 días: {formatearEntero(valorPoza.volumen)} perdidos ·{" "}
+                <span className="font-semibold text-laton-texto">{formatearMxn(valorPoza.valorMxn)}</span>
+              </p>
             </div>
 
-            <p className="hidden items-center gap-2 text-xs text-niebla md:flex">
-              <Keyboard className="size-3.5" aria-hidden />
-              <Tecla>J</Tecla>
-              <Tecla>K</Tecla> para moverse · <Tecla>R</Tecla> rescatar · <Tecla>D</Tecla> descartar · <Tecla>Shift</Tecla> para seleccionar
-              varios · <Tecla>Esc</Tecla> limpia la selección
-            </p>
-
-            {visibles.length === 0 ? (
-              <Vacio>
-                {filtros.bandeja === "pendientes"
-                  ? `No hay ${filtrosActivos ? "leads con esos filtros" : "leads pendientes"} en esta poza.`
-                  : `Todavía no hay leads ${filtros.bandeja} en esta poza.`}{" "}
-                {filtrosActivos ? (
-                  <button type="button" onClick={() => actualizar({ banda: null, antiguedad: null })} className="text-cauce-texto underline underline-offset-2">
-                    Quitar filtros de score y antigüedad
-                  </button>
-                ) : filtros.bandeja !== "pendientes" ? (
-                  <button type="button" onClick={() => actualizar({ bandeja: "pendientes" })} className="text-cauce-texto underline underline-offset-2">
-                    Ver pendientes
-                  </button>
-                ) : null}
+            {enPoza.length === 0 ? (
+              <Vacio icono={<Inbox />}>
+                Esta poza mide sesiones anónimas: no hay leads con datos de contacto para rescatar.
+                {experimento && (
+                  <>
+                    {" "}
+                    El experimento{" "}
+                    <Link href={`/experimentos?exp=${experimento.id}`} className="text-cauce-texto underline underline-offset-2">
+                      {experimento.nombre}
+                    </Link>{" "}
+                    ataca esta fuga.
+                  </>
+                )}
               </Vacio>
             ) : (
-              <div className="relative">
-                <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? poza.causa}`} className="overflow-hidden rounded-panel border border-linea bg-papel">
-                  <AnimatePresence initial={false} custom={ultimaAccion}>
-                    {visibles.map((l) => (
-                      <LeadFeedItem
-                        key={l.id}
-                        lead={l}
-                        estado={estadoDe(l.id)}
-                        seleccionado={seleccion.has(l.id)}
-                        destacado={l.id === filtros.lead}
-                        onSeleccionar={(rango) => alternarSeleccion(l.id, rango)}
-                        onAccion={(accion) => aplicar(accion, [l.id])}
-                        onEnfocar={() => setEnfocado(l.id)}
-                      />
+              <>
+                <div className="flex flex-col gap-3">
+                  <GrupoChips etiqueta="Bandeja">
+                    {BANDEJAS.map((b) => (
+                      <Chip key={b.id} activo={filtros.bandeja === b.id} onClick={() => actualizar({ bandeja: b.id })}>
+                        {b.nombre}
+                        <span className="cifra text-xs opacity-70">{enPoza.filter((l) => estadoDe(l.id) === ESTADO_DE_BANDEJA[b.id]).length}</span>
+                      </Chip>
                     ))}
-                  </AnimatePresence>
-                </ul>
+                  </GrupoChips>
+                  <div className="flex flex-wrap gap-x-6 gap-y-3">
+                    <GrupoChips etiqueta="Score">
+                      {BANDAS.map((b) => (
+                        <Chip key={b.id} activo={filtros.banda === b.id} onClick={() => actualizar({ banda: filtros.banda === b.id ? null : b.id })}>
+                          {b.nombre}
+                        </Chip>
+                      ))}
+                    </GrupoChips>
+                    <GrupoChips etiqueta="Antigüedad">
+                      {RANGOS.map((r) => (
+                        <Chip
+                          key={r.id}
+                          activo={filtros.antiguedad === r.id}
+                          destacado={r.id === "critica"}
+                          onClick={() => actualizar({ antiguedad: filtros.antiguedad === r.id ? null : r.id })}
+                        >
+                          {r.nombre}
+                        </Chip>
+                      ))}
+                    </GrupoChips>
+                  </div>
+                </div>
 
-                {seleccion.size > 0 && (
-                  <div
-                    role="region"
-                    aria-label="Acciones para la selección"
-                    className="sticky bottom-[calc(var(--alto-barra-movil)+12px)] z-10 mt-3 flex flex-wrap items-center gap-3 rounded-panel bg-tinta px-4 py-3 text-sm text-concreto shadow-flotante md:bottom-4"
-                  >
-                    <span className="cifra flex-1">
-                      {seleccion.size} seleccionado{seleccion.size === 1 ? "" : "s"}
-                    </span>
-                    {filtros.bandeja === "pendientes" ? (
-                      <>
-                        <button type="button" onClick={() => aplicar("rescatar", [...seleccion])} className="rounded-control bg-cauce px-3 py-1.5 font-medium text-sobre-cauce">
-                          Rescatar {seleccion.size} lead{seleccion.size === 1 ? "" : "s"}
-                        </button>
-                        <button type="button" onClick={() => aplicar("descartar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-concreto/10">
-                          Descartar
-                        </button>
-                      </>
-                    ) : (
-                      <button type="button" onClick={() => aplicar("restaurar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-concreto/10">
-                        Devolver a la poza
+                <p className="hidden items-center gap-2 text-xs text-niebla md:flex">
+                  <Keyboard className="size-3.5" aria-hidden />
+                  <Tecla>J</Tecla>
+                  <Tecla>K</Tecla> para moverse · <Tecla>R</Tecla> rescatar · <Tecla>D</Tecla> descartar · <Tecla>Shift</Tecla> para seleccionar
+                  varios · <Tecla>Esc</Tecla> limpia la selección
+                </p>
+
+                {visibles.length === 0 ? (
+                  <Vacio icono={filtrosActivos ? <SearchX /> : <Inbox />}>
+                    {filtros.bandeja === "pendientes"
+                      ? `No hay ${filtrosActivos ? "leads con esos filtros" : "leads pendientes"} en esta poza.`
+                      : `Todavía no hay leads ${filtros.bandeja} en esta poza.`}{" "}
+                    {filtrosActivos ? (
+                      <button type="button" onClick={() => actualizar({ banda: null, antiguedad: null })} className="text-cauce-texto underline underline-offset-2">
+                        Quitar filtros de score y antigüedad
                       </button>
+                    ) : filtros.bandeja !== "pendientes" ? (
+                      <button type="button" onClick={() => actualizar({ bandeja: "pendientes" })} className="text-cauce-texto underline underline-offset-2">
+                        Ver pendientes
+                      </button>
+                    ) : null}
+                  </Vacio>
+                ) : (
+                  <div className="relative">
+                    <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? poza.causa}`} className="overflow-hidden rounded-panel border border-linea bg-papel">
+                      <AnimatePresence initial={false} custom={ultimaAccion}>
+                        {visibles.map((l) => (
+                          <LeadFeedItem
+                            key={l.id}
+                            lead={l}
+                            estado={estadoDe(l.id)}
+                            seleccionado={seleccion.has(l.id)}
+                            destacado={l.id === filtros.lead}
+                            onSeleccionar={(rango) => alternarSeleccion(l.id, rango)}
+                            onAccion={(accion) => aplicar(accion, [l.id])}
+                            onEnfocar={() => setEnfocado(l.id)}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </ul>
+
+                    {seleccion.size > 0 && (
+                      <div
+                        role="region"
+                        aria-label="Acciones para la selección"
+                        className="sticky bottom-[calc(var(--alto-barra-movil)+12px)] z-10 mt-3 flex flex-wrap items-center gap-3 rounded-panel bg-tinta px-4 py-3 text-sm text-concreto shadow-flotante md:bottom-4"
+                      >
+                        <span className="cifra flex-1">
+                          {seleccion.size} seleccionado{seleccion.size === 1 ? "" : "s"}
+                        </span>
+                        {filtros.bandeja === "pendientes" ? (
+                          <>
+                            <button type="button" onClick={() => aplicar("rescatar", [...seleccion])} className="rounded-control bg-cauce px-3 py-1.5 font-medium text-sobre-cauce">
+                              Rescatar {seleccion.size} lead{seleccion.size === 1 ? "" : "s"}
+                            </button>
+                            <button type="button" onClick={() => aplicar("descartar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-concreto/10">
+                              Descartar
+                            </button>
+                          </>
+                        ) : (
+                          <button type="button" onClick={() => aplicar("restaurar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-concreto/10">
+                            Devolver a la poza
+                          </button>
+                        )}
+                        <button type="button" onClick={() => setSeleccion(new Set())} className="rounded-control px-3 py-1.5 text-concreto/70 hover:bg-concreto/10">
+                          Limpiar
+                        </button>
+                      </div>
                     )}
-                    <button type="button" onClick={() => setSeleccion(new Set())} className="rounded-control px-3 py-1.5 text-concreto/70 hover:bg-concreto/10">
-                      Limpiar
-                    </button>
                   </div>
                 )}
-              </div>
+              </>
             )}
-          </>
-        )}
+          </TabsContent>
+        </Tabs>
       </section>
-
-      <Toast toast={toast} onCerrar={cerrarToast} />
-    </div>
-  );
-}
-
-function Pestanas({
-  pozas,
-  activa,
-  onCambiar,
-}: {
-  pozas: { id: string; nombre: string; pendientes: number | null }[];
-  activa: string;
-  onCambiar: (id: string) => void;
-}) {
-  const alPresionar = (e: ReactKeyboardEvent) => {
-    const delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-    if (!delta) return;
-    e.preventDefault();
-    const i = pozas.findIndex((p) => p.id === activa);
-    const siguiente = pozas[(i + delta + pozas.length) % pozas.length];
-    onCambiar(siguiente.id);
-    requestAnimationFrame(() => document.getElementById(`pestana-${siguiente.id}`)?.focus());
-  };
-  return (
-    <div role="tablist" aria-label="Pozas" onKeyDown={alPresionar} className="-mx-4 flex gap-1 overflow-x-auto border-b border-linea px-4 md:mx-0 md:px-0">
-      {pozas.map((p) => (
-        <button
-          key={p.id}
-          id={`pestana-${p.id}`}
-          role="tab"
-          aria-selected={p.id === activa}
-          tabIndex={p.id === activa ? 0 : -1}
-          onClick={() => onCambiar(p.id)}
-          className={`-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 py-2.5 text-sm motion-safe:transition-colors ${
-            p.id === activa ? "border-oxido font-medium text-tinta" : "border-transparent text-niebla hover:text-tinta"
-          }`}
-        >
-          {p.nombre}
-          {p.pendientes !== null && (
-            <span className={`cifra rounded-full px-1.5 text-xs ${p.id === activa ? "bg-oxido-suave text-oxido-texto" : "bg-linea text-niebla"}`}>{p.pendientes}</span>
-          )}
-        </button>
-      ))}
     </div>
   );
 }
@@ -428,6 +402,13 @@ function Tecla({ children }: { children: ReactNode }) {
   return <kbd className="rounded border border-linea px-1 font-sans text-[length:var(--texto-xs)]">{children}</kbd>;
 }
 
-function Vacio({ children }: { children: ReactNode }) {
-  return <p className="rounded-panel border border-dashed border-linea-fuerte px-4 py-8 text-center text-sm text-niebla">{children}</p>;
+function Vacio({ icono, children }: { icono: ReactNode; children: ReactNode }) {
+  return (
+    <Empty className="flex-none py-8">
+      <EmptyHeader className="max-w-md">
+        <EmptyMedia variant="icon">{icono}</EmptyMedia>
+        <EmptyDescription>{children}</EmptyDescription>
+      </EmptyHeader>
+    </Empty>
+  );
 }

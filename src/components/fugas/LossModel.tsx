@@ -3,6 +3,7 @@
 import { RotateCcw } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { useId, useMemo, useState } from "react";
+import { Slider } from "@/components/ui/slider";
 import { PARAMETROS_PERDIDA_INICIALES as P } from "@/config/modelo";
 import { useTween } from "@/hooks/useTween";
 import { formatearEntero, formatearMxn } from "@/lib/formato";
@@ -55,23 +56,21 @@ export function LossModel() {
         {CONTROLES.map((c) => (
           <div key={c.clave} className="flex flex-col gap-1.5">
             <div className="flex items-baseline justify-between gap-3">
-              <label htmlFor={`${id}-${c.clave}`} className="text-sm font-medium">
+              <label id={`${id}-${c.clave}-etiqueta`} htmlFor={`${id}-${c.clave}`} className="text-sm font-medium">
                 {c.nombre}
               </label>
               <output htmlFor={`${id}-${c.clave}`} className="cifra text-base font-semibold">
                 {c.formato(p[c.clave])}
               </output>
             </div>
-            <input
-              id={`${id}-${c.clave}`}
-              type="range"
+            <Slider
               min={c.min}
               max={c.max}
               step={c.paso}
-              value={p[c.clave]}
-              aria-valuetext={c.formato(p[c.clave])}
-              onChange={(e) => setP((x) => ({ ...x, [c.clave]: Number(e.target.value) }))}
-              className="h-2 w-full cursor-pointer accent-cauce"
+              value={[p[c.clave]]}
+              onValueChange={([v]) => setP((x) => ({ ...x, [c.clave]: v }))}
+              thumbProps={{ id: `${id}-${c.clave}`, "aria-labelledby": `${id}-${c.clave}-etiqueta`, "aria-valuetext": c.formato(p[c.clave]) }}
+              className="py-1.5"
             />
             <p className="text-xs text-niebla">
               {p[c.clave] === iniciales[c.clave] ? `Origen: ${c.origen}` : `Ajustado · inicial ${c.formato(iniciales[c.clave])} (${c.origen})`}

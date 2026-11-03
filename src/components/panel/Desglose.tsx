@@ -1,6 +1,8 @@
 "use client";
 
-import { useId, useRef, useState, type KeyboardEvent } from "react";
+import { useState } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableRowHead } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export type FilaDesglose = { id: string; nombre: string; valor: number | null; detalle: string };
 export type GrupoDesglose = { clave: string; nombre: string; filas: FilaDesglose[] };
@@ -20,66 +22,41 @@ export function Desglose({
   etiquetaReferencia?: string;
   tabla: boolean;
 }) {
-  const [activo, setActivo] = useState(0);
-  const pestanas = useRef<(HTMLButtonElement | null)[]>([]);
-  const id = useId();
-  const grupo = grupos[activo];
+  const [activo, setActivo] = useState(grupos[0].clave);
+  const grupo = grupos.find((g) => g.clave === activo) ?? grupos[0];
   const ordenadas = [...grupo.filas].sort((a, b) => (b.valor ?? -1) - (a.valor ?? -1));
   const max = Math.max(...ordenadas.map((f) => f.valor ?? 0), referencia ?? 0, 1e-9);
 
-  const alPresionar = (e: KeyboardEvent) => {
-    const delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-    if (!delta) return;
-    e.preventDefault();
-    const siguiente = (activo + delta + grupos.length) % grupos.length;
-    setActivo(siguiente);
-    pestanas.current[siguiente]?.focus();
-  };
-
   return (
-    <div>
-      <div role="tablist" aria-label="Desglose" className="flex gap-1 border-b border-linea" onKeyDown={alPresionar}>
-        {grupos.map((g, i) => (
-          <button
-            key={g.clave}
-            ref={(el) => {
-              pestanas.current[i] = el;
-            }}
-            role="tab"
-            id={`${id}-tab-${i}`}
-            aria-selected={i === activo}
-            aria-controls={`${id}-panel`}
-            tabIndex={i === activo ? 0 : -1}
-            onClick={() => setActivo(i)}
-            className={`-mb-px border-b-2 px-3 py-2 text-sm motion-safe:transition-colors ${
-              i === activo ? "border-cauce font-medium text-tinta" : "border-transparent text-niebla hover:text-tinta"
-            }`}
-          >
+    <Tabs value={grupo.clave} onValueChange={setActivo}>
+      <TabsList variant="line" aria-label="Desglose" className="w-full justify-start">
+        {grupos.map((g) => (
+          <TabsTrigger key={g.clave} value={g.clave} className="flex-none px-3">
             {g.nombre}
-          </button>
+          </TabsTrigger>
         ))}
-      </div>
+      </TabsList>
 
-      <div role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-tab-${activo}`} className="pt-4">
+      <TabsContent value={grupo.clave} className="pt-2">
         {tabla ? (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-linea text-xs text-niebla">
-                <th scope="col" className="py-2 text-left font-medium">{grupo.nombre}</th>
-                <th scope="col" className="py-2 text-right font-medium">Valor</th>
-                <th scope="col" className="py-2 text-right font-medium">Detalle</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="px-0">{grupo.nombre}</TableHead>
+                <TableHead className="px-0 text-right">Valor</TableHead>
+                <TableHead className="px-0 text-right">Detalle</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {ordenadas.map((f) => (
-                <tr key={f.id} className="border-b border-linea last:border-0">
-                  <th scope="row" className="py-2 text-left font-normal">{f.nombre}</th>
-                  <td className="cifra py-2 text-right">{f.valor === null ? "—" : formato(f.valor)}</td>
-                  <td className="cifra py-2 text-right text-niebla">{f.detalle}</td>
-                </tr>
+                <TableRow key={f.id}>
+                  <TableRowHead className="px-0 py-2">{f.nombre}</TableRowHead>
+                  <TableCell className="cifra px-0 py-2 text-right">{f.valor === null ? "—" : formato(f.valor)}</TableCell>
+                  <TableCell className="cifra px-0 py-2 text-right text-niebla">{f.detalle}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         ) : (
           <ul className="flex flex-col gap-3">
             {ordenadas.map((f) => (
@@ -108,7 +85,7 @@ export function Desglose({
             {etiquetaReferencia}
           </p>
         )}
-      </div>
-    </div>
+      </TabsContent>
+    </Tabs>
   );
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { ArrowUpRight, Droplet } from "lucide-react";
+import { ArrowUpRight, Droplet, FlaskConical } from "lucide-react";
 import Link from "next/link";
 import { useMemo, type ReactNode } from "react";
 import { useDatos } from "@/components/Proveedores";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import { Table, TableBody, TableCell, TableRow, TableRowHead } from "@/components/ui/table";
 import { CANALES, ESTADOS, SECTORES } from "@/config/dimensiones";
 import { ETAPAS, NIVELES_LEAD, ORDEN_ETAPAS, PRIORIDADES, TRANSICIONES, nombreEtapa } from "@/config/etapas";
-import { ETIQUETA_ESTADO_EXPERIMENTO, TONO_ESTADO_EXPERIMENTO } from "@/config/experimentos";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
 import type { Seleccion } from "@/hooks/useSeleccion";
 import { formatearEntero, formatearMxn, formatearPct, formatearPp, formatearSemanaCorta } from "@/lib/formato";
@@ -20,6 +21,7 @@ import {
   volumenPorEtapa,
 } from "@/lib/selectors";
 import type { Transicion } from "@/lib/tipos";
+import { ChipEstado } from "@/components/experimentos/comunes";
 import { Desglose, type GrupoDesglose } from "./Desglose";
 import { TendenciaSemanal, type PuntoSerie } from "./TendenciaSemanal";
 
@@ -147,16 +149,16 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
 
       <Seccion titulo={transicion ? "Conversión semanal" : "Volumen semanal"} nota="Últimas 12 semanas">
         {tabla ? (
-          <table className="w-full text-sm">
-            <tbody>
+          <Table>
+            <TableBody>
               {d.serie.map((p) => (
-                <tr key={p.semana} className="border-b border-linea last:border-0">
-                  <th scope="row" className="py-1.5 text-left font-normal">Semana del {formatearSemanaCorta(p.semana)}</th>
-                  <td className="cifra py-1.5 text-right">{p.valor === null ? "—" : formatoSerie(p.valor)}</td>
-                </tr>
+                <TableRow key={p.semana}>
+                  <TableRowHead className="px-0 py-1.5">Semana del {formatearSemanaCorta(p.semana)}</TableRowHead>
+                  <TableCell className="cifra px-0 py-1.5 text-right">{p.valor === null ? "—" : formatoSerie(p.valor)}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         ) : (
           <TendenciaSemanal
             puntos={d.serie}
@@ -181,7 +183,9 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
 
       <Seccion titulo={transicion ? "Fugas de esta transición" : `Fugas al salir de ${nombreEtapa(etapa)}`}>
         {d.fugasAqui.length === 0 ? (
-          <Vacio>No hay pozas registradas aquí. El volumen que no avanza se reparte sin una causa atribuida.</Vacio>
+          <Vacio icono={<Droplet />} titulo="Sin pozas registradas">
+            El volumen que no avanza se reparte sin una causa atribuida.
+          </Vacio>
         ) : (
           <ul className="flex flex-col divide-y divide-linea rounded-panel border border-linea">
             {d.fugasAqui.map((f) => (
@@ -207,7 +211,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
 
       <Seccion titulo="Experimentos">
         {d.expAqui.length === 0 ? (
-          <Vacio>
+          <Vacio icono={<FlaskConical />} titulo="Sin experimentos">
             Ningún experimento apunta aquí todavía.{" "}
             <Link href="/experimentos" className="text-cauce-texto underline underline-offset-2">
               Ver el registro de hipótesis
@@ -220,9 +224,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
                 <Link href={`/experimentos?exp=${e.id}`} className="group block rounded-panel border border-linea p-3 hover:border-linea-fuerte hover:bg-concreto">
                   <span className="flex items-start gap-2">
                     <span className="flex-1 text-sm font-medium">{e.nombre}</span>
-                    <span className={`shrink-0 rounded-control border px-1.5 text-xs ${TONO_ESTADO_EXPERIMENTO[e.estado]}`}>
-                      {ETIQUETA_ESTADO_EXPERIMENTO[e.estado]}
-                    </span>
+                    <ChipEstado estado={e.estado} />
                   </span>
                   <span className="mt-1 block text-xs text-niebla">{e.hipotesis}</span>
                   <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
@@ -260,8 +262,16 @@ function Seccion({ titulo, nota, children }: { titulo: string; nota?: string; ch
   );
 }
 
-function Vacio({ children }: { children: ReactNode }) {
-  return <p className="rounded-panel border border-dashed border-linea-fuerte px-3 py-4 text-sm text-niebla">{children}</p>;
+function Vacio({ icono, titulo, children }: { icono: ReactNode; titulo: string; children: ReactNode }) {
+  return (
+    <Empty className="flex-none gap-2 p-4">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">{icono}</EmptyMedia>
+        <EmptyTitle>{titulo}</EmptyTitle>
+        <EmptyDescription>{children}</EmptyDescription>
+      </EmptyHeader>
+    </Empty>
+  );
 }
 
 function tonoDelta(v: number | null): string {

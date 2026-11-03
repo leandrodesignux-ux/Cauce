@@ -1,12 +1,17 @@
-import { ETIQUETA_ESTADO_EXPERIMENTO, TONO_ESTADO_EXPERIMENTO } from "@/config/experimentos";
+import { Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
 import { formatearPp } from "@/lib/formato";
 import type { EstadoExperimento, Experimento } from "@/lib/tipos";
 
+/** Estado del experimento: etiqueta siempre visible; En curso y Validado comparten tono y se distinguen por punto, ícono e intensidad. */
 export function ChipEstado({ estado }: { estado: EstadoExperimento }) {
   return (
-    <span className={`inline-flex h-6 shrink-0 items-center rounded-control border px-2 text-xs font-medium ${TONO_ESTADO_EXPERIMENTO[estado]}`}>
+    <Badge variant={estado}>
+      {estado === "en_curso" && <span className="size-1.5 rounded-full bg-current" aria-hidden />}
+      {estado === "validado" && <Check aria-hidden />}
       {ETIQUETA_ESTADO_EXPERIMENTO[estado]}
-    </span>
+    </Badge>
   );
 }
 

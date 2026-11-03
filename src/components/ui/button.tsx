@@ -16,6 +16,12 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        // Ghost en niebla: acciones secundarias de la nav, cerrar paneles.
+        sutil:
+          "text-muted-foreground hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
+        // Disparadores de filtro: contorno en reposo, cauce tintado si el filtro está aplicado (data-activo).
+        filtro:
+          "border-linea-fuerte text-foreground hover:border-niebla hover:bg-card aria-expanded:border-niebla aria-expanded:bg-card data-[activo=true]:border-cauce data-[activo=true]:bg-cauce-suave data-[activo=true]:text-cauce-texto",
         destructive:
           "bg-destructive/10 text-oxido-texto hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-cauce-texto underline-offset-4 hover:underline",
