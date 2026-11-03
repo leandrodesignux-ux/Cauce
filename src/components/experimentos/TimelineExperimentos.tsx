@@ -12,11 +12,11 @@ import type { EstadoExperimento, Experimento } from "@/lib/tipos";
 import { ChipEstado } from "./comunes";
 
 const TONO_BARRA: Record<EstadoExperimento, { ejecucion: string; lectura: string; borde: string }> = {
-  diseno: { ejecucion: "transparent", lectura: "transparent", borde: "var(--niebla)" },
-  en_curso: { ejecucion: "var(--cauce-suave)", lectura: "var(--cauce)", borde: "var(--cauce)" },
-  leyendo: { ejecucion: "color-mix(in srgb, var(--laton) 18%, transparent)", lectura: "var(--laton)", borde: "var(--laton)" },
-  validado: { ejecucion: "var(--cauce-suave)", lectura: "var(--cauce)", borde: "var(--cauce)" },
-  refutado: { ejecucion: "var(--oxido-suave)", lectura: "var(--oxido)", borde: "var(--oxido)" },
+  diseno: { ejecucion: "transparent", lectura: "transparent", borde: "var(--tenue)" },
+  en_curso: { ejecucion: "var(--azul-suave)", lectura: "var(--azul-relleno)", borde: "var(--azul-relleno)" },
+  leyendo: { ejecucion: "color-mix(in srgb, var(--coral) 18%, transparent)", lectura: "var(--coral)", borde: "var(--coral)" },
+  validado: { ejecucion: "var(--azul-suave)", lectura: "var(--azul-relleno)", borde: "var(--azul-relleno)" },
+  refutado: { ejecucion: "var(--coral-suave)", lectura: "var(--coral)", borde: "var(--coral)" },
 };
 
 const fecha = (iso: string) => new Date(`${iso}T00:00:00Z`);
@@ -45,13 +45,13 @@ export function TimelineExperimentos({
   const xHoy = x(fecha(HOY));
 
   return (
-    <div ref={ref} className="rounded-panel border border-linea bg-papel p-4 md:p-5">
+    <div ref={ref} className="rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta md:p-5">
       {ancho > 0 && (
         <>
           {/* Eje de meses */}
           <div className="relative mb-2 h-6" style={{ marginLeft: columnaEtiquetas }} aria-hidden>
             {meses.map((d) => (
-              <span key={d.toISOString()} className="absolute top-0 -translate-x-1/2 text-xs text-niebla" style={{ left: x(d) }}>
+              <span key={d.toISOString()} className="absolute top-0 -translate-x-1/2 text-xs text-tinta-2" style={{ left: x(d) }}>
                 {(d.getUTCMonth() === 0 ? mesAnio : mes).format(d).replace(".", "")}
               </span>
             ))}
@@ -63,7 +63,7 @@ export function TimelineExperimentos({
               {meses.map((d) => (
                 <span key={d.toISOString()} className="absolute inset-y-0 w-px bg-linea" style={{ left: x(d) }} />
               ))}
-              <span className="absolute inset-y-0 w-0.5 bg-tinta" style={{ left: xHoy }} />
+              <span className="absolute inset-y-0 w-0.5 bg-activo" style={{ left: xHoy }} />
             </div>}
 
             {experimentos.map((e) => {
@@ -83,13 +83,13 @@ export function TimelineExperimentos({
                     aria-label={`${e.nombre}. ${ETIQUETA_ESTADO_EXPERIMENTO[e.estado]}. Despliegue ${formatearSemana(e.despliegue)}, lectura del ${formatearSemana(
                       inicioLectura(e),
                     )} al ${formatearSemana(finLectura(e))}. ${s.texto}.`}
-                    className={`grid w-full items-center gap-y-2 rounded-control py-3 text-left md:py-2.5 ${activo ? "bg-cauce-suave" : "hover:bg-concreto"}`}
+                    className={`grid w-full items-center gap-y-2 rounded-control py-3 text-left md:py-2.5 ${activo ? "bg-azul-suave" : "hover:bg-neutro-suave"}`}
                     style={{ gridTemplateColumns: columnaEtiquetas ? `${columnaEtiquetas}px 1fr` : "1fr" }}
                   >
                     <span className="flex min-w-0 items-center gap-2 px-2">
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-medium">{e.nombre}</span>
-                        <span className="block truncate text-xs text-niebla">
+                        <span className="block truncate text-xs text-tinta-2">
                           {nombreEtapa(e.transicion.desde)} → {nombreEtapa(e.transicion.hacia)} · {s.texto}
                         </span>
                       </span>
@@ -101,7 +101,7 @@ export function TimelineExperimentos({
                           {meses.map((d) => (
                             <span key={d.toISOString()} className="absolute inset-y-0 w-px bg-linea" style={{ left: x(d) }} />
                           ))}
-                          <span className="absolute inset-y-0 w-0.5 bg-tinta" style={{ left: xHoy }} />
+                          <span className="absolute inset-y-0 w-0.5 bg-activo" style={{ left: xHoy }} />
                         </>
                       )}
                       {/* Ejecución: del despliegue al inicio de la lectura */}
@@ -126,7 +126,7 @@ export function TimelineExperimentos({
                           borderStyle: e.estado === "diseno" ? "dashed" : "solid",
                         }}
                       />
-                      <span className="absolute top-0 size-2 -translate-x-1/2 rounded-full bg-tinta" style={{ left: x0, top: 10 }} />
+                      <span className="absolute top-0 size-2 -translate-x-1/2 rounded-full bg-activo" style={{ left: x0, top: 10 }} />
                     </span>
                   </button>
                 </li>
@@ -140,25 +140,25 @@ export function TimelineExperimentos({
             </span>
           </div>
 
-          <ul aria-label="Leyenda" className="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-linea pt-3 text-xs text-niebla">
+          <ul aria-label="Leyenda" className="mt-4 flex flex-wrap gap-x-6 gap-y-2 border-t border-linea pt-3 text-xs text-tinta-2">
             <li className="flex items-center gap-2">
-              <span aria-hidden className="size-2 rounded-full bg-tinta" />
+              <span aria-hidden className="size-2 rounded-full bg-activo" />
               Despliegue
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden className="h-3 w-6 rounded-l-full border border-cauce bg-cauce-suave" />
+              <span aria-hidden className="h-3 w-6 rounded-l-full border border-azul bg-azul-suave" />
               En ejecución
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden className="h-3 w-6 rounded-r-full bg-cauce" />
+              <span aria-hidden className="h-3 w-6 rounded-r-full bg-azul-relleno" />
               Ventana de lectura
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden className="h-3 w-6 rounded-full border border-dashed border-niebla" />
+              <span aria-hidden className="h-3 w-6 rounded-full border border-dashed border-tenue" />
               En diseño
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden className="h-3 w-0.5 bg-tinta" />
+              <span aria-hidden className="h-3 w-0.5 bg-activo" />
               Hoy (corte de los datos)
             </li>
           </ul>

@@ -49,7 +49,7 @@ export const useSesion = create<Sesion>()(
   ),
 );
 
-function esHoy(iso: string): boolean {
+export function esHoy(iso: string): boolean {
   const fecha = new Date(iso);
   const hoy = new Date();
   return fecha.getFullYear() === hoy.getFullYear() && fecha.getMonth() === hoy.getMonth() && fecha.getDate() === hoy.getDate();
@@ -60,32 +60,7 @@ export function useRescatadosHoy(): number {
   return useSesion((s) => Object.values(s.rescatados).filter(esHoy).length);
 }
 
-type Interfaz = {
-  navCompacta: boolean;
-  alternarNav: () => void;
-  /** Panel de etapa abierto en escritorio: la nav se compacta para dejarle lugar al río. No se persiste. */
-  panelAbierto: boolean;
-  fijarPanelAbierto: (abierto: boolean) => void;
-};
-
-export const useInterfaz = create<Interfaz>()(
-  persist(
-    (set) => ({
-      navCompacta: false,
-      alternarNav: () => set((s) => ({ navCompacta: !s.navCompacta })),
-      panelAbierto: false,
-      fijarPanelAbierto: (panelAbierto) => set({ panelAbierto }),
-    }),
-    {
-      name: "cauce-interfaz",
-      storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ navCompacta: s.navCompacta }),
-      skipHydration: true,
-    },
-  ),
-);
 
 export function rehidratarStores(): void {
   void useSesion.persist.rehydrate();
-  void useInterfaz.persist.rehydrate();
 }

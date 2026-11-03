@@ -52,7 +52,7 @@ export function Desglose({
                 <TableRow key={f.id}>
                   <TableRowHead className="px-0 py-2">{f.nombre}</TableRowHead>
                   <TableCell className="cifra px-0 py-2 text-right">{f.valor === null ? "—" : formato(f.valor)}</TableCell>
-                  <TableCell className="cifra px-0 py-2 text-right text-niebla">{f.detalle}</TableCell>
+                  <TableCell className="cifra px-0 py-2 text-right text-tinta-2">{f.detalle}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -64,24 +64,24 @@ export function Desglose({
                 <span className="truncate text-sm">{f.nombre}</span>
                 <span className="relative h-2 rounded-full bg-linea" aria-hidden>
                   <span
-                    className="absolute inset-y-0 left-0 rounded-full bg-cauce motion-safe:transition-[width] motion-safe:duration-(--duracion-media)"
+                    className="absolute inset-y-0 left-0 rounded-full bg-azul-relleno motion-safe:transition-[width] motion-safe:duration-(--duracion-media)"
                     style={{ width: `${((f.valor ?? 0) / max) * 100}%` }}
                   />
                   {referencia != null && (
-                    <span className="absolute -inset-y-1 w-px bg-tinta" style={{ left: `${(referencia / max) * 100}%` }} />
+                    <span className="absolute -inset-y-1 w-px bg-activo" style={{ left: `${(referencia / max) * 100}%` }} />
                   )}
                 </span>
                 <span className="flex flex-col items-end">
                   <span className="cifra text-sm font-medium">{f.valor === null ? "—" : formato(f.valor)}</span>
-                  <span className="cifra text-xs text-niebla">{f.detalle}</span>
+                  <span className="cifra text-xs text-tinta-2">{f.detalle}</span>
                 </span>
               </li>
             ))}
           </ul>
         )}
         {referencia != null && etiquetaReferencia && !tabla && (
-          <p className="mt-3 flex items-center gap-2 text-xs text-niebla">
-            <span aria-hidden className="h-3 w-px bg-tinta" />
+          <p className="mt-3 flex items-center gap-2 text-xs text-tinta-2">
+            <span aria-hidden className="h-3 w-px bg-activo" />
             {etiquetaReferencia}
           </p>
         )}

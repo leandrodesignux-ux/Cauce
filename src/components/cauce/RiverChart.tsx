@@ -164,10 +164,10 @@ function Rio({
       >
         <defs>
           <linearGradient id="agua" x1="0" y1="0" x2={horizontal ? 1 : 0} y2={horizontal ? 0 : 1}>
-            <stop offset={0} stopColor="var(--cauce)" stopOpacity={0.15} />
-            <stop offset={geo.etapas[0].s / geo.fin} stopColor="var(--cauce)" stopOpacity={1} />
-            <stop offset={geo.etapas[n - 1].s / geo.fin} stopColor="var(--cauce)" stopOpacity={0.8} />
-            <stop offset={1} stopColor="var(--cauce)" stopOpacity={0.2} />
+            <stop offset={0} stopColor="var(--azul-relleno)" stopOpacity={0.15} />
+            <stop offset={geo.etapas[0].s / geo.fin} stopColor="var(--azul-relleno)" stopOpacity={1} />
+            <stop offset={geo.etapas[n - 1].s / geo.fin} stopColor="var(--azul-relleno)" stopOpacity={0.8} />
+            <stop offset={1} stopColor="var(--azul-relleno)" stopOpacity={0.2} />
           </linearGradient>
           <linearGradient
             id="corriente"
@@ -177,10 +177,10 @@ function Rio({
             x2={horizontal ? geo.finCorrientes : 0}
             y2={horizontal ? 0 : geo.finCorrientes}
           >
-            <stop offset={0} stopColor="var(--papel)" stopOpacity={0} />
-            <stop offset={0.2} stopColor="var(--papel)" stopOpacity={0.2} />
-            <stop offset={0.7} stopColor="var(--papel)" stopOpacity={0.16} />
-            <stop offset={1} stopColor="var(--papel)" stopOpacity={0} />
+            <stop offset={0} stopColor="var(--tarjeta)" stopOpacity={0} />
+            <stop offset={0.2} stopColor="var(--tarjeta)" stopOpacity={0.2} />
+            <stop offset={0.7} stopColor="var(--tarjeta)" stopOpacity={0.16} />
+            <stop offset={1} stopColor="var(--tarjeta)" stopOpacity={0} />
           </linearGradient>
           <clipPath id="forma-rio">
             <path d={geo.rio} />
@@ -219,7 +219,7 @@ function Rio({
               key={p.id}
               d={p.hilo}
               fill="none"
-              stroke="var(--oxido)"
+              stroke="var(--coral)"
               strokeOpacity={esActivo({ tipo: "poza", id: p.id }) ? 1 : 0.78}
               strokeWidth={p.grosorHilo}
               strokeLinecap="round"
@@ -233,21 +233,21 @@ function Rio({
         {/* El agua */}
         <g clipPath="url(#llenado)">
           {/* Fondo opaco: los hilos nacen debajo del agua y no se transparentan */}
-          <path d={geo.rio} fill="var(--concreto)" />
+          <path d={geo.rio} fill="var(--fondo-a)" />
           <path d={geo.rio} fill="url(#agua)" />
           {geo.corrientes.map((d, i) => (
             <path key={i} d={d} fill="none" stroke="url(#corriente)" strokeWidth={1} aria-hidden />
           ))}
         </g>
 
-        {/* Período anterior: orillas punteadas. Afuera del agua en niebla; adentro, claras y recortadas al río. */}
+        {/* Período anterior: orillas punteadas. Afuera del agua en tenue; adentro, claras y recortadas al río. */}
         {geo.rioAnterior && (
           <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} aria-hidden>
-            <path d={geo.rioAnterior} fill="none" stroke="var(--niebla)" strokeWidth={1.25} strokeDasharray="4 4" />
+            <path d={geo.rioAnterior} fill="none" stroke="var(--tenue)" strokeWidth={1.25} strokeDasharray="4 4" />
             <path
               d={geo.rioAnterior}
               fill="none"
-              stroke="var(--papel)"
+              stroke="var(--tarjeta)"
               strokeOpacity={0.75}
               strokeWidth={1.25}
               strokeDasharray="4 4"
@@ -281,11 +281,11 @@ function Rio({
                       width={Math.min(124, geo.paso * 0.96)}
                       height={54}
                       rx={8}
-                      fill={seleccionada ? "var(--cauce-suave)" : "transparent"}
-                      className={focoVisible === `etapa:${i}` ? "stroke-cauce" : ""}
+                      fill={seleccionada ? "var(--azul-suave)" : "transparent"}
+                      className={focoVisible === `etapa:${i}` ? "stroke-azul" : ""}
                       strokeWidth={2}
                     />
-                    <text x={e.x} y={18} textAnchor="middle" className={`${geo.compacto ? "text-xs" : "text-sm"} ${seleccionada ? "fill-cauce-texto font-medium" : "fill-niebla"}`}>
+                    <text x={e.x} y={18} textAnchor="middle" className={`${geo.compacto ? "text-xs" : "text-sm"} ${seleccionada ? "fill-azul-texto font-medium" : "fill-tinta-2"}`}>
                       {etapa.nombre}
                     </text>
                     <text x={e.x} y={42} textAnchor="middle" className={`cifra fill-tinta font-semibold ${geo.compacto ? "text-base" : "text-lg"}`}>
@@ -301,11 +301,11 @@ function Rio({
                       width={MARGEN_ETIQUETA_V - 2}
                       height={46}
                       rx={8}
-                      fill={seleccionada ? "var(--cauce-suave)" : "transparent"}
-                      className={focoVisible === `etapa:${i}` ? "stroke-cauce" : ""}
+                      fill={seleccionada ? "var(--azul-suave)" : "transparent"}
+                      className={focoVisible === `etapa:${i}` ? "stroke-azul" : ""}
                       strokeWidth={2}
                     />
-                    <text x={0} y={e.y - 6} className={`text-xs ${seleccionada ? "fill-cauce-texto font-medium" : "fill-niebla"}`}>
+                    <text x={0} y={e.y - 6} className={`text-xs ${seleccionada ? "fill-azul-texto font-medium" : "fill-tinta-2"}`}>
                       {etapa.nombre}
                     </text>
                     <text x={0} y={e.y + 14} className="cifra fill-tinta text-base font-semibold">
@@ -363,7 +363,7 @@ function Rio({
                 height={p.ry * 2 + 30 + lineas.length * 16 + 22}
                 rx={10}
                 fill="transparent"
-                className={focoVisible === `poza:${p.id}` ? "stroke-cauce" : ""}
+                className={focoVisible === `poza:${p.id}` ? "stroke-azul" : ""}
                 strokeWidth={2}
               />
               <ellipse
@@ -371,8 +371,8 @@ function Rio({
                 cy={p.y}
                 rx={p.rx}
                 ry={p.ry}
-                fill="var(--oxido-suave)"
-                stroke="var(--oxido)"
+                fill="var(--coral-suave)"
+                stroke="var(--coral)"
                 strokeWidth={marcada ? 1.5 : 1}
                 className="motion-safe:transition-[stroke-width]"
               />
@@ -381,17 +381,17 @@ function Rio({
                   {l}
                 </text>
               ))}
-              <text x={textoX} y={y0 + lineas.length * 15 + 4} textAnchor={anclaje} className="cifra fill-laton-texto text-sm font-semibold">
+              <text x={textoX} y={y0 + lineas.length * 15 + 4} textAnchor={anclaje} className="cifra fill-tinta text-sm font-semibold">
                 {formatearMxnCorto(pozas[i].valor)}
               </text>
-              <text x={textoX} y={y0 + lineas.length * 15 + 20} textAnchor={anclaje} className="cifra fill-niebla text-xs">
+              <text x={textoX} y={y0 + lineas.length * 15 + 20} textAnchor={anclaje} className="cifra fill-tinta-2 text-xs">
                 {formatearEntero(pozas[i].volumen)} perdidos
               </text>
             </motion.g>,
           );
         })}
 
-        {/* Retorno de rescatados: hilo en --cauce que sube desde la poza hasta la etapa siguiente */}
+        {/* Retorno de rescatados: hilo en --azul que sube desde la poza hasta la etapa siguiente */}
         {retornos
           .filter((ret) => ret.cantidad > 0)
           .map((ret) => {
@@ -423,11 +423,11 @@ function Rio({
             const anchoTexto = texto.length * 6.6 + 16;
             return (
               <g key={ret.fugaId} role="img" aria-label={`${texto.slice(2)} vuelven de ${poza.nombre} a ${ETAPAS[poza.desde + 1].nombre}`}>
-                <path d={d} fill="none" stroke="var(--concreto)" strokeWidth={grosor + 5} strokeLinecap="round" />
+                <path d={d} fill="none" stroke="var(--fondo-a)" strokeWidth={grosor + 5} strokeLinecap="round" />
                 <motion.path
                   d={d}
                   fill="none"
-                  stroke="var(--cauce)"
+                  stroke="var(--azul-relleno)"
                   strokeWidth={grosor}
                   strokeLinecap="round"
                   initial={{ pathLength: 0 }}
@@ -439,17 +439,17 @@ function Rio({
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3, delay: reducir ? 0 : entrada ? LLENADO + 1.1 : 0.6 }}
                 >
-                  <circle cx={fin.x} cy={fin.y} r={grosor / 2 + 3} fill="var(--cauce)" stroke="var(--papel)" strokeWidth={2} />
+                  <circle cx={fin.x} cy={fin.y} r={grosor / 2 + 3} fill="var(--azul-relleno)" stroke="var(--tarjeta)" strokeWidth={2} />
                   <rect
                     x={etiqueta.x - anchoTexto / 2}
                     y={etiqueta.y - 12}
                     width={anchoTexto}
                     height={22}
                     rx={11}
-                    fill="var(--papel)"
-                    stroke="var(--cauce)"
+                    fill="var(--tarjeta)"
+                    stroke="var(--azul-relleno)"
                   />
-                  <text x={etiqueta.x} y={etiqueta.y + 3} textAnchor="middle" className="cifra fill-cauce-texto text-xs font-semibold">
+                  <text x={etiqueta.x} y={etiqueta.y + 3} textAnchor="middle" className="cifra fill-azul-texto text-xs font-semibold">
                     {texto}
                   </text>
                 </motion.g>
@@ -466,7 +466,7 @@ function Rio({
 const MARGEN_ETIQUETA_V = 96;
 
 function guia(marcada: boolean): string {
-  return `${marcada ? "stroke-cauce" : "stroke-linea-fuerte"} motion-safe:transition-colors`;
+  return `${marcada ? "stroke-azul" : "stroke-linea-fuerte"} motion-safe:transition-colors`;
 }
 
 function Tasa({
@@ -487,9 +487,9 @@ function Tasa({
   foco: boolean;
 }) {
   const t = geo.transiciones[indice];
-  const tono = delta === null || Math.abs(delta) < 0.05 ? "fill-niebla" : delta > 0 ? "fill-cauce-texto" : "fill-oxido-texto";
+  const tono = delta === null || Math.abs(delta) < 0.05 ? "fill-tinta-2" : delta > 0 ? "fill-azul-texto" : "fill-coral-texto";
   const flecha = delta === null || Math.abs(delta) < 0.05 ? "" : delta > 0 ? "↑ " : "↓ ";
-  const fondo = seleccionada ? "var(--cauce-suave)" : resaltada ? "var(--papel)" : "transparent";
+  const fondo = seleccionada ? "var(--azul-suave)" : resaltada ? "var(--tarjeta)" : "transparent";
 
   if (geo.orientacion === "horizontal") {
     const izquierda = geo.etapas[indice].x + geo.paso * 0.22;
@@ -504,7 +504,7 @@ function Tasa({
           height={44}
           rx={8}
           fill={fondo}
-          className={`motion-safe:transition-colors ${foco ? "stroke-cauce" : ""}`}
+          className={`motion-safe:transition-colors ${foco ? "stroke-azul" : ""}`}
           strokeWidth={2}
         />
         <text x={t.x} y={84} textAnchor="middle" className="cifra fill-tinta text-sm font-medium">
@@ -521,7 +521,7 @@ function Tasa({
     <>
       {/* Zona de toque contigua a la de las etapas vecinas */}
       <rect x={-6} y={t.y - geo.paso / 4} width={geo.centro + geo.grosorMax / 2 + 6} height={geo.paso / 2} fill="transparent" />
-      <rect x={-6} y={t.y - 22} width={MARGEN_ETIQUETA_V - 2} height={42} rx={8} fill={fondo} className={foco ? "stroke-cauce" : ""} strokeWidth={2} />
+      <rect x={-6} y={t.y - 22} width={MARGEN_ETIQUETA_V - 2} height={42} rx={8} fill={fondo} className={foco ? "stroke-azul" : ""} strokeWidth={2} />
       <text x={0} y={t.y - 4} className="cifra fill-tinta text-xs font-medium">
         {formatearPct(tasa)}
       </text>

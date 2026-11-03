@@ -4,7 +4,7 @@ import { scaleLinear } from "d3-scale";
 import { area, curveMonotoneX, line } from "d3-shape";
 import { motion } from "motion/react";
 
-export type FilaTooltip = { etiqueta: string; valor: string; tono?: "cauce" | "oxido" | "laton" | "niebla" };
+export type FilaTooltip = { etiqueta: string; valor: string; tono?: "azul" | "coral" | "monto" | "tenue" };
 
 export type ContenidoTooltip = {
   titulo: string;
@@ -16,10 +16,10 @@ export type ContenidoTooltip = {
 
 const ANCHO = 248;
 const TONO: Record<NonNullable<FilaTooltip["tono"]>, string> = {
-  cauce: "text-cauce-texto",
-  oxido: "text-oxido-texto",
-  laton: "text-laton-texto",
-  niebla: "text-niebla",
+  azul: "text-azul-texto",
+  coral: "text-coral-texto",
+  monto: "text-tinta font-semibold",
+  tenue: "text-tinta-2",
 };
 
 export function TooltipCauce({
@@ -43,20 +43,20 @@ export function TooltipCauce({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.12 }}
       style={{ left: izquierda, top: y, width: ANCHO, translate: arriba ? "0 -100%" : undefined }}
-      className="pointer-events-none absolute z-20 rounded-panel border border-linea bg-papel p-3 shadow-flotante"
+      className="pointer-events-none absolute z-20 rounded-panel border border-linea bg-tarjeta p-3 shadow-flotante"
     >
       <p className="text-sm font-medium leading-snug">{contenido.titulo}</p>
-      {contenido.subtitulo && <p className="mt-0.5 text-xs text-niebla">{contenido.subtitulo}</p>}
+      {contenido.subtitulo && <p className="mt-0.5 text-xs text-tinta-2">{contenido.subtitulo}</p>}
       <dl className="mt-2 flex flex-col gap-1">
         {contenido.filas.map((f) => (
           <div key={f.etiqueta} className="flex items-baseline justify-between gap-3 text-xs">
-            <dt className="text-niebla">{f.etiqueta}</dt>
+            <dt className="text-tinta-2">{f.etiqueta}</dt>
             <dd className={`cifra text-sm font-medium ${f.tono ? TONO[f.tono] : ""}`}>{f.valor}</dd>
           </div>
         ))}
       </dl>
       {contenido.serie && <Sparkline {...contenido.serie} />}
-      {contenido.pie && <p className="mt-2 border-t border-linea pt-2 text-xs text-niebla">{contenido.pie}</p>}
+      {contenido.pie && <p className="mt-2 border-t border-linea pt-2 text-xs text-tinta-2">{contenido.pie}</p>}
     </motion.div>
   );
 }
@@ -79,11 +79,11 @@ function Sparkline({ valores, etiqueta }: { valores: (number | null)[]; etiqueta
   return (
     <figure className="mt-3">
       <svg width={w} height={h} aria-hidden className="block overflow-visible">
-        <path d={relleno(puntos) ?? ""} fill="var(--cauce-suave)" />
-        <path d={trazo(puntos) ?? ""} fill="none" stroke="var(--cauce)" strokeWidth={1.5} />
-        <circle cx={sx(ultimo[0])} cy={sy(ultimo[1])} r={2.5} fill="var(--cauce)" />
+        <path d={relleno(puntos) ?? ""} fill="var(--azul-suave)" />
+        <path d={trazo(puntos) ?? ""} fill="none" stroke="var(--azul-relleno)" strokeWidth={1.5} />
+        <circle cx={sx(ultimo[0])} cy={sy(ultimo[1])} r={2.5} fill="var(--azul-relleno)" />
       </svg>
-      <figcaption className="mt-1 text-xs text-niebla">{etiqueta}</figcaption>
+      <figcaption className="mt-1 text-xs text-tinta-2">{etiqueta}</figcaption>
     </figure>
   );
 }

@@ -16,9 +16,9 @@ export function ChipEstado({ estado }: { estado: EstadoExperimento }) {
 }
 
 export function tonoObservado(e: Experimento): string {
-  if (e.observadoPp === undefined) return "text-niebla";
-  if (e.observadoPp >= e.prediccionPp * 0.8) return "text-cauce-texto";
-  return e.observadoPp > 0 ? "text-laton-texto" : "text-oxido-texto";
+  if (e.observadoPp === undefined) return "text-tinta-2";
+  if (e.observadoPp >= e.prediccionPp * 0.8) return "text-azul-texto";
+  return e.observadoPp > 0 ? "text-tinta" : "text-coral-texto";
 }
 
 /** Predicho → observado, con veredicto en texto (nunca solo color). */
@@ -34,11 +34,11 @@ export function PredichoObservado({ e, compacto = false }: { e: Experimento; com
   return (
     <span className={`cifra inline-flex flex-wrap items-baseline gap-x-1.5 ${compacto ? "text-xs" : "text-sm"}`}>
       <span>{formatearPp(e.prediccionPp)}</span>
-      <span className="text-niebla" aria-hidden>
+      <span className="text-tinta-2" aria-hidden>
         →
       </span>
       <span className={`font-semibold ${tonoObservado(e)}`}>{e.observadoPp === undefined ? "—" : formatearPp(e.observadoPp)}</span>
-      <span className="font-sans text-xs text-niebla">{veredicto}</span>
+      <span className="font-sans text-xs text-tinta-2">{veredicto}</span>
     </span>
   );
 }

@@ -18,34 +18,37 @@
   --color-*: initial;
 
   /* Cauce */
-  --color-concreto: var(--concreto);
-  --color-papel: var(--papel);
+  --color-fondo-a: var(--fondo-a);
+  --color-fondo-b: var(--fondo-b);
+  --color-fondo-c: var(--fondo-c);
+  --color-panel: var(--panel);
+  --color-panel-borde: var(--panel-borde);
+  --color-tarjeta: var(--tarjeta);
+  --color-tarjeta-borde: var(--tarjeta-borde);
   --color-tinta: var(--tinta);
-  --color-niebla: var(--niebla);
-  --color-niebla-texto: var(--niebla-texto);
-  --color-cauce: var(--cauce);
-  --color-laton: var(--laton);
-  --color-oxido: var(--oxido);
-  --color-cauce-texto: var(--cauce-texto);
-  --color-laton-texto: var(--laton-texto);
-  --color-oxido-texto: var(--oxido-texto);
-  --color-cauce-suave: var(--cauce-suave);
-  --color-laton-suave: var(--laton-suave);
-  --color-oxido-suave: var(--oxido-suave);
-  --color-niebla-suave: var(--niebla-suave);
-  --color-cauce-fuerte: var(--cauce-fuerte);
+  --color-tinta-2: var(--tinta-2);
+  --color-tenue: var(--tenue);
   --color-linea: var(--linea);
   --color-linea-fuerte: var(--linea-fuerte);
-  --color-sobre-cauce: var(--sobre-cauce);
-  --color-sobre-laton: var(--sobre-laton);
-  --color-sobre-oxido: var(--sobre-oxido);
+  --color-azul: var(--azul);
+  --color-azul-texto: var(--azul-texto);
+  --color-azul-relleno: var(--azul-relleno);
+  --color-azul-suave: var(--azul-suave);
+  --color-coral: var(--coral);
+  --color-coral-texto: var(--coral-texto);
+  --color-coral-relleno: var(--coral-relleno);
+  --color-coral-suave: var(--coral-suave);
+  --color-neutro-suave: var(--neutro-suave);
+  --color-activo: var(--activo);
+  --color-sobre-activo: var(--sobre-activo);
+  --color-sobre-relleno: var(--sobre-relleno);
 
   /*
    * black y white existen porque los usan componentes de shadcn:
-   * bg-black/50 (velo de Dialog, Sheet, Drawer) = tinta profunda al 40 %; text-white = texto sobre óxido.
+   * bg-black/50 (velo de Dialog, Sheet, Drawer) = tinta profunda al 40 %; text-white = texto sobre -relleno.
    */
   --color-black: color-mix(in srgb, var(--tinta-profunda) 80%, transparent);
-  --color-white: var(--sobre-oxido);
+  --color-white: var(--sobre-relleno);
 
   /* Semántica de shadcn/ui */
   --color-background: var(--background);
@@ -89,6 +92,7 @@
   --font-weight-normal: var(--peso-regular);
   --font-weight-medium: var(--peso-medio);
   --font-weight-semibold: var(--peso-semibold);
+  --font-weight-bold: var(--peso-bold);
 
   /* Todos los tamaños comparten el interlineado de cuerpo; .cifra lo cambia. */
   --text-*: initial;
@@ -107,19 +111,29 @@
   --text-3xl: var(--texto-3xl);
   --text-3xl--line-height: var(--interlineado-cuerpo);
 
-  /* Radios derivados de --radius (6 px): sm 2, md 4, lg 6, xl 10. control y panel siguen existiendo. */
+  /* Radios: --radius (12 px) para controles y menús; panel, tarjeta, tile y fila por jerarquía. Pills: rounded-full. */
   --radius-*: initial;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-full: 9999px;
   --radius-control: var(--radio-control);
+  --radius-fila: var(--radio-fila);
+  --radius-tile: var(--radio-tile);
+  --radius-tarjeta: var(--radio-tarjeta);
   --radius-panel: var(--radio-panel);
 
-  /* Sombras por token: solo lo flotante (popovers, panel, sheet, drawer) proyecta sombra. */
+  /* Breakpoints del board (los de la referencia): tres columnas desde 1181 px, experimentos al costado desde 1500 px. */
+  --breakpoint-tablero: 73.8125rem;
+  --breakpoint-ancho: 93.75rem;
+
+  /* Sombras por token: paneles y tarjetas con la suave; lo flotante (popovers, sheet, drawer, avisos) con la marcada. */
   --shadow-*: initial;
   --shadow-xs: none;
-  --shadow-sm: none;
+  --shadow-sm: var(--sombra-tarjeta);
+  --shadow-tarjeta: var(--sombra-tarjeta);
   --shadow-md: var(--sombra-flotante);
   --shadow-lg: var(--sombra-flotante);
   --shadow-flotante: var(--sombra-flotante);
@@ -137,6 +151,14 @@
   line-height: var(--interlineado-cifra);
 }
 
+/* Superficie vidriada (paneles, nav, chips, botones redondos): blanco translúcido sobre el degradé. */
+@utility vidrio {
+  background-color: var(--panel);
+  border: 1px solid var(--panel-borde);
+  -webkit-backdrop-filter: blur(var(--vidrio));
+  backdrop-filter: blur(var(--vidrio));
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -146,8 +168,11 @@
     @apply font-sans;
   }
 
+  /* Degradé frío fijo detrás de todo; los paneles vidriados lo dejan ver. */
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-sm text-foreground;
+    background-image: linear-gradient(155deg, var(--fondo-a) 0%, var(--fondo-b) 55%, var(--fondo-c) 100%);
+    background-attachment: fixed;
     line-height: var(--interlineado-cuerpo);
   }
 
@@ -157,9 +182,9 @@
   }
 }
 
-/* Avisos (sonner): sobre la barra inferior en móvil; la barra de latón se vacía en 5 s y se pausa con el hover. */
+/* Avisos (sonner): sobre la barra flotante en móvil; la barra coral se vacía en 5 s y se pausa con el hover. */
 :root {
-  --offset-aviso: calc(var(--alto-barra-movil) + 12px);
+  --offset-aviso: calc(var(--alto-barra-movil) + 28px);
 }
 @media (min-width: 768px) {
   :root {
@@ -172,7 +197,7 @@
   inset-inline: 0;
   bottom: 0;
   height: 2px;
-  background: var(--laton);
+  background: var(--coral);
   transform-origin: left;
   animation: aviso-vaciar 5s linear forwards;
 }

@@ -38,6 +38,7 @@ export function datosCompactos(): DatosCompactos {
     sector: l.sector,
     estado: l.estado,
     score: l.score,
+    ultimaActividad: l.ultimaActividad,
     ...(l.fugaId ? { fugaId: l.fugaId } : {}),
   }));
 

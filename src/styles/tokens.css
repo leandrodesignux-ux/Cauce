@@ -1,49 +1,63 @@
 /*
- * Tokens de diseño de Cauce. Fuente de verdad: docs/DESIGN.md.
+ * Tokens de diseño de Cauce. Fuente de verdad: docs/DESIGN.md (referencia visual: docs/referencia/).
  * Tailwind los expone como utilidades en src/app/globals.css (@theme inline).
  *
  * Dos familias conviven:
- * - Cauce (concreto, papel, tinta, cauce, latón, óxido…): las usa el río y la UI propia.
+ * - Cauce (fondo, panel, tarjeta, tinta, azul, coral, activo…): la paleta del journey board.
  * - Semántica de shadcn/ui (background, primary, muted…): apunta a las de Cauce, nunca al revés.
  *
- * Regla de color: cauce, latón y óxido base son solo para rellenos y trazos.
- * Todo texto en esos tonos usa su variante -texto (AA garantizado por `npm run contraste`).
+ * Reglas de color:
+ * - azul y coral base: solo líneas y trazos (espina, fugas, conectores, bordes, arcos).
+ * - -texto: letras en ese tono. Siempre sobre tarjeta o sobre su -suave, nunca sobre el degradé.
+ * - -relleno: pills sólidas con texto blanco (--sobre-relleno).
+ * Sobre el degradé y los paneles vidriados solo va texto neutro (tinta, tinta-2).
+ * `npm run contraste` verifica cada par en claro y oscuro.
  */
 
 :root {
-  /* Color base */
-  --concreto: #e9ebe8;
-  --papel: #f7f8f6;
-  --tinta: #142019;
-  --niebla: #5a6862;
-  --cauce: #2e6b52;
-  --laton: #a9822f;
-  --oxido: #b4472f;
+  /* Fondo: degradé frío de tres paradas */
+  --fondo-a: #e4e8ef;
+  --fondo-b: #d3dae7;
+  --fondo-c: #c9d1e2;
 
-  /* Texto en los tonos de acento */
-  --cauce-texto: #24573f;
-  --laton-texto: #7a5a1f;
-  --oxido-texto: #9a3a24;
-  /* Niebla sobre su propio relleno (badges neutros): un paso más oscura que --niebla */
-  --niebla-texto: #4c5953;
+  /* Superficies */
+  --panel: rgb(255 255 255 / 0.42);
+  --panel-borde: rgb(255 255 255 / 0.75);
+  --tarjeta: #f8f9fb;
+  --tarjeta-borde: #ffffff;
 
-  /* Derivados */
-  --cauce-suave: color-mix(in srgb, var(--cauce) 14%, transparent);
-  --laton-suave: color-mix(in srgb, var(--laton) 14%, transparent);
-  --oxido-suave: color-mix(in srgb, var(--oxido) 12%, transparent);
-  --niebla-suave: color-mix(in srgb, var(--niebla) 14%, transparent);
-  /* Relleno más intenso para el estado de mayor certeza (badge Validado) */
-  --cauce-fuerte: color-mix(in srgb, var(--cauce) 18%, transparent);
-  --linea: #d3d8d4;
-  --linea-fuerte: #b9c1bc;
+  /* Texto neutro */
+  --tinta: #111318;
+  --tinta-2: #4b5160;
+  --tenue: #5f6576;
 
-  /* Texto sobre fondos de acento sólidos (botones, chips activos) */
-  --sobre-cauce: var(--papel);
-  --sobre-laton: var(--tinta);
-  --sobre-oxido: var(--papel);
+  /* Líneas */
+  --linea: #dde2ea;
+  --linea-fuerte: #c3cad7;
 
-  /* Velo de overlays (Dialog, Sheet, Drawer, ⌘K): siempre la tinta oscura, en ambos modos */
-  --tinta-profunda: #142019;
+  /* Azul: avanza */
+  --azul: #7e95da;
+  --azul-texto: #3651a8;
+  --azul-relleno: #3d5bc0;
+  --azul-suave: #e3e8f7;
+
+  /* Coral: se pierde */
+  --coral: #e26a61;
+  --coral-texto: #b23a32;
+  --coral-relleno: #c2453c;
+  --coral-suave: #f7e2df;
+
+  /* Neutro tintado (badges neutros, hover de controles) */
+  --neutro-suave: color-mix(in srgb, var(--tinta-2) 10%, transparent);
+
+  /* Activo: pill negra en claro, blanca en oscuro */
+  --activo: #0f1014;
+  --sobre-activo: #ffffff;
+  /* Texto sobre -relleno (azul y coral): blanco en ambos modos */
+  --sobre-relleno: #ffffff;
+
+  /* Velo de overlays (Dialog, Sheet, Drawer, ⌘K): siempre oscuro, en ambos modos */
+  --tinta-profunda: #0f1014;
 
   /* Tipografía (las variables --font-* las inyecta next/font en <html>) */
   --fuente-cifra: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
@@ -52,6 +66,7 @@
   --peso-regular: 400;
   --peso-medio: 500;
   --peso-semibold: 600;
+  --peso-bold: 700;
 
   --texto-xs: 0.75rem;
   --texto-sm: 0.875rem;
@@ -61,89 +76,103 @@
   --texto-2xl: 2.5rem;
   --texto-3xl: 3.5rem;
 
-  --interlineado-cuerpo: 1.5;
+  --interlineado-cuerpo: 1.45;
   --interlineado-cifra: 1.1;
 
-  /* Radios */
-  --radio-control: 6px;
-  --radio-panel: 10px;
+  /* Radios por jerarquía */
+  --radio-panel: 32px;
+  --radio-tarjeta: 26px;
+  --radio-tile: 22px;
+  --radio-fila: 18px;
+  --radio-control: 12px;
+
+  /* Desenfoque del vidrio */
+  --vidrio: 18px;
 
   /* Layout */
-  --ancho-nav: 200px;
-  --ancho-nav-compacta: 64px;
-  --ancho-panel: 420px;
-  --alto-barra-movil: 56px;
+  --ancho-rail: 88px;
+  --ancho-panel: 440px;
+  --alto-barra-movil: 64px;
 
   /* Motion */
-  --duracion-rapida: 200ms;
+  --duracion-rapida: 150ms;
   --duracion-media: 300ms;
   --curva-salida: cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* Sombras (solo popovers, panel lateral, sheet y drawer) */
-  --sombra-flotante: 0 8px 24px rgb(20 32 25 / 0.1);
+  /* Sombras: suave en paneles y tarjetas, más marcada en lo flotante */
+  --sombra-tarjeta: 0 1px 2px rgb(17 19 24 / 0.04), 0 8px 24px rgb(40 52 90 / 0.06);
+  --sombra-flotante: 0 2px 6px rgb(17 19 24 / 0.06), 0 16px 40px rgb(40 52 90 / 0.14);
 
   /* ---- Semántica de shadcn/ui → tokens de Cauce ---- */
-  --background: var(--concreto);
+  --background: var(--fondo-b);
   --foreground: var(--tinta);
-  --card: var(--papel);
+  --card: var(--tarjeta);
   --card-foreground: var(--tinta);
-  --popover: var(--papel);
+  --popover: var(--tarjeta);
   --popover-foreground: var(--tinta);
-  --primary: var(--cauce);
-  --primary-foreground: var(--sobre-cauce);
-  --secondary: color-mix(in srgb, var(--niebla) 10%, var(--papel));
+  --primary: var(--activo);
+  --primary-foreground: var(--sobre-activo);
+  --secondary: color-mix(in srgb, var(--tinta-2) 8%, var(--tarjeta));
   --secondary-foreground: var(--tinta);
-  --muted: color-mix(in srgb, var(--niebla) 10%, var(--papel));
-  --muted-foreground: var(--niebla);
-  --accent: var(--cauce-suave);
+  --muted: color-mix(in srgb, var(--tinta-2) 8%, var(--tarjeta));
+  --muted-foreground: var(--tinta-2);
+  --accent: var(--azul-suave);
   --accent-foreground: var(--tinta);
-  --destructive: var(--oxido);
+  --destructive: var(--coral-relleno);
   --border: var(--linea);
-  --input: var(--linea);
-  --ring: var(--cauce);
+  --input: var(--linea-fuerte);
+  --ring: var(--azul-texto);
   --radius: var(--radio-control);
-  --chart-1: var(--cauce);
-  --chart-2: var(--laton);
-  --chart-3: var(--oxido);
-  --chart-4: var(--niebla);
-  --chart-5: var(--tinta);
-  --sidebar: var(--concreto);
+  --chart-1: var(--azul);
+  --chart-2: var(--coral);
+  --chart-3: var(--azul-relleno);
+  --chart-4: var(--coral-relleno);
+  --chart-5: var(--tenue);
+  --sidebar: var(--fondo-a);
   --sidebar-foreground: var(--tinta);
-  --sidebar-primary: var(--cauce);
-  --sidebar-primary-foreground: var(--sobre-cauce);
-  --sidebar-accent: var(--cauce-suave);
+  --sidebar-primary: var(--activo);
+  --sidebar-primary-foreground: var(--sobre-activo);
+  --sidebar-accent: var(--azul-suave);
   --sidebar-accent-foreground: var(--tinta);
   --sidebar-border: var(--linea);
-  --sidebar-ring: var(--cauce);
+  --sidebar-ring: var(--azul-texto);
 
   color-scheme: light;
 }
 
 /* Modo oscuro por clase (.dark en <html>, lo pone next-themes con el switch) */
 .dark {
-  --concreto: #18211d;
-  --papel: #1f2a25;
-  --tinta: #e4e9e6;
-  /* +4 de L sobre el #8A9A93 original: con 10 % de niebla en muted, el original daba 4.3:1 */
-  --niebla: #95a39d;
-  /* cauce, latón y óxido: +12 de L en HSL respecto del modo claro */
-  --cauce: #409673;
-  --laton: #cca249;
-  --oxido: #d1674f;
+  --fondo-a: #14171e;
+  --fondo-b: #171b24;
+  --fondo-c: #1b2030;
 
-  --cauce-texto: #5cb58f;
-  --laton-texto: #d9b35f;
-  --oxido-texto: #e8846d;
-  --niebla-texto: #a7b4ae;
+  --panel: rgb(255 255 255 / 0.035);
+  --panel-borde: rgb(255 255 255 / 0.07);
+  --tarjeta: #20242e;
+  --tarjeta-borde: #2a2f3b;
 
-  --linea: #2e3a34;
-  --linea-fuerte: #3c4943;
+  --tinta: #eef0f4;
+  --tinta-2: #c3c8d2;
+  --tenue: #a3aab8;
 
-  --sobre-cauce: #0e1411;
-  --sobre-laton: #0e1411;
-  --sobre-oxido: #0e1411;
+  --linea: #2c3240;
+  --linea-fuerte: #3a4152;
 
-  --sombra-flotante: 0 8px 24px rgb(0 0 0 / 0.4);
+  --azul: #8ea3e6;
+  --azul-texto: #9db0ee;
+  --azul-relleno: #3d5bc0;
+  --azul-suave: #2a3350;
+
+  --coral: #ee7f76;
+  --coral-texto: #f08a80;
+  --coral-relleno: #c2453c;
+  --coral-suave: #3d2a2d;
+
+  --activo: #f2f3f6;
+  --sobre-activo: #0f1014;
+
+  --sombra-tarjeta: 0 8px 24px rgb(0 0 0 / 0.35);
+  --sombra-flotante: 0 16px 40px rgb(0 0 0 / 0.5);
 
   color-scheme: dark;
 }

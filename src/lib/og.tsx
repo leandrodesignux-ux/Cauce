@@ -20,19 +20,19 @@ export const TAMANO_OG = { width: 1200, height: 630 };
 
 function Marco({ titulo, subtitulo, children }: { titulo: string; subtitulo: string; children: ReactNode }) {
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: COLOR.concreto, color: COLOR.tinta, padding: 64 }}>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", backgroundImage: `linear-gradient(155deg, ${COLOR.fondoA}, ${COLOR.fondoB} 55%, ${COLOR.fondoC})`, color: COLOR.tinta, padding: 64 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
         <svg width="40" height="40" viewBox="0 0 24 24">
-          <path d="M2 4.5C9 4.5 11.5 9 22 10v4C11.5 15 9 19.5 2 19.5z" fill={COLOR.cauce} />
-          <circle cx="14.5" cy="21" r="1.6" fill={COLOR.oxido} />
+          <path d="M2 4.5C9 4.5 11.5 9 22 10v4C11.5 15 9 19.5 2 19.5z" fill={COLOR.azulRelleno} />
+          <circle cx="14.5" cy="21" r="1.6" fill={COLOR.coral} />
         </svg>
         <span style={{ fontSize: 34, fontWeight: 700, letterSpacing: -0.5 }}>Cauce</span>
         <span
           style={{
             marginLeft: "auto",
             fontSize: 20,
-            color: COLOR.niebla,
-            border: `2px dashed ${COLOR.niebla}`,
+            color: COLOR.tinta2,
+            border: `2px dashed ${COLOR.tinta2}`,
             borderRadius: 8,
             padding: "6px 14px",
           }}
@@ -42,7 +42,7 @@ function Marco({ titulo, subtitulo, children }: { titulo: string; subtitulo: str
       </div>
       <div style={{ display: "flex", flexDirection: "column", marginTop: 44 }}>
         <span style={{ fontSize: 60, fontWeight: 700, lineHeight: 1.05, letterSpacing: -1.5 }}>{titulo}</span>
-        <span style={{ fontSize: 26, color: COLOR.niebla, marginTop: 16, lineHeight: 1.35, maxWidth: 900 }}>{subtitulo}</span>
+        <span style={{ fontSize: 26, color: COLOR.tinta2, marginTop: 16, lineHeight: 1.35, maxWidth: 900 }}>{subtitulo}</span>
       </div>
       <div style={{ display: "flex", flex: 1, alignItems: "flex-end" }}>{children}</div>
     </div>
@@ -76,11 +76,11 @@ export function imagenCauce() {
       <Marco titulo="La demanda como un río" subtitulo={`Del primer clic al contrato, con las fugas a la vista: ${formatoM(valorEnRiesgoTotal(pozas))} en riesgo en 30 días.`}>
         <svg width={1072} height={230} viewBox={`0 ${y0} 1072 ${y1 - y0}`} preserveAspectRatio="none">
           {geo.pozas.map((p) => (
-            <path key={p.id} d={p.hilo} fill="none" stroke={COLOR.oxido} strokeWidth={p.grosorHilo} strokeLinecap="round" />
+            <path key={p.id} d={p.hilo} fill="none" stroke={COLOR.coral} strokeWidth={p.grosorHilo} strokeLinecap="round" />
           ))}
-          <path d={geo.rio} fill={COLOR.cauce} />
+          <path d={geo.rio} fill={COLOR.azulRelleno} />
           {geo.pozas.map((p) => (
-            <ellipse key={p.id} cx={p.x} cy={p.y} rx={p.rx} ry={p.ry} fill={COLOR.oxidoSuave} stroke={COLOR.oxido} strokeWidth={2} />
+            <ellipse key={p.id} cx={p.x} cy={p.y} rx={p.rx} ry={p.ry} fill={COLOR.coralSuave} stroke={COLOR.coral} strokeWidth={2} />
           ))}
         </svg>
       </Marco>
@@ -98,12 +98,12 @@ export function imagenFugas() {
       <Marco titulo="Pozas y rescate" subtitulo="Cuánto vale lo que se escapa y qué leads con intención conviene rescatar primero.">
         <div style={{ display: "flex", alignItems: "flex-end", gap: 56, width: "100%" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: 24, color: COLOR.niebla }}>Valor en riesgo en la poza de fantasmas</span>
-            <span style={{ fontSize: 96, fontWeight: 700, color: COLOR.laton, letterSpacing: -2 }}>{`$${monto.toLocaleString("en-US")} MXN`}</span>
+            <span style={{ fontSize: 24, color: COLOR.tinta2 }}>Valor en riesgo en la poza de fantasmas</span>
+            <span style={{ fontSize: 96, fontWeight: 700, color: COLOR.tinta, letterSpacing: -2 }}>{`$${monto.toLocaleString("en-US")} MXN`}</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", marginLeft: "auto", alignItems: "flex-end" }}>
-            <span style={{ fontSize: 24, color: COLOR.niebla }}>Leads en pozas</span>
-            <span style={{ fontSize: 72, fontWeight: 700, color: COLOR.cauce }}>{leads.length}</span>
+            <span style={{ fontSize: 24, color: COLOR.tinta2 }}>Leads en pozas</span>
+            <span style={{ fontSize: 72, fontWeight: 700, color: COLOR.azulRelleno }}>{leads.length}</span>
           </div>
         </div>
       </Marco>
@@ -118,7 +118,7 @@ export function imagenExperimentos(experimentos: { nombre: string; estado: strin
   const inicio = Date.parse(ordenados[0].despliegue);
   const fin = Math.max(...ordenados.map((e) => Date.parse(e.despliegue) + (e.ventanaSemanas[1] + 1) * 7 * 86_400_000));
   const x = (t: number) => ((t - inicio) / (fin - inicio)) * 100;
-  const tono: Record<string, string> = { diseno: COLOR.niebla, en_curso: COLOR.cauce, leyendo: COLOR.laton, validado: COLOR.cauce, refutado: COLOR.oxido };
+  const tono: Record<string, string> = { diseno: COLOR.tinta2, en_curso: COLOR.azulRelleno, leyendo: COLOR.tinta, validado: COLOR.azulRelleno, refutado: COLOR.coral };
   return new ImageResponse(
     (
       <Marco titulo="Registro de hipótesis" subtitulo="Qué espera mover cada experimento, cuándo se puede leer y qué pasó de verdad.">

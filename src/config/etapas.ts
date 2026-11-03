@@ -20,6 +20,13 @@ export const TRANSICIONES: readonly Transicion[] = ORDEN_ETAPAS.slice(0, -1).map
   hacia: ORDEN_ETAPAS[i + 1],
 }));
 
+/** Fases del journey board: cada una es una tarjeta con sus etapas en orden. */
+export const FASES: readonly { id: "atraer" | "convertir" | "cerrar"; nombre: string; descripcion: string; etapas: readonly EtapaId[] }[] = [
+  { id: "atraer", nombre: "Atraer", descripcion: "Del canal a la ficha", etapas: ["descubrimiento", "exploracion", "evaluacion"] },
+  { id: "convertir", nombre: "Convertir", descripcion: "Del contacto al broker", etapas: ["contacto", "calificacion", "asignacion"] },
+  { id: "cerrar", nombre: "Cerrar", descripcion: "De la visita al contrato", etapas: ["visita", "cierre"] },
+];
+
 export function nombreEtapa(id: EtapaId): string {
   return ETAPAS.find((e) => e.id === id)!.nombre;
 }

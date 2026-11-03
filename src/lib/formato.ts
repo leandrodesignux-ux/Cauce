@@ -17,6 +17,14 @@ export function formatearMxnCorto(n: number): string {
   return Math.abs(n) >= 1_000_000 ? `$${dosDecimales.format(n / 1_000_000)} M MXN` : formatearMxn(n);
 }
 
+/** Filas del board: "$2.31 M", "$352 K", "$950". */
+export function formatearMxnCompacto(n: number): string {
+  const abs = Math.abs(n);
+  if (abs >= 1_000_000) return `$${dosDecimales.format(n / 1_000_000)} M`;
+  if (abs >= 1_000) return `$${entero.format(n / 1_000)} K`;
+  return `$${entero.format(n)}`;
+}
+
 /** Tasa 0–1 → "23.4 %". */
 export function formatearPct(tasa: number | null): string {
   return tasa === null ? "—" : `${unDecimal.format(tasa * 100)} %`;

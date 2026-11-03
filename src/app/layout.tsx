@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 
 // Claro por defecto; <ColorDeBarra> lo actualiza al cambiar de tema con el switch.
 export const viewport: Viewport = {
-  themeColor: COLOR.concreto,
+  themeColor: COLOR.fondoB,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

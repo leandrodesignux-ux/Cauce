@@ -128,7 +128,7 @@ export function CommandPalette() {
                 key={f.id}
                 valor={`poza ${f.causa}`}
                 onSelect={() => ir(`/fugas?poza=${f.id}`)}
-                icono={<Droplet className="text-oxido-texto" />}
+                icono={<Droplet className="text-coral-texto" />}
                 detalle={`${nombreEtapa(f.desde)} → ${nombreEtapa(f.hacia)}`}
               >
                 {f.causa}

@@ -6,18 +6,21 @@ import { cn } from "@/lib/utils"
 import { Toggle as TogglePrimitive } from "radix-ui"
 
 const toggleVariants = cva(
-  "group/toggle inline-flex items-center justify-center gap-1 rounded-lg text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/toggle inline-flex items-center justify-center gap-1 rounded-full text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default:
           "bg-transparent hover:bg-muted hover:text-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
-        // Chips y alternadores de Cauce: contorno en reposo, cauce tintado cuando está activo.
+        // Chips y alternadores de Cauce: pill vidriada en reposo, pill negra (blanca en oscuro) si está activa.
         outline:
-          "border border-linea-fuerte bg-transparent text-foreground hover:border-niebla hover:bg-card data-[state=on]:border-cauce data-[state=on]:bg-cauce-suave data-[state=on]:text-cauce-texto",
-        // Control segmentado (período, flujo/tabla): el activo va invertido en tinta.
+          "rounded-full vidrio text-tinta-2 hover:bg-tarjeta hover:text-tinta data-[state=on]:border-activo data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",
+        // Chip de alerta (ventana crítica): borde coral en reposo, pill coral sólida si está activa.
+        alerta:
+          "rounded-full border border-coral bg-tarjeta text-tinta hover:bg-coral-suave data-[state=on]:border-coral-relleno data-[state=on]:bg-coral-relleno data-[state=on]:text-sobre-relleno",
+        // Control segmentado (vistas, período, tabla/timeline): pill negra para el activo dentro de una pill vidriada.
         segmentado:
-          "h-full rounded-[calc(var(--radius)-2px)] text-muted-foreground hover:text-foreground data-[state=on]:bg-foreground data-[state=on]:text-background",
+          "h-full rounded-full px-4 text-tinta-2 hover:text-tinta data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",
       },
       size: {
         default:

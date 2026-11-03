@@ -64,7 +64,7 @@ export function TendenciaSemanal({
           {[min, max].map((v, k) => (
             <g key={k}>
               <line x1={0} x2={ancho - M.derecha + 8} y1={sy(v)} y2={sy(v)} className="stroke-linea" strokeDasharray="2 4" />
-              <text x={ancho} y={sy(v) + 4} textAnchor="end" className="cifra fill-niebla text-xs">
+              <text x={ancho} y={sy(v) + 4} textAnchor="end" className="cifra fill-tinta-2 text-xs">
                 {formato(v)}
               </text>
             </g>
@@ -78,8 +78,8 @@ export function TendenciaSemanal({
               const x1 = sx(ultimo) + 4;
               return (
                 <g>
-                  <rect x={x0} y={M.arriba - 4} width={x1 - x0} height={ALTO - M.abajo - M.arriba + 4} fill="var(--laton)" fillOpacity={0.1} />
-                  <text x={(x0 + x1) / 2} y={ALTO - M.abajo - 6} textAnchor="middle" className="fill-laton-texto text-xs">
+                  <rect x={x0} y={M.arriba - 4} width={x1 - x0} height={ALTO - M.abajo - M.arriba + 4} fill="var(--coral)" fillOpacity={0.1} />
+                  <text x={(x0 + x1) / 2} y={ALTO - M.abajo - 6} textAnchor="middle" className="fill-tinta text-xs">
                     {franja.etiqueta}
                   </text>
                 </g>
@@ -96,17 +96,17 @@ export function TendenciaSemanal({
             return (
               <g key={m.semana + m.etiqueta}>
                 <title>{m.etiqueta}</title>
-                <line x1={x} x2={x} y1={M.arriba - 8} y2={ALTO - M.abajo} className="stroke-laton" strokeDasharray="3 3" />
-                <text x={haciaIzquierda ? x - 4 : x + 4} y={M.arriba - 12} textAnchor={haciaIzquierda ? "end" : "start"} className="fill-laton-texto text-xs">
+                <line x1={x} x2={x} y1={M.arriba - 8} y2={ALTO - M.abajo} className="stroke-coral" strokeDasharray="3 3" />
+                <text x={haciaIzquierda ? x - 4 : x + 4} y={M.arriba - 12} textAnchor={haciaIzquierda ? "end" : "start"} className="fill-tinta text-xs">
                   {texto}
                 </text>
               </g>
             );
           })}
-          <path d={relleno(validos) ?? ""} fill="var(--cauce-suave)" />
-          <path d={trazo(validos) ?? ""} fill="none" stroke="var(--cauce)" strokeWidth={2} />
+          <path d={relleno(validos) ?? ""} fill="var(--azul-suave)" />
+          <path d={trazo(validos) ?? ""} fill="none" stroke="var(--azul-relleno)" strokeWidth={2} />
           {validos.map((p) => (
-            <circle key={p.i} cx={sx(p.i)} cy={sy(p.valor)} r={p.i === indice ? 4 : 2} fill="var(--cauce)" stroke="var(--papel)" strokeWidth={p.i === indice ? 2 : 0} />
+            <circle key={p.i} cx={sx(p.i)} cy={sy(p.valor)} r={p.i === indice ? 4 : 2} fill="var(--azul-relleno)" stroke="var(--tarjeta)" strokeWidth={p.i === indice ? 2 : 0} />
           ))}
           {puntoActivo && (
             <text
@@ -118,7 +118,7 @@ export function TendenciaSemanal({
               {formato(puntoActivo.valor)}
             </text>
           )}
-          <text x={sx(0)} y={ALTO - 4} className="fill-niebla text-xs">
+          <text x={sx(0)} y={ALTO - 4} className="fill-tinta-2 text-xs">
             {formatearSemanaCorta(puntos[0].semana)}
           </text>
           {puntoActivo && puntoActivo.i !== 0 && puntoActivo.i !== puntos.length - 1 && (
@@ -126,7 +126,7 @@ export function TendenciaSemanal({
               {formatearSemanaCorta(puntoActivo.semana)}
             </text>
           )}
-          <text x={sx(puntos.length - 1)} y={ALTO - 4} textAnchor="end" className="fill-niebla text-xs">
+          <text x={sx(puntos.length - 1)} y={ALTO - 4} textAnchor="end" className="fill-tinta-2 text-xs">
             {formatearSemanaCorta(puntos[puntos.length - 1].semana)}
           </text>
         </svg>

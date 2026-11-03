@@ -15,9 +15,3 @@ export const DIMENSIONES = [
 
 export type ClaveDimension = (typeof DIMENSIONES)[number]["clave"];
 
-/** "Canal", "Canal: SEO" o "Canal · 3". */
-export function etiquetaDimension(nombre: string, opciones: readonly { id: string; nombre: string }[], elegidos: readonly string[]): string {
-  if (elegidos.length === 0) return nombre;
-  if (elegidos.length === 1) return `${nombre}: ${opciones.find((o) => o.id === elegidos[0])!.nombre}`;
-  return `${nombre} · ${elegidos.length}`;
-}

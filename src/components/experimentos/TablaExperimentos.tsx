@@ -28,20 +28,20 @@ export function TablaExperimentos({
               data-exp={e.id}
               onClick={() => onAbrir(e.id)}
               aria-expanded={seleccionado === e.id}
-              className={`flex w-full flex-col gap-2 rounded-panel border p-4 text-left ${seleccionado === e.id ? "border-cauce bg-cauce-suave" : "border-linea bg-papel"}`}
+              className={`flex w-full flex-col gap-2 rounded-tile border p-4 text-left shadow-tarjeta ${seleccionado === e.id ? "border-azul bg-azul-suave" : "border-tarjeta-borde bg-tarjeta"}`}
             >
               <span className="flex items-start justify-between gap-3">
                 <span>
                   <span className="block font-medium">{e.nombre}</span>
-                  <span className="block text-xs text-niebla">{e.palanca}</span>
+                  <span className="block text-xs text-tinta-2">{e.palanca}</span>
                 </span>
                 <ChipEstado estado={e.estado} />
               </span>
               <span className="text-sm">
                 {nombreEtapa(e.transicion.desde)} → {nombreEtapa(e.transicion.hacia)}
               </span>
-              <span className="text-sm text-niebla">{e.hipotesis}</span>
-              <span className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-niebla">
+              <span className="text-sm text-tinta-2">{e.hipotesis}</span>
+              <span className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-tinta-2">
                 <span className="whitespace-nowrap">Despliegue {formatearSemanaCorta(e.despliegue)}</span>
                 <span className="whitespace-nowrap">
                   Lectura {formatearSemanaCorta(inicioLectura(e))} – {formatearSemanaCorta(finLectura(e))}
@@ -75,22 +75,22 @@ export function TablaExperimentos({
                     data-exp={e.id}
                     onClick={() => onAbrir(e.id)}
                     aria-expanded={seleccionado === e.id}
-                    className="rounded-control text-left font-medium hover:text-cauce-texto"
+                    className="rounded-control text-left font-medium hover:text-azul-texto"
                   >
                     {e.nombre}
                   </button>
-                  <span className="mt-0.5 block text-xs text-niebla">{e.palanca}</span>
+                  <span className="mt-0.5 block text-xs text-tinta-2">{e.palanca}</span>
                 </TableRowHead>
                 <TableCell className="whitespace-nowrap py-3">
                   {nombreEtapa(e.transicion.desde)} → {nombreEtapa(e.transicion.hacia)}
                 </TableCell>
-                <TableCell className="max-w-72 py-3 text-niebla">{e.hipotesis}</TableCell>
+                <TableCell className="max-w-72 py-3 text-tinta-2">{e.hipotesis}</TableCell>
                 <TableCell className="cifra whitespace-nowrap py-3">{formatearSemana(e.despliegue)}</TableCell>
                 <TableCell className="whitespace-nowrap py-3">
                   <span className="cifra">
                     {formatearSemanaCorta(inicioLectura(e))} – {formatearSemanaCorta(finLectura(e))}
                   </span>
-                  <span className="block text-xs text-niebla">
+                  <span className="block text-xs text-tinta-2">
                     Semanas {e.ventanaSemanas[0]}–{e.ventanaSemanas[1]}
                   </span>
                 </TableCell>
