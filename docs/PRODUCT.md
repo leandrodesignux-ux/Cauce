@@ -2,7 +2,7 @@
 
 ## En una frase
 
-Cauce muestra la demanda como un río: entra ancho por los canales de adquisición, se angosta en cada etapa, y lo que se escapa cae a pozas que se pueden ver, cuantificar y rescatar.
+Cauce muestra la demanda como un recorrido: entra por los canales de adquisición, avanza (o no) en cada etapa, y lo que se escapa cae a pozas que se pueden ver, cuantificar y rescatar.
 
 ## Para quién y para qué
 
@@ -40,18 +40,19 @@ Cada fuga cuelga de una transición y tiene causa, volumen, valor estimado en MX
 
 ## Vistas
 
-### `/` — El cauce (home)
+### `/` — El journey board (home)
 
-Lo primero que se ve es el río, no una fila de KPI cards.
+Lo primero que se ve es el recorrido completo, no una fila de KPI cards. Referencia visual: `docs/referencia/cauce-home-referencia.html`.
 
-- Flujo horizontal de las 8 etapas. El ancho del cauce es proporcional al volumen. Entre etapas, la tasa de conversión de esa transición y su delta vs. el período anterior.
-- Las fugas caen por debajo del cauce como hilos hacia pozas rotuladas con causa, volumen y MXN.
-- Filtros (en la URL): período (7d / 30d / 90d / personalizado), canal, sector, estado de la República.
-- Toggle "Comparar con período anterior": dibuja el contorno del río anterior detrás del actual.
-- Hover en etapa o transición: tooltip con volumen, tasa y tendencia (sparkline de 12 semanas).
-- Click en etapa o transición: abre el panel lateral (ver abajo).
-- Toggle "Ver como tabla": misma información en tabla accesible.
-- Una sola franja de contexto arriba: valor en riesgo del período (suma de pozas en MXN) y "Rescatados hoy": leads rescatados en la fecha actual (el store guarda la fecha de cada rescate).
+- Título "Journey de adquisición" con el período en el subtítulo.
+- Panel **Recorrido del lead**: valor en riesgo del período (suma de pozas en MXN) y cuántas pozas lo forman; la tira **Por rescatar** con los 7 fantasmas pendientes de mayor score (iniciales y días sin atención, en coral si son más de 3; clic abre el lead en `/fugas`, "+N" son los demás pendientes); botones de comparar y de ver como tabla.
+- **Tres tarjetas por fase**: Atraer (Descubrimiento, Exploración, Evaluación), Convertir (Contacto, Calificación, Asignación) y Cerrar (Visita, Cierre). Cada etapa es una fila con volumen, tasa de avance a la siguiente y delta en pp contra el período anterior (Cierre: porcentaje del total). Debajo de cada etapa, indentadas, sus fugas con causa, perdidos y monto.
+- Conectores: espina azul entre etapas, curvas con puntos entre tarjetas, fugas en coral punteado que caen separadas de la espina.
+- Clic en una etapa: abre el panel de la etapa y actualiza la URL (`?etapa=…`). Clic en una fuga: `/fugas?poza=…`. **Rescatar** en Fantasmas: va a la poza de fantasmas.
+- **Experimentos**: tiles con estado y la predicción en pp; hover o foco resaltan la etapa que atacan; clic abre el detalle. El tile negro es el experimento más reciente en lectura.
+- Filtros (en la URL): período (7d / 30d / 90d / personalizado), canal, sector, estado de la República, como chips arriba a la derecha.
+- "Comparar con período anterior": cada etapa muestra también el volumen del período anterior. "Ver como tabla": la misma información en tablas accesibles. "Exportar" (rail): CSV con etapas y pozas con los filtros vigentes.
+- **Fila inferior**: tabla **Fantasmas por rescatar** con los 4 de mayor score (intención, días sin atención, qué buscan) y **Rescatar** real (store + aviso con Deshacer); medidores de **valor en riesgo por fase** y **rescatados hoy** sobre los fantasmas del día.
 
 **Panel lateral de etapa/transición**
 - Desglose por canal, sector y estado (barras horizontales ordenadas).
@@ -66,7 +67,7 @@ Lo primero que se ve es el río, no una fila de KPI cards.
 - Feed de leads con: nombre demo abreviado, teléfono enmascarado, sector, estado, score de intención (Alto ≥70 / Medio 40–69 / Bajo <40), urgencia, último mensaje, antigüedad, mensajes, espacios vistos.
 - Filtros por banda de score y por antigüedad (destacar la ventana crítica de 3 días).
 - Acciones: **Rescatar lead** y **Descartar**. Atajos `R` / `D` sobre el elemento enfocado, `J` / `K` para moverse. Selección múltiple con `Shift`.
-- **Interacción clave:** al rescatar, el lead vuelve al cauce. En `/` aparece un hilo de retorno desde la poza hacia Asignación y el contador "rescatados" sube. Deshacer disponible durante 5 s (toast).
+- **Interacción clave:** al rescatar, el lead sale de la poza: en `/` deja la tira y la tabla de fantasmas y sube el medidor de rescatados hoy. Deshacer disponible durante 5 s (toast).
 
 ### `/experimentos` — Registro de hipótesis
 
@@ -85,9 +86,9 @@ Cada iniciativa debe declarar, antes de desplegarse, qué espera mover y cuándo
 
 ### Global
 
-- Navegación lateral: Cauce, Fugas, Experimentos.
+- Nav de vistas en pill (Cauce, Fugas, Experimentos) y rail de botones circulares (buscar, filtros, comparar, tabla, exportar, tema). En móvil, barra flotante abajo.
 - Paleta de comandos `⌘K` / `Ctrl+K`: saltar a una vista, un lead, un experimento o una etapa.
-- Sello visible "Prototipo · datos demo" en el pie de la navegación.
+- Sello visible "Prototipo con datos demo" en el rail (en móvil, al pie del contenido).
 
 ## Fuera de alcance
 

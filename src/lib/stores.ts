@@ -49,7 +49,7 @@ export const useSesion = create<Sesion>()(
   ),
 );
 
-function esHoy(iso: string): boolean {
+export function esHoy(iso: string): boolean {
   const fecha = new Date(iso);
   const hoy = new Date();
   return fecha.getFullYear() === hoy.getFullYear() && fecha.getMonth() === hoy.getMonth() && fecha.getDate() === hoy.getDate();

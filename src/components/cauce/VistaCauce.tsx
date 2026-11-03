@@ -14,6 +14,7 @@ import { formatearMxnCorto, formatearRangoSemanas } from "@/lib/formato";
 import { experimentoDestacado, experimentosDelBoard } from "@/lib/journey";
 import type { EtapaId } from "@/lib/tipos";
 import { DataTableCauce } from "./DataTableCauce";
+import { FilaInferior } from "./FilaInferior";
 import { JourneyBoard } from "./JourneyBoard";
 import { TiraFantasmas } from "./TiraFantasmas";
 
@@ -104,6 +105,8 @@ export function VistaCauce() {
           </>
         )}
       </section>
+
+      <FilaInferior journey={journey} />
 
       <StagePanel
         abierto={seleccion !== null}
