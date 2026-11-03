@@ -1,15 +1,13 @@
-import { FlaskConical } from "lucide-react";
 import type { Metadata } from "next";
-import { EnConstruccion } from "@/components/EnConstruccion";
+import { Suspense } from "react";
+import { VistaExperimentos } from "@/components/experimentos/VistaExperimentos";
 
 export const metadata: Metadata = { title: "Experimentos" };
 
 export default function Experimentos() {
   return (
-    <EnConstruccion
-      titulo="Registro de hipótesis"
-      descripcion="Aquí van a estar la tabla y el timeline de experimentos con su lectura."
-      Icono={FlaskConical}
-    />
+    <Suspense>
+      <VistaExperimentos />
+    </Suspense>
   );
 }

@@ -8,6 +8,8 @@ import { formatearSemanaCorta } from "@/lib/formato";
 
 export type PuntoSerie = { semana: string; valor: number | null };
 export type Marcador = { semana: string; etiqueta: string };
+/** Tramo sombreado (por ejemplo, la ventana de lectura de un experimento). Semanas en ISO de lunes. */
+export type Franja = { desde: string; hasta: string; etiqueta: string };
 
 const ALTO = 168;
 // A la derecha queda una columna para los rótulos de mínimo y máximo.
@@ -19,11 +21,13 @@ export function TendenciaSemanal({
   puntos,
   formato,
   marcadores,
+  franja,
   descripcion,
 }: {
   puntos: PuntoSerie[];
   formato: (v: number) => string;
   marcadores: Marcador[];
+  franja?: Franja;
   descripcion: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -65,6 +69,22 @@ export function TendenciaSemanal({
               </text>
             </g>
           ))}
+          {franja &&
+            (() => {
+              const a = puntos.findIndex((p) => p.semana >= franja.desde);
+              const ultimo = puntos.map((p) => p.semana <= franja.hasta).lastIndexOf(true);
+              if (a === -1 || ultimo < a) return null;
+              const x0 = sx(a) - 4;
+              const x1 = sx(ultimo) + 4;
+              return (
+                <g>
+                  <rect x={x0} y={M.arriba - 4} width={x1 - x0} height={ALTO - M.abajo - M.arriba + 4} fill="var(--laton)" fillOpacity={0.1} />
+                  <text x={(x0 + x1) / 2} y={ALTO - M.abajo - 6} textAnchor="middle" className="fill-laton text-xs">
+                    {franja.etiqueta}
+                  </text>
+                </g>
+              );
+            })()}
           {marcadores.map((m) => {
             const i = puntos.findIndex((p) => p.semana === m.semana);
             if (i === -1) return null;
