@@ -42,6 +42,17 @@
   --radio-control: 6px;
   --radio-panel: 10px;
 
+  /* Layout */
+  --ancho-nav: 200px;
+  --ancho-nav-compacta: 64px;
+  --ancho-panel: 420px;
+  --alto-barra-movil: 56px;
+
+  /* Motion */
+  --duracion-rapida: 200ms;
+  --duracion-media: 300ms;
+  --curva-salida: cubic-bezier(0.22, 1, 0.36, 1);
+
   /* Sombras (solo popovers y panel lateral) */
   --sombra-flotante: 0 8px 24px rgb(20 32 25 / 0.1);
 

@@ -17,12 +17,13 @@ export const SECTORES: readonly { id: Sector; nombre: string }[] = [
   { id: "terreno", nombre: "Terreno" },
 ];
 
-export const ESTADOS: readonly { id: Estado; nombre: string }[] = [
-  { id: "CDMX", nombre: "CDMX" },
-  { id: "Nuevo León", nombre: "Nuevo León" },
-  { id: "Jalisco", nombre: "Jalisco" },
-  { id: "Edomex", nombre: "Edomex" },
-  { id: "Querétaro", nombre: "Querétaro" },
-  { id: "Puebla", nombre: "Puebla" },
-  { id: "Yucatán", nombre: "Yucatán" },
+/** slug: forma del estado en la URL. */
+export const ESTADOS: readonly { id: Estado; nombre: string; slug: string }[] = [
+  { id: "CDMX", nombre: "CDMX", slug: "cdmx" },
+  { id: "Nuevo León", nombre: "Nuevo León", slug: "nuevo-leon" },
+  { id: "Jalisco", nombre: "Jalisco", slug: "jalisco" },
+  { id: "Edomex", nombre: "Edomex", slug: "edomex" },
+  { id: "Querétaro", nombre: "Querétaro", slug: "queretaro" },
+  { id: "Puebla", nombre: "Puebla", slug: "puebla" },
+  { id: "Yucatán", nombre: "Yucatán", slug: "yucatan" },
 ];

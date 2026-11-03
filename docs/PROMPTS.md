@@ -2,6 +2,8 @@
 
 Pegá un prompt por vez. Cada fase en su rama; revisá el preview de Vercel antes de mergear.
 
+**Foco (nov 2026):** es una pieza para mostrar. Prioridad: que se vea muy bien y sea interactivo. Al final de cada fase, capturas a 1440 y 390 px.
+
 ---
 
 ## Fase 0 — Scaffold
@@ -24,7 +26,7 @@ Pegá un prompt por vez. Cada fase en su rama; revisá el preview de Vercel ante
 
 ## Fase 3 — El cauce
 
-> Construí `RiverChart` en SVG con d3-scale y d3-shape como describe DESIGN.md: 8 etapas, ancho proporcional al volumen, tasas entre etapas, hilos de fuga hacia pozas con su monto en latón, contorno del período anterior cuando "comparar" está activo, animación de llenado solo en la primera carga, interpolación de 300 ms al cambiar filtros, y `prefers-reduced-motion`. Versión vertical en móvil. `DataTable` equivalente cuando "Ver como tabla" está activo. La franja superior muestra valor en riesgo y rescatados.
+> Es la pieza central: máximo cuidado visual y de animación, también en móvil. Construí `RiverChart` en SVG con d3-scale y d3-shape como describe DESIGN.md: 8 etapas, ancho proporcional al volumen, tasas entre etapas, hilos de fuga hacia pozas con su monto en latón, contorno del período anterior cuando "comparar" está activo, animación de llenado solo en la primera carga, interpolación de 300 ms al cambiar filtros, y `prefers-reduced-motion`. Versión vertical en móvil. `DataTable` equivalente cuando "Ver como tabla" está activo. La franja superior muestra valor en riesgo y rescatados.
 
 **Listo cuando:** los filtros cambian el río de forma visible y coherente con los selectores, y la tabla muestra exactamente las mismas cifras.
 
@@ -34,18 +36,18 @@ Pegá un prompt por vez. Cada fase en su rama; revisá el preview de Vercel ante
 
 ## Fase 5 — Fugas y rescate
 
-> Construí `/fugas`: `LossModel` con sliders y fórmula paso a paso usando los valores iniciales de DATA.md; tabs por poza; feed de `LeadFeedItem` con score, urgencia, último mensaje y antigüedad; filtros por banda de score y antigüedad con la ventana de 3 días destacada; acciones Rescatar lead / Descartar con atajos R, D, J, K y selección múltiple; toast con Deshacer de 5 s. Al rescatar, el lead se marca en el store y en `/` aparece el hilo de retorno de la poza de fantasmas hacia Asignación.
+> El hilo de retorno tiene que verse bien. Construí `/fugas`: `LossModel` con sliders y fórmula paso a paso usando los valores iniciales de DATA.md; tabs por poza; feed de `LeadFeedItem` con score, urgencia, último mensaje y antigüedad; filtros por banda de score y antigüedad con la ventana de 3 días destacada; acciones Rescatar lead / Descartar con atajos R, D, J, K y selección múltiple; toast con Deshacer de 5 s. Al rescatar, el lead se marca en el store y en `/` aparece el hilo de retorno de la poza de fantasmas hacia Asignación.
 
 **Listo cuando:** rescatar 3 leads en `/fugas` y volver a `/` muestra el retorno y el contador en 3.
 
 ## Fase 6 — Experimentos
 
-> Construí `/experimentos` con tres vistas conmutables: tabla (todas las columnas de PRODUCT.md), timeline con línea de hoy y gráfico de calibración predicho vs. observado con la diagonal. Click en un experimento abre su detalle con link a la transición en el cauce (`/?transicion=…`).
+> Construí `/experimentos` con dos vistas conmutables: tabla (todas las columnas de PRODUCT.md) y timeline con línea de hoy. Sin gráfico de calibración. Click en un experimento abre su detalle con link a la transición en el cauce (`/?transicion=…`).
 
-## Fase 7 — Recorrido de un lead
+## Fase 7 — Eliminada
 
-> Construí `/leads/[id]` con `LeadTimeline`, `MiniRiver` marcando la etapa actual o la poza, y las señales que explican el score. Desde el feed de fugas y desde ⌘K se llega a cada lead.
+Sin `/leads/[id]`. Los leads se ven en el feed de `/fugas` y se buscan desde ⌘K.
 
 ## Fase 8 — Pulido y deploy
 
-> Revisá accesibilidad (foco, contraste AA, roles y labels en el SVG), estados vacíos con dirección, modo oscuro, metadata y Open Graph de cada vista, y el sello "Prototipo con datos demo". Medí Lighthouse en el preview y corregí lo que baje de 90 en performance o accesibilidad.
+> Pulido visual, modo oscuro, estados vacíos con dirección, sello "Prototipo con datos demo", metadata y Open Graph de cada vista para que el link se vea bien al compartirlo. Sin Lighthouse.
