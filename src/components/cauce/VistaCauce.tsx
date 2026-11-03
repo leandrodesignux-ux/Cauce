@@ -191,8 +191,8 @@ export function VistaCauce() {
         </div>
   
         <section aria-label="Contexto del período" className="flex flex-wrap items-end gap-x-10 gap-y-4 px-4 pt-6 md:px-6 xl:px-8">
-          <Cifra etiqueta="Valor en riesgo" valor={formatearMxnCorto(datos.valorEnRiesgo)} tono="text-laton" />
-          <Cifra etiqueta="Rescatados hoy" valor={formatearEntero(rescatadosHoy)} tono="text-cauce" />
+          <Cifra etiqueta="Valor en riesgo" valor={formatearMxnCorto(datos.valorEnRiesgo)} tono="text-laton-texto" />
+          <Cifra etiqueta="Rescatados hoy" valor={formatearEntero(rescatadosHoy)} tono="text-cauce-texto" />
           <p className="hidden text-sm text-niebla md:ml-auto md:block">
             {formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)} · {semanas} {semanas === 1 ? "semana" : "semanas"}
           </p>
@@ -275,7 +275,7 @@ function Leyenda({ comparar, retorno }: { comparar: boolean; retorno: boolean })
         Fuga hacia una poza
       </li>
       <li className="flex items-center gap-2">
-        <span aria-hidden className="cifra font-semibold text-laton">$</span>
+        <span aria-hidden className="cifra font-semibold text-laton-texto">$</span>
         Valor estimado en MXN
       </li>
       {retorno && (

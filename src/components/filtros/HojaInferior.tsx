@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { useMontado } from "@/hooks/useMontado";
 
 const ENFOCABLES = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
@@ -21,6 +22,7 @@ export function HojaInferior({
   children: ReactNode;
   pie?: ReactNode;
 }) {
+  const montado = useMontado();
   const panel = useRef<HTMLDivElement>(null);
   const previo = useRef<HTMLElement | null>(null);
 
@@ -54,14 +56,14 @@ export function HojaInferior({
     }
   };
 
-  if (typeof document === "undefined") return null;
+  if (!montado) return null;
 
   return createPortal(
     <AnimatePresence>
       {abierta && (
         <div className="fixed inset-0 z-40" onKeyDown={alPresionar}>
           <motion.div
-            className="absolute inset-0 bg-tinta/30"
+            className="absolute inset-0 bg-black/50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

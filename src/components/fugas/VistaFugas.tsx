@@ -192,7 +192,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
         <dl className="flex gap-8">
           <div>
             <dt className="text-sm text-niebla">Rescatados hoy</dt>
-            <dd className="cifra text-2xl font-semibold text-cauce">{formatearEntero(rescatadosHoy)}</dd>
+            <dd className="cifra text-2xl font-semibold text-cauce-texto">{formatearEntero(rescatadosHoy)}</dd>
           </div>
           <div>
             <dt className="text-sm text-niebla">Pendientes en pozas</dt>
@@ -220,7 +220,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
           </p>
           <p className="cifra text-sm text-niebla">
             Últimos 30 días: {formatearEntero(valorPoza.volumen)} perdidos ·{" "}
-            <span className="font-semibold text-laton">{formatearMxn(valorPoza.valorMxn)}</span>
+            <span className="font-semibold text-laton-texto">{formatearMxn(valorPoza.valorMxn)}</span>
           </p>
         </div>
 
@@ -231,7 +231,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
               <>
                 {" "}
                 El experimento{" "}
-                <Link href={`/experimentos?exp=${experimento.id}`} className="text-cauce underline underline-offset-2">
+                <Link href={`/experimentos?exp=${experimento.id}`} className="text-cauce-texto underline underline-offset-2">
                   {experimento.nombre}
                 </Link>{" "}
                 ataca esta fuga.
@@ -285,11 +285,11 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                   ? `No hay ${filtrosActivos ? "leads con esos filtros" : "leads pendientes"} en esta poza.`
                   : `Todavía no hay leads ${filtros.bandeja} en esta poza.`}{" "}
                 {filtrosActivos ? (
-                  <button type="button" onClick={() => actualizar({ banda: null, antiguedad: null })} className="text-cauce underline underline-offset-2">
+                  <button type="button" onClick={() => actualizar({ banda: null, antiguedad: null })} className="text-cauce-texto underline underline-offset-2">
                     Quitar filtros de score y antigüedad
                   </button>
                 ) : filtros.bandeja !== "pendientes" ? (
-                  <button type="button" onClick={() => actualizar({ bandeja: "pendientes" })} className="text-cauce underline underline-offset-2">
+                  <button type="button" onClick={() => actualizar({ bandeja: "pendientes" })} className="text-cauce-texto underline underline-offset-2">
                     Ver pendientes
                   </button>
                 ) : null}
@@ -386,7 +386,7 @@ function Pestanas({
         >
           {p.nombre}
           {p.pendientes !== null && (
-            <span className={`cifra rounded-full px-1.5 text-xs ${p.id === activa ? "bg-oxido-suave text-oxido" : "bg-linea text-niebla"}`}>{p.pendientes}</span>
+            <span className={`cifra rounded-full px-1.5 text-xs ${p.id === activa ? "bg-oxido-suave text-oxido-texto" : "bg-linea text-niebla"}`}>{p.pendientes}</span>
           )}
         </button>
       ))}
@@ -413,9 +413,9 @@ function Chip({ activo, destacado, onClick, children }: { activo: boolean; desta
         activo
           ? destacado
             ? "border-laton bg-laton text-sobre-laton"
-            : "border-cauce bg-cauce-suave text-cauce"
+            : "border-cauce bg-cauce-suave text-cauce-texto"
           : destacado
-            ? "border-laton text-laton hover:bg-laton/10"
+            ? "border-laton text-laton-texto hover:bg-laton-suave"
             : "border-linea-fuerte hover:border-niebla hover:bg-papel"
       }`}
     >

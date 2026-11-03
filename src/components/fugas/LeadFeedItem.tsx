@@ -70,7 +70,7 @@ export function LeadFeedItem({
         if (e.shiftKey) onSeleccionar(true);
       }}
       className={`group grid grid-cols-[auto_1fr] gap-x-3 gap-y-3 border-b border-linea px-3 py-4 last:border-0 focus-visible:bg-concreto md:grid-cols-[auto_minmax(0,1.6fr)_minmax(0,1fr)_auto] md:items-center md:px-4 ${
-        seleccionado ? "bg-cauce-suave" : destacado ? "bg-laton/10" : ""
+        seleccionado ? "bg-cauce-suave" : destacado ? "bg-laton-suave" : ""
       }`}
     >
       <input
@@ -103,14 +103,14 @@ export function LeadFeedItem({
       <div className="col-start-2 flex flex-wrap items-center gap-2 md:col-start-auto">
         <ScoreBadge score={lead.score} />
         {lead.urgencia && (
-          <span className="inline-flex h-6 items-center gap-1 rounded-control border border-oxido px-2 text-xs text-oxido">
+          <span className="inline-flex h-6 items-center gap-1 rounded-control border border-oxido px-2 text-xs text-oxido-texto">
             <AlarmClock className="size-3" aria-hidden />
             Urgente
           </span>
         )}
         <span
           className={`inline-flex h-6 items-center rounded-control px-2 text-xs ${
-            critico ? "bg-laton/15 font-medium text-laton" : "text-niebla"
+            critico ? "bg-laton-suave font-medium text-laton-texto" : "text-niebla"
           }`}
         >
           {textoAntiguedad(dias)}
@@ -141,7 +141,7 @@ export function LeadFeedItem({
           </>
         ) : (
           <>
-            <span className={`inline-flex h-8 items-center text-sm ${estado === "rescatado" ? "text-cauce" : "text-niebla"}`}>
+            <span className={`inline-flex h-8 items-center text-sm ${estado === "rescatado" ? "text-cauce-texto" : "text-niebla"}`}>
               {estado === "rescatado" ? "Rescatado" : "Descartado"}
             </span>
             <button

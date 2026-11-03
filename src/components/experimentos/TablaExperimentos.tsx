@@ -75,7 +75,7 @@ export function TablaExperimentos({
                     data-exp={e.id}
                     onClick={() => onAbrir(e.id)}
                     aria-expanded={seleccionado === e.id}
-                    className="rounded-control text-left font-medium hover:text-cauce"
+                    className="rounded-control text-left font-medium hover:text-cauce-texto"
                   >
                     {e.nombre}
                   </button>

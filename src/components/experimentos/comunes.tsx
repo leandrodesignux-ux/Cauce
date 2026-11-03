@@ -12,8 +12,8 @@ export function ChipEstado({ estado }: { estado: EstadoExperimento }) {
 
 export function tonoObservado(e: Experimento): string {
   if (e.observadoPp === undefined) return "text-niebla";
-  if (e.observadoPp >= e.prediccionPp * 0.8) return "text-cauce";
-  return e.observadoPp > 0 ? "text-laton" : "text-oxido";
+  if (e.observadoPp >= e.prediccionPp * 0.8) return "text-cauce-texto";
+  return e.observadoPp > 0 ? "text-laton-texto" : "text-oxido-texto";
 }
 
 /** Predicho → observado, con veredicto en texto (nunca solo color). */

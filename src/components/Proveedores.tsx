@@ -1,9 +1,11 @@
 "use client";
 
 import { MotionConfig } from "motion/react";
+import { ThemeProvider } from "next-themes";
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from "react";
 import { type DatosCompactos, type LeadIndice, expandirFlujo } from "@/lib/datos-cliente";
 import { rehidratarStores } from "@/lib/stores";
+import { ColorDeBarra } from "./shell/SwitchTema";
 import type { Experimento, Fuga, SemanaEtapa } from "@/lib/tipos";
 
 type Datos = {
@@ -39,9 +41,13 @@ export function Proveedores({ datos, children }: { datos: DatosCompactos; childr
   useEffect(rehidratarStores, []);
 
   return (
-    <ContextoDatos.Provider value={valor}>
-      {/* "user": respeta prefers-reduced-motion en todas las animaciones de motion. */}
-      <MotionConfig reducedMotion="user">{children}</MotionConfig>
-    </ContextoDatos.Provider>
+    // Tema por clase en <html>: arranca en claro y solo cambia con el switch (no sigue al sistema).
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
+      <ColorDeBarra />
+      <ContextoDatos.Provider value={valor}>
+        {/* "user": respeta prefers-reduced-motion en todas las animaciones de motion. */}
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      </ContextoDatos.Provider>
+    </ThemeProvider>
   );
 }

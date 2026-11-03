@@ -1,0 +1,123 @@
+// Contraste WCAG de cada par texto/fondo, en modo claro y oscuro, leído de src/styles/tokens.css.
+// Uso: npm run contraste → sale con código 1 si algún par queda por debajo de 4.5:1.
+
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+type Rgba = [number, number, number, number]; // 0–255 y alfa 0–1
+
+const MINIMO = 4.5;
+const css = readFileSync(join(process.cwd(), "src", "styles", "tokens.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+
+function bloque(selector: string): Record<string, string> {
+  const inicio = css.indexOf(`${selector} {`);
+  if (inicio === -1) throw new Error(`No encontré ${selector} en tokens.css`);
+  const cuerpo = css.slice(css.indexOf("{", inicio) + 1, css.indexOf("\n}", inicio));
+  const vars: Record<string, string> = {};
+  for (const [, nombre, valor] of cuerpo.matchAll(/--([\w-]+):\s*([^;]+);/g)) vars[nombre] = valor.trim();
+  return vars;
+}
+
+const claro = bloque(":root");
+const oscuro = { ...claro, ...bloque(".dark") };
+
+function hex(valor: string): Rgba {
+  const h = valor.replace("#", "");
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16), 1];
+}
+
+/** Resuelve un valor de color: hex, var(--x), transparent o color-mix(in srgb, A p%, B). */
+function resolver(valor: string, vars: Record<string, string>): Rgba {
+  valor = valor.trim();
+  if (valor === "transparent") return [0, 0, 0, 0];
+  if (valor.startsWith("#")) return hex(valor);
+  const ref = valor.match(/^var\(--([\w-]+)\)$/);
+  if (ref) return resolver(vars[ref[1]], vars);
+  const mezcla = valor.match(/^color-mix\(in srgb,\s*(.+?)\s+(\d+(?:\.\d+)?)%,\s*(.+)\)$/);
+  if (mezcla) {
+    const a = resolver(mezcla[1], vars);
+    const b = resolver(mezcla[3], vars);
+    const p = Number(mezcla[2]) / 100;
+    // Mezcla con alfa premultiplicado, como el navegador.
+    const alfa = a[3] * p + b[3] * (1 - p);
+    if (alfa === 0) return [0, 0, 0, 0];
+    const canal = (i: number) => (a[i] * a[3] * p + b[i] * b[3] * (1 - p)) / alfa;
+    return [canal(0), canal(1), canal(2), alfa];
+  }
+  throw new Error(`No sé resolver el color: ${valor}`);
+}
+
+function sobre(arriba: Rgba, abajo: Rgba): Rgba {
+  const a = arriba[3];
+  return [0, 1, 2].map((i) => arriba[i] * a + abajo[i] * (1 - a)).concat(1) as Rgba;
+}
+
+function luminancia([r, g, b]: Rgba): number {
+  const c = [r, g, b].map((v) => {
+    const s = v / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+
+function contraste(a: Rgba, b: Rgba): number {
+  const [x, y] = [luminancia(a), luminancia(b)].sort((p, q) => q - p);
+  return (x + 0.05) / (y + 0.05);
+}
+
+/** Fondo: un token o una pila de capas translúcidas sobre un token opaco ("cauce-suave/papel"). */
+function fondo(spec: string, vars: Record<string, string>): Rgba {
+  const capas = spec.split("/").map((t) => resolver(`var(--${t})`, vars));
+  return capas.reduceRight((abajo, arriba) => sobre(arriba, abajo));
+}
+
+const TEXTOS_UI = ["tinta", "niebla", "cauce-texto", "laton-texto", "oxido-texto"];
+const FONDOS_UI = ["concreto", "papel", "muted", "secondary"];
+
+const pares: [texto: string, fondo: string][] = [
+  // Texto de la UI sobre las superficies.
+  ...TEXTOS_UI.flatMap((t) => FONDOS_UI.map((f) => [t, f] as [string, string])),
+  // Cada variante -texto sobre su -suave (fondos de badges), apoyada en papel y en concreto.
+  ...(["cauce", "laton", "oxido"] as const).flatMap((c) => [
+    [`${c}-texto`, `${c}-suave/papel`] as [string, string],
+    [`${c}-texto`, `${c}-suave/concreto`] as [string, string],
+  ]),
+  // Elementos seleccionados: filas y tarjetas en cauce-suave sobre papel; tasa y nav activa sobre concreto.
+  ...TEXTOS_UI.map((t) => [t, "cauce-suave/papel"] as [string, string]),
+  ...["tinta", "cauce-texto", "oxido-texto"].map((t) => [t, "cauce-suave/concreto"] as [string, string]),
+  // Chip de ventana crítica y badges de antigüedad: latón translúcido.
+  ["laton-texto", "laton-suave/papel"],
+  // Texto sobre acentos sólidos.
+  ["sobre-cauce", "cauce"],
+  ["sobre-laton", "laton"],
+  ["sobre-oxido", "oxido"],
+  ["concreto", "tinta"], // controles invertidos (segmentado activo, toast)
+  // Semántica de shadcn.
+  ["foreground", "background"],
+  ["card-foreground", "card"],
+  ["popover-foreground", "popover"],
+  ["primary-foreground", "primary"],
+  ["secondary-foreground", "secondary"],
+  ["muted-foreground", "muted"],
+  ["muted-foreground", "background"],
+  ["accent-foreground", "accent/background"],
+  ["sidebar-foreground", "sidebar"],
+  ["sidebar-primary-foreground", "sidebar-primary"],
+];
+
+let fallas = 0;
+for (const [modo, vars] of [
+  ["claro", claro],
+  ["oscuro", oscuro],
+] as const) {
+  console.log(`\nModo ${modo}`);
+  for (const [t, f] of pares) {
+    const r = contraste(resolver(`var(--${t})`, vars), fondo(f, vars));
+    const ok = r >= MINIMO;
+    if (!ok) fallas++;
+    console.log(`  ${ok ? "ok   " : "FALLA"} ${r.toFixed(2).padStart(5)}:1  ${t.padEnd(26)} sobre ${f}`);
+  }
+}
+
+console.log(fallas === 0 ? `\nTodos los pares cumplen ${MINIMO}:1.` : `\n${fallas} par(es) por debajo de ${MINIMO}:1.`);
+process.exit(fallas === 0 ? 0 : 1);

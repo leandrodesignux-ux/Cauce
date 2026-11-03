@@ -97,7 +97,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
     cifras.push(
       { etiqueta: "Conversión", valor: formatearPct(tasa) },
       { etiqueta: "Vs. período anterior", valor: `${flecha(delta)}${formatearPp(delta)}`, tono: tonoDelta(delta) },
-      { etiqueta: "No avanzan", valor: formatearEntero(d.actual[transicion.desde] - d.actual[transicion.hacia]), tono: "text-oxido" },
+      { etiqueta: "No avanzan", valor: formatearEntero(d.actual[transicion.desde] - d.actual[transicion.hacia]), tono: "text-oxido-texto" },
     );
   } else {
     const v = d.actual[etapa];
@@ -187,7 +187,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
             {d.fugasAqui.map((f) => (
               <li key={f.id}>
                 <Link href={`/fugas?poza=${f.id}`} className="group flex items-center gap-3 px-3 py-3 hover:bg-concreto">
-                  <Droplet className="size-4 shrink-0 text-oxido" aria-hidden />
+                  <Droplet className="size-4 shrink-0 text-oxido-texto" aria-hidden />
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm">{f.causa}</span>
                     <span className="cifra text-xs text-niebla">
@@ -195,7 +195,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
                       {f.id === FUGA_MODELO_PERDIDA ? " · modelo de pérdida" : ""}
                     </span>
                   </span>
-                  <span className="cifra text-sm font-semibold text-laton">{formatearMxn(f.poza.valorMxn)}</span>
+                  <span className="cifra text-sm font-semibold text-laton-texto">{formatearMxn(f.poza.valorMxn)}</span>
                   <ArrowUpRight className="size-4 shrink-0 text-niebla group-hover:text-tinta" aria-hidden />
                   <span className="sr-only">Abrir en Fugas</span>
                 </Link>
@@ -209,7 +209,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
         {d.expAqui.length === 0 ? (
           <Vacio>
             Ningún experimento apunta aquí todavía.{" "}
-            <Link href="/experimentos" className="text-cauce underline underline-offset-2">
+            <Link href="/experimentos" className="text-cauce-texto underline underline-offset-2">
               Ver el registro de hipótesis
             </Link>
           </Vacio>
@@ -266,7 +266,7 @@ function Vacio({ children }: { children: ReactNode }) {
 
 function tonoDelta(v: number | null): string {
   if (v === null || Math.abs(v) < 0.05) return "text-niebla";
-  return v > 0 ? "text-cauce" : "text-oxido";
+  return v > 0 ? "text-cauce-texto" : "text-oxido-texto";
 }
 
 function flecha(v: number | null): string {

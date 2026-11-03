@@ -71,14 +71,14 @@ export function DataTableCauce({
                   {ETAPAS[p.desde].nombre} → {ETAPAS[p.desde + 1].nombre}
                 </td>
                 <td className={tdNum}>{formatearEntero(p.volumen)}</td>
-                <td className={`${tdNum} text-laton`}>{formatearMxn(p.valor)}</td>
+                <td className={`${tdNum} text-laton-texto`}>{formatearMxn(p.valor)}</td>
               </tr>
             ))}
           </tbody>
           <tfoot>
             <tr className="border-t border-linea-fuerte">
               <th scope="row" colSpan={3} className={`${td} text-left font-medium`}>Valor en riesgo</th>
-              <td className={`${tdNum} font-semibold text-laton`}>{formatearMxn(pozas.reduce((s, p) => s + p.valor, 0))}</td>
+              <td className={`${tdNum} font-semibold text-laton-texto`}>{formatearMxn(pozas.reduce((s, p) => s + p.valor, 0))}</td>
             </tr>
           </tfoot>
         </table>
@@ -89,7 +89,7 @@ export function DataTableCauce({
 
 export function tonoDelta(delta: number | null): string {
   if (delta === null || Math.abs(delta) < 0.05) return "text-niebla";
-  return delta > 0 ? "text-cauce" : "text-oxido";
+  return delta > 0 ? "text-cauce-texto" : "text-oxido-texto";
 }
 
 export function flechaDelta(delta: number | null): string {

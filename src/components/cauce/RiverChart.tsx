@@ -285,7 +285,7 @@ function Rio({
                       className={focoVisible === `etapa:${i}` ? "stroke-cauce" : ""}
                       strokeWidth={2}
                     />
-                    <text x={e.x} y={18} textAnchor="middle" className={`${geo.compacto ? "text-xs" : "text-sm"} ${seleccionada ? "fill-cauce font-medium" : "fill-niebla"}`}>
+                    <text x={e.x} y={18} textAnchor="middle" className={`${geo.compacto ? "text-xs" : "text-sm"} ${seleccionada ? "fill-cauce-texto font-medium" : "fill-niebla"}`}>
                       {etapa.nombre}
                     </text>
                     <text x={e.x} y={42} textAnchor="middle" className={`cifra fill-tinta font-semibold ${geo.compacto ? "text-base" : "text-lg"}`}>
@@ -305,7 +305,7 @@ function Rio({
                       className={focoVisible === `etapa:${i}` ? "stroke-cauce" : ""}
                       strokeWidth={2}
                     />
-                    <text x={0} y={e.y - 6} className={`text-xs ${seleccionada ? "fill-cauce font-medium" : "fill-niebla"}`}>
+                    <text x={0} y={e.y - 6} className={`text-xs ${seleccionada ? "fill-cauce-texto font-medium" : "fill-niebla"}`}>
                       {etapa.nombre}
                     </text>
                     <text x={0} y={e.y + 14} className="cifra fill-tinta text-base font-semibold">
@@ -381,7 +381,7 @@ function Rio({
                   {l}
                 </text>
               ))}
-              <text x={textoX} y={y0 + lineas.length * 15 + 4} textAnchor={anclaje} className="cifra fill-laton text-sm font-semibold">
+              <text x={textoX} y={y0 + lineas.length * 15 + 4} textAnchor={anclaje} className="cifra fill-laton-texto text-sm font-semibold">
                 {formatearMxnCorto(pozas[i].valor)}
               </text>
               <text x={textoX} y={y0 + lineas.length * 15 + 20} textAnchor={anclaje} className="cifra fill-niebla text-xs">
@@ -449,7 +449,7 @@ function Rio({
                     fill="var(--papel)"
                     stroke="var(--cauce)"
                   />
-                  <text x={etiqueta.x} y={etiqueta.y + 3} textAnchor="middle" className="cifra fill-cauce text-xs font-semibold">
+                  <text x={etiqueta.x} y={etiqueta.y + 3} textAnchor="middle" className="cifra fill-cauce-texto text-xs font-semibold">
                     {texto}
                   </text>
                 </motion.g>
@@ -487,7 +487,7 @@ function Tasa({
   foco: boolean;
 }) {
   const t = geo.transiciones[indice];
-  const tono = delta === null || Math.abs(delta) < 0.05 ? "fill-niebla" : delta > 0 ? "fill-cauce" : "fill-oxido";
+  const tono = delta === null || Math.abs(delta) < 0.05 ? "fill-niebla" : delta > 0 ? "fill-cauce-texto" : "fill-oxido-texto";
   const flecha = delta === null || Math.abs(delta) < 0.05 ? "" : delta > 0 ? "↑ " : "↓ ";
   const fondo = seleccionada ? "var(--cauce-suave)" : resaltada ? "var(--papel)" : "transparent";
 

@@ -16,9 +16,9 @@ export type ContenidoTooltip = {
 
 const ANCHO = 248;
 const TONO: Record<NonNullable<FilaTooltip["tono"]>, string> = {
-  cauce: "text-cauce",
-  oxido: "text-oxido",
-  laton: "text-laton",
+  cauce: "text-cauce-texto",
+  oxido: "text-oxido-texto",
+  laton: "text-laton-texto",
   niebla: "text-niebla",
 };
 

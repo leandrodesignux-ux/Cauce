@@ -79,7 +79,7 @@ export function TendenciaSemanal({
               return (
                 <g>
                   <rect x={x0} y={M.arriba - 4} width={x1 - x0} height={ALTO - M.abajo - M.arriba + 4} fill="var(--laton)" fillOpacity={0.1} />
-                  <text x={(x0 + x1) / 2} y={ALTO - M.abajo - 6} textAnchor="middle" className="fill-laton text-xs">
+                  <text x={(x0 + x1) / 2} y={ALTO - M.abajo - 6} textAnchor="middle" className="fill-laton-texto text-xs">
                     {franja.etiqueta}
                   </text>
                 </g>
@@ -97,7 +97,7 @@ export function TendenciaSemanal({
               <g key={m.semana + m.etiqueta}>
                 <title>{m.etiqueta}</title>
                 <line x1={x} x2={x} y1={M.arriba - 8} y2={ALTO - M.abajo} className="stroke-laton" strokeDasharray="3 3" />
-                <text x={haciaIzquierda ? x - 4 : x + 4} y={M.arriba - 12} textAnchor={haciaIzquierda ? "end" : "start"} className="fill-laton text-xs">
+                <text x={haciaIzquierda ? x - 4 : x + 4} y={M.arriba - 12} textAnchor={haciaIzquierda ? "end" : "start"} className="fill-laton-texto text-xs">
                   {texto}
                 </text>
               </g>
