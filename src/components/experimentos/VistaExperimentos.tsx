@@ -1,10 +1,12 @@
 "use client";
 
-import { GanttChart, Table2 } from "lucide-react";
+import { FlaskConical, GanttChart, Table2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, type ReactNode } from "react";
 import { StagePanel } from "@/components/panel/StagePanel";
 import { useDatos } from "@/components/Proveedores";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { nombreEtapa } from "@/config/etapas";
 import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
 import { useMedia } from "@/hooks/useMedia";
@@ -84,23 +86,39 @@ export function VistaExperimentos() {
               );
             })}
           </div>
-          <div role="group" aria-label="Vista" className="flex h-9 rounded-control border border-linea-fuerte p-0.5">
-            <BotonVista activo={vista === "tabla"} onClick={() => poner({ vista: null })} icono={<Table2 className="size-4" aria-hidden />}>
+          <ToggleGroup
+            type="single"
+            variant="segmentado"
+            spacing={0}
+            aria-label="Vista"
+            value={vista}
+            onValueChange={(v) => v && poner({ vista: v === "timeline" ? "timeline" : null })}
+          >
+            <ToggleGroupItem value="tabla">
+              <Table2 data-icon="inline-start" />
               Tabla
-            </BotonVista>
-            <BotonVista activo={vista === "timeline"} onClick={() => poner({ vista: "timeline" })} icono={<GanttChart className="size-4" aria-hidden />}>
+            </ToggleGroupItem>
+            <ToggleGroupItem value="timeline">
+              <GanttChart data-icon="inline-start" />
               Timeline
-            </BotonVista>
-          </div>
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
 
         {visibles.length === 0 ? (
-          <p className="rounded-panel border border-dashed border-linea-fuerte px-4 py-10 text-center text-sm text-niebla">
-            No hay experimentos {estado ? `en estado «${ETIQUETA_ESTADO_EXPERIMENTO[estado]}»` : ""} todavía.{" "}
-            <button type="button" onClick={() => poner({ estado: null })} className="text-cauce-texto underline underline-offset-2">
-              Ver todos
-            </button>
-          </p>
+          <Empty className="flex-none py-10">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <FlaskConical />
+              </EmptyMedia>
+              <EmptyDescription>
+                No hay experimentos {estado ? `en estado «${ETIQUETA_ESTADO_EXPERIMENTO[estado]}»` : ""} todavía.{" "}
+                <button type="button" onClick={() => poner({ estado: null })} className="text-cauce-texto underline underline-offset-2">
+                  Ver todos
+                </button>
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : vista === "tabla" ? (
           <TablaExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
         ) : (
@@ -131,22 +149,6 @@ function Chip({ activo, onClick, children }: { activo: boolean; onClick: () => v
         activo ? "border-cauce bg-cauce-suave text-cauce-texto" : "border-linea-fuerte hover:border-niebla hover:bg-papel"
       }`}
     >
-      {children}
-    </button>
-  );
-}
-
-function BotonVista({ activo, onClick, icono, children }: { activo: boolean; onClick: () => void; icono: ReactNode; children: ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={activo}
-      onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-[calc(var(--radio-control)-2px)] px-3 text-sm motion-safe:transition-colors ${
-        activo ? "bg-tinta text-concreto" : "text-niebla hover:text-tinta"
-      }`}
-    >
-      {icono}
       {children}
     </button>
   );

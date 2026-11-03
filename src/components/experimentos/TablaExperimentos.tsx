@@ -1,5 +1,6 @@
 "use client";
 
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, TableRowHead } from "@/components/ui/table";
 import { nombreEtapa } from "@/config/etapas";
 import { finLectura, inicioLectura } from "@/lib/experimentos";
 import { formatearSemana, formatearSemanaCorta } from "@/lib/formato";
@@ -16,7 +17,6 @@ export function TablaExperimentos({
   seleccionado: string | null;
   onAbrir: (id: string) => void;
 }) {
-  const th = "px-3 py-2.5 text-left text-xs font-medium text-niebla whitespace-nowrap";
   return (
     <>
       {/* Móvil: una ficha por experimento con las mismas columnas */}
@@ -52,24 +52,24 @@ export function TablaExperimentos({
           </li>
         ))}
       </ul>
-      <div className="hidden overflow-x-auto rounded-panel border border-linea bg-papel md:block">
-        <table className="w-full min-w-[980px] border-collapse text-sm">
-          <caption className="sr-only">Registro de hipótesis de Growth</caption>
-          <thead>
-            <tr className="border-b border-linea">
-              <th scope="col" className={th}>Experimento y palanca</th>
-              <th scope="col" className={th}>Transición objetivo</th>
-              <th scope="col" className={th}>Hipótesis</th>
-              <th scope="col" className={th}>Despliegue</th>
-              <th scope="col" className={th}>Ventana de lectura</th>
-              <th scope="col" className={th}>Predicho → observado</th>
-              <th scope="col" className={th}>Estado</th>
-            </tr>
-          </thead>
-          <tbody>
+      <div className="hidden md:block">
+        <Table marco className="min-w-[980px]">
+          <TableCaption className="sr-only">Registro de hipótesis de Growth</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Experimento y palanca</TableHead>
+              <TableHead>Transición objetivo</TableHead>
+              <TableHead>Hipótesis</TableHead>
+              <TableHead>Despliegue</TableHead>
+              <TableHead>Ventana de lectura</TableHead>
+              <TableHead>Predicho → observado</TableHead>
+              <TableHead>Estado</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {experimentos.map((e) => (
-              <tr key={e.id} className={`border-b border-linea align-top last:border-0 ${seleccionado === e.id ? "bg-cauce-suave" : "hover:bg-concreto"}`}>
-                <th scope="row" className="px-3 py-3 text-left font-normal">
+              <TableRow key={e.id} data-state={seleccionado === e.id ? "selected" : undefined} className="align-top">
+                <TableRowHead className="py-3">
                   <button
                     type="button"
                     data-exp={e.id}
@@ -80,30 +80,30 @@ export function TablaExperimentos({
                     {e.nombre}
                   </button>
                   <span className="mt-0.5 block text-xs text-niebla">{e.palanca}</span>
-                </th>
-                <td className="whitespace-nowrap px-3 py-3">
+                </TableRowHead>
+                <TableCell className="whitespace-nowrap py-3">
                   {nombreEtapa(e.transicion.desde)} → {nombreEtapa(e.transicion.hacia)}
-                </td>
-                <td className="max-w-72 px-3 py-3 text-niebla">{e.hipotesis}</td>
-                <td className="cifra whitespace-nowrap px-3 py-3">{formatearSemana(e.despliegue)}</td>
-                <td className="whitespace-nowrap px-3 py-3">
+                </TableCell>
+                <TableCell className="max-w-72 py-3 text-niebla">{e.hipotesis}</TableCell>
+                <TableCell className="cifra whitespace-nowrap py-3">{formatearSemana(e.despliegue)}</TableCell>
+                <TableCell className="whitespace-nowrap py-3">
                   <span className="cifra">
                     {formatearSemanaCorta(inicioLectura(e))} – {formatearSemanaCorta(finLectura(e))}
                   </span>
                   <span className="block text-xs text-niebla">
                     Semanas {e.ventanaSemanas[0]}–{e.ventanaSemanas[1]}
                   </span>
-                </td>
-                <td className="whitespace-nowrap px-3 py-3">
+                </TableCell>
+                <TableCell className="whitespace-nowrap py-3">
                   <PredichoObservado e={e} />
-                </td>
-                <td className="px-3 py-3">
+                </TableCell>
+                <TableCell className="py-3">
                   <ChipEstado estado={e.estado} />
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </>
   );

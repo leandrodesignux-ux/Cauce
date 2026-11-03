@@ -404,7 +404,7 @@ function Tecla({ children }: { children: ReactNode }) {
 
 function Vacio({ icono, children }: { icono: ReactNode; children: ReactNode }) {
   return (
-    <Empty className="py-8">
+    <Empty className="flex-none py-8">
       <EmptyHeader className="max-w-md">
         <EmptyMedia variant="icon">{icono}</EmptyMedia>
         <EmptyDescription>{children}</EmptyDescription>

@@ -8,7 +8,6 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/
 import { Table, TableBody, TableCell, TableRow, TableRowHead } from "@/components/ui/table";
 import { CANALES, ESTADOS, SECTORES } from "@/config/dimensiones";
 import { ETAPAS, NIVELES_LEAD, ORDEN_ETAPAS, PRIORIDADES, TRANSICIONES, nombreEtapa } from "@/config/etapas";
-import { ETIQUETA_ESTADO_EXPERIMENTO, TONO_ESTADO_EXPERIMENTO } from "@/config/experimentos";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
 import type { Seleccion } from "@/hooks/useSeleccion";
 import { formatearEntero, formatearMxn, formatearPct, formatearPp, formatearSemanaCorta } from "@/lib/formato";
@@ -22,6 +21,7 @@ import {
   volumenPorEtapa,
 } from "@/lib/selectors";
 import type { Transicion } from "@/lib/tipos";
+import { ChipEstado } from "@/components/experimentos/comunes";
 import { Desglose, type GrupoDesglose } from "./Desglose";
 import { TendenciaSemanal, type PuntoSerie } from "./TendenciaSemanal";
 
@@ -224,9 +224,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
                 <Link href={`/experimentos?exp=${e.id}`} className="group block rounded-panel border border-linea p-3 hover:border-linea-fuerte hover:bg-concreto">
                   <span className="flex items-start gap-2">
                     <span className="flex-1 text-sm font-medium">{e.nombre}</span>
-                    <span className={`shrink-0 rounded-control border px-1.5 text-xs ${TONO_ESTADO_EXPERIMENTO[e.estado]}`}>
-                      {ETIQUETA_ESTADO_EXPERIMENTO[e.estado]}
-                    </span>
+                    <ChipEstado estado={e.estado} />
                   </span>
                   <span className="mt-1 block text-xs text-niebla">{e.hipotesis}</span>
                   <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
@@ -266,7 +264,7 @@ function Seccion({ titulo, nota, children }: { titulo: string; nota?: string; ch
 
 function Vacio({ icono, titulo, children }: { icono: ReactNode; titulo: string; children: ReactNode }) {
   return (
-    <Empty className="gap-2 p-4">
+    <Empty className="flex-none gap-2 p-4">
       <EmptyHeader>
         <EmptyMedia variant="icon">{icono}</EmptyMedia>
         <EmptyTitle>{titulo}</EmptyTitle>
