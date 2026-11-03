@@ -76,7 +76,7 @@ Móvil (<768 px): el cauce se vuelve vertical, de arriba hacia abajo; las pozas 
 ## El cauce (componente estrella)
 
 - SVG propio con d3-scale y d3-shape (curvas `curveBasis`). No usar un sankey de librería.
-- Ancho del cauce en cada etapa = escala lineal del volumen, con un mínimo visible de 6 px.
+- Ancho del cauce en cada etapa = escala de raíz cuadrada del volumen (d3 `scaleSqrt`), con un mínimo visible de 6 px. Con escala lineal, de Contacto en adelante todo quedaba en el mínimo (Contacto es el 1.6 % de Descubrimiento). El grosor máximo corresponde al volumen total del período sin filtros, así que filtrar angosta el río.
 - Relleno `--cauce` con un leve degradé de opacidad hacia la derecha (de 100 % a 80 %): el agua pierde fuerza.
 - Fugas: hilos de 1–8 px (según volumen) en `--oxido` que bajan desde el borde inferior hacia la poza. La poza es una elipse plana con la cifra en latón.
 - Período anterior: contorno en `--niebla`, 1 px, punteado, detrás del río.

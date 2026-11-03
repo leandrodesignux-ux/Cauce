@@ -5,14 +5,9 @@ import { useCallback, useMemo } from "react";
 import { useDatos } from "@/components/Proveedores";
 import { type EstadoFiltros, escribirFiltros, leerFiltros } from "@/lib/filtros-url";
 import type { Filtros } from "@/lib/selectors";
+import { reemplazarUrl } from "@/lib/url";
 
 type Cambios = Partial<EstadoFiltros> | ((actual: EstadoFiltros) => Partial<EstadoFiltros>);
-
-function reemplazarUrl(pathname: string, params: URLSearchParams): void {
-  // Las comas quedan legibles: ?canal=seo,paid
-  const qs = params.toString().replace(/%2C/g, ",");
-  window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
-}
 
 /** Filtros leídos de la URL. Los cambios reemplazan la entrada del historial (sin recargar). */
 export function useFiltros() {
