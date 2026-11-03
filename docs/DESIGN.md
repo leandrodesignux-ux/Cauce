@@ -14,6 +14,7 @@ Base fría tipo concreto (no crema), un verde de cauce, latón para el dinero y 
 | `--papel` | `#F7F8F6` | `#1F2A25` | Panel lateral, tablas, popovers |
 | `--tinta` | `#142019` | `#E4E9E6` | Texto principal, ejes |
 | `--niebla` | `#5A6862` | `#95A39D` | Texto secundario, período anterior, líneas guía |
+| `--niebla-texto` | `#4C5953` | `#A7B4AE` | Texto de badges neutros sobre `--niebla-suave` (niebla daba 4.1:1) |
 | `--cauce` | `#2E6B52` | `#409673` | Volumen que avanza, acciones primarias, foco |
 | `--laton` | `#A9822F` | `#CCA249` | Montos en MXN, valor en riesgo, comisiones |
 | `--oxido` | `#B4472F` | `#D1674F` | Fugas, pozas, deltas negativos |
@@ -26,9 +27,9 @@ Base fría tipo concreto (no crema), un verde de cauce, latón para el dinero y 
 | `--sobre-laton` | `#142019` | `#0E1411` | Texto sobre fondo `--laton` (papel daba 3.3:1) |
 | `--sobre-oxido` | `#F7F8F6` | `#0E1411` | Texto sobre fondo `--oxido` (`text-white` de shadcn) |
 | `--tinta-profunda` | `#142019` | `#142019` | Velo de overlays (Dialog, Sheet, Drawer, ⌘K) al 40 %: `bg-black/50` |
-| `--sombra-flotante` | `0 8px 24px rgb(20 32 25 / 0.10)` | `0 8px 24px rgb(0 0 0 / 0.40)` | Popovers y panel lateral |
+| `--sombra-flotante` | `0 8px 24px rgb(20 32 25 / 0.10)` | `0 8px 24px rgb(0 0 0 / 0.40)` | Popovers, menús, tooltips del río, dialog, sheet, drawer, avisos y panel lateral |
 
-Derivados con `color-mix()` sobre el token base, así siguen al modo oscuro: `--cauce-suave` (cauce al 14 %), `--laton-suave` (latón al 14 %), `--oxido-suave` (óxido al 12 %). Son los fondos de chips, badges y filas seleccionadas. Deltas positivos en cauce, negativos en óxido; nunca el color solo: siempre con signo y flecha.
+Derivados con `color-mix()` sobre el token base, así siguen al modo oscuro: `--cauce-suave` (cauce al 14 %), `--laton-suave` (latón al 14 %), `--oxido-suave` (óxido al 12 %), `--niebla-suave` (niebla al 14 %) y `--cauce-fuerte` (cauce al 18 %, solo el badge Validado). Son los fondos de chips, badges y filas seleccionadas. Deltas positivos en cauce, negativos en óxido; nunca el color solo: siempre con signo y flecha.
 
 **Regla de uso:** `--cauce`, `--laton` y `--oxido` base son solo para rellenos y trazos (el río, hilos, pozas, barras, bordes, íconos de forma). Todo **texto** en esos tonos usa su variante `-texto` (`text-cauce-texto`, `fill-laton-texto` en SVG…). `npm run contraste` verifica cada par texto/fondo en ambos modos y falla por debajo de 4.5:1.
 
@@ -103,11 +104,51 @@ Motion como respuesta a acciones:
 - Rescatar: la tarjeta sale del feed y el contador sube; en el cauce aparece el hilo de retorno.
 - Abrir panel: deslizamiento de 200 ms.
 
-Con `prefers-reduced-motion`: todo aparece en su estado final, sin interpolación. Las animaciones de tw-animate-css (`animate-in`, `animate-out`, acordeones) se anulan con una regla global.
+Con `prefers-reduced-motion`: todo aparece en su estado final, sin interpolación. Las animaciones de tw-animate-css (`animate-in`, `animate-out`, acordeones), las de vaul (Drawer) y sonner (avisos) y la barra de tiempo del aviso se anulan con una regla global en `globals.css`.
 
 ## Componentes
 
 `AppShell`, `NavRail`, `FilterBar`, `RiverChart`, `StagePanel`, `LeakPool`, `LossModel` (sliders + fórmula), `LeadFeedItem`, `ScoreBadge`, `ExperimentTable`, `ExperimentTimeline`, `CalibrationPlot`, `LeadTimeline`, `MiniRiver`, `CommandPalette`, `Toast`, `DataTable` (alternativa accesible de cada gráfico).
+
+### Piezas de shadcn/ui
+
+Las primitivas de interacción salen de shadcn/ui (`src/components/ui`); los colores y variantes se ajustan **dentro** de esos archivos. En las llamadas, `className` es solo layout (ancho, márgenes, alineación, tipografía del contenido), nunca para pisar el color de un componente.
+
+| Necesidad | Componente | Notas |
+|---|---|---|
+| Filtro multiselección (canal, sector, estado) | `DropdownMenu` + `CheckboxItem` | El menú queda abierto al marcar; disparador `Button variant="filtro"` con `data-activo`. |
+| Formulario corto flotante (rango de semanas) | `Popover` + `Select` | |
+| Opción única visible (período, flujo/tabla, tabla/timeline) | `ToggleGroup variant="segmentado"` | Activo invertido en tinta. Valor vacío ignorado: nunca queda sin opción. |
+| Alternador suelto (comparar) y chips en móvil | `Toggle` / `ToggleGroup variant="outline"` | Activo en cauce tintado. |
+| Hoja de filtros en móvil | `Drawer` (vaul) con `DrawerTrigger` | |
+| Panel de etapa | ≥1280 px: `aside` propio que empuja; 768–1279: `Sheet` al 60 %; <768: `Drawer` | Sin Trigger: el panel devuelve el foco a quien lo abrió. |
+| Paleta ⌘K | `CommandDialog` (Command dentro de Dialog) | Devuelve el foco a donde estaba. |
+| Pestañas (pozas, desglose) | `Tabs` con `TabsList variant="line"` | `tono="oxido"` en pozas, `cauce` por defecto. |
+| Parámetros numéricos | `Slider` | `thumbProps` para id, `aria-labelledby` y `aria-valuetext`. |
+| Datos tabulares | `Table` (`marco` para el panel de papel), `TableRowHead` para `<th scope="row">` | Cifras con `.cifra` y alineadas a la derecha. |
+| Avisos con deshacer | `sonner` (`toast()`) | Abajo al centro, invertido en tinta, 5 s, uno por vez, barra de latón que se pausa con hover. |
+| Ayuda sobre íconos | `Tooltip` | En la NavRail solo cuando está en íconos. |
+| Sin resultados | `Empty` | Ícono + texto con dirección, borde punteado, sin sombra. |
+
+**El río no es shadcn:** `RiverChart` sigue siendo SVG propio y no va dentro de una `Card`. No se usan `Card`: la jerarquía es espacio y líneas de 1 px.
+
+### Badges
+
+`Badge` con variantes propias: **relleno tintado** (12–18 %), **texto en la variante `-texto`** y **borde del mismo tono al 40 %**. Nunca solo contorno ni relleno sólido. El texto siempre nombra el estado: el color nunca va solo.
+
+| Variante | Tono | Relleno | Uso |
+|---|---|---|---|
+| `alto` | cauce | 14 % | Score ≥70 |
+| `medio` | latón | 14 % | Score 40–69 |
+| `bajo` | niebla | 14 % | Score <40 |
+| `diseno` | niebla | 14 % | Experimento en diseño |
+| `en_curso` | cauce | 14 % + punto | Experimento desplegado |
+| `leyendo` | latón | 14 % | En ventana de lectura |
+| `validado` | cauce | 18 % + ✓ | Hipótesis cumplida |
+| `refutado` | óxido | 12 % | Hipótesis no cumplida |
+| `urgente` | óxido | 12 % | Lead con urgencia declarada |
+| `critica` | latón | 14 % | Ventana crítica (≤3 días) |
+| `pendientes` / `neutro` | óxido / niebla | | Contador de la pestaña de poza activa / inactiva |
 
 ## Copy
 
