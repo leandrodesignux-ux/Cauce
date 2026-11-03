@@ -1,15 +1,17 @@
-import { Droplets } from "lucide-react";
 import type { Metadata } from "next";
-import { EnConstruccion } from "@/components/EnConstruccion";
+import { Suspense } from "react";
+import { VistaFugas } from "@/components/fugas/VistaFugas";
+import { obtenerLeads } from "@/lib/datos";
+import { sinLineaDeTiempo } from "@/lib/leads";
 
 export const metadata: Metadata = { title: "Fugas" };
 
 export default function Fugas() {
+  // Solo los leads que están en una poza: son los que se pueden rescatar.
+  const leads = sinLineaDeTiempo(obtenerLeads().filter((l) => l.fugaId));
   return (
-    <EnConstruccion
-      titulo="Pozas y rescate"
-      descripcion="Aquí van a estar el modelo de pérdida, las pozas y el feed de leads para rescatar."
-      Icono={Droplets}
-    />
+    <Suspense>
+      <VistaFugas leads={leads} />
+    </Suspense>
   );
 }

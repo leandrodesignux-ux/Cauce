@@ -23,7 +23,7 @@ import {
 import { ContenidoPanel, encabezadoPanel } from "@/components/panel/ContenidoPanel";
 import { StagePanel } from "@/components/panel/StagePanel";
 import { useMedia } from "@/hooks/useMedia";
-import { useInterfaz, useRescatadosHoy } from "@/lib/stores";
+import { useInterfaz, useRescatadosHoy, useSesion } from "@/lib/stores";
 import { DataTableCauce } from "./DataTableCauce";
 import { RiverChart, type Activo, type PozaRio } from "./RiverChart";
 import type { ContenidoTooltip } from "./TooltipCauce";
@@ -32,7 +32,13 @@ const SEMANAS_SERIE = 12;
 
 export function VistaCauce() {
   const router = useRouter();
-  const { flujo, fugas } = useDatos();
+  const { flujo, fugas, leads } = useDatos();
+  const rescatados = useSesion((s) => s.rescatados);
+  const retornos = useMemo(() => {
+    const porPoza = new Map<string, number>();
+    for (const l of leads) if (l.fugaId && rescatados[l.id]) porPoza.set(l.fugaId, (porPoza.get(l.fugaId) ?? 0) + 1);
+    return [...porPoza].map(([fugaId, cantidad]) => ({ fugaId, cantidad }));
+  }, [leads, rescatados]);
   const { estado, filtros } = useFiltros();
   const { seleccion, seleccionar } = useSeleccion();
   const rescatadosHoy = useRescatadosHoy();
@@ -212,8 +218,9 @@ export function VistaCauce() {
                 onSeleccionar={alSeleccionar}
                 onAbrirPoza={(id) => router.push(`/fugas?poza=${id}`)}
                 describir={describir}
+                retornos={retornos}
               />
-              <Leyenda comparar={estado.comparar} />
+              <Leyenda comparar={estado.comparar} retorno={retornos.length > 0} />
             </>
           )}
         </section>
@@ -240,7 +247,7 @@ function Cifra({ etiqueta, valor, tono }: { etiqueta: string; valor: string; ton
   );
 }
 
-function Leyenda({ comparar }: { comparar: boolean }) {
+function Leyenda({ comparar, retorno }: { comparar: boolean; retorno: boolean }) {
   return (
     <ul aria-label="Leyenda" className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-t border-linea pt-4 text-xs text-niebla">
       <li className="flex items-center gap-2">
@@ -255,6 +262,12 @@ function Leyenda({ comparar }: { comparar: boolean }) {
         <span aria-hidden className="cifra font-semibold text-laton">$</span>
         Valor estimado en MXN
       </li>
+      {retorno && (
+        <li className="flex items-center gap-2">
+          <span aria-hidden className="h-1 w-6 rounded-full bg-cauce" />
+          Leads rescatados que vuelven al cauce
+        </li>
+      )}
       {comparar && (
         <li className="flex items-center gap-2">
           <span aria-hidden className="h-0 w-6 border-t border-dashed border-niebla" />

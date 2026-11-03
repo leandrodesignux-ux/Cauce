@@ -24,6 +24,8 @@ type Props = {
   onSeleccionar: (s: { tipo: "etapa" | "transicion"; indice: number } | null) => void;
   onAbrirPoza: (id: string) => void;
   describir: (a: Activo) => ContenidoTooltip;
+  /** Leads rescatados por poza: dibujan un hilo de retorno hacia la etapa siguiente. */
+  retornos?: readonly { fugaId: string; cantidad: number }[];
 };
 
 const LLENADO = 1.2;
@@ -61,6 +63,7 @@ function Rio({
   onSeleccionar,
   onAbrirPoza,
   describir,
+  retornos = [],
 }: Props & { ancho: number; orientacion: Orientacion }) {
   const reducir = useReducedMotion() ?? false;
   const [entrada] = useState(() => !llenadoHecho && !reducir);
@@ -388,6 +391,71 @@ function Rio({
           );
         })}
 
+        {/* Retorno de rescatados: hilo en --cauce que sube desde la poza hasta la etapa siguiente */}
+        {retornos
+          .filter((ret) => ret.cantidad > 0)
+          .map((ret) => {
+            const p = geo.pozas.find((q) => q.id === ret.fugaId);
+            const poza = pozas.find((q) => q.id === ret.fugaId);
+            if (!p || !poza) return null;
+            const e = geo.etapas[poza.desde + 1];
+            const grosor = Math.min(8, 2.5 + Math.sqrt(ret.cantidad) * 1.2);
+            let d: string;
+            let etiqueta: { x: number; y: number };
+            let fin: { x: number; y: number };
+            if (horizontal) {
+              const sx = p.x + p.rx * 0.5;
+              const sy = p.y - p.ry * 0.6;
+              fin = { x: e.x, y: geo.centro + e.grosor / 2 - 1 };
+              const medio = (sy + fin.y) / 2;
+              d = `M${sx},${sy} C${sx},${medio} ${fin.x},${medio + 30} ${fin.x},${fin.y}`;
+              etiqueta = { x: (sx + fin.x) / 2, y: medio + 8 };
+            } else {
+              const sx = p.x - p.rx * 0.4;
+              const sy = p.y + p.ry * 0.7;
+              fin = { x: geo.centro + e.grosor / 2 - 1, y: e.y };
+              const medio = (sx + fin.x) / 2;
+              d = `M${sx},${sy} C${medio},${sy} ${medio},${fin.y} ${fin.x},${fin.y}`;
+              // Sobre el río, debajo del punto de retorno: no tapa los rótulos de las pozas.
+              etiqueta = { x: geo.centro, y: fin.y + 30 };
+            }
+            const texto = `↑ ${ret.cantidad} rescatado${ret.cantidad === 1 ? "" : "s"}`;
+            const anchoTexto = texto.length * 6.6 + 16;
+            return (
+              <g key={ret.fugaId} role="img" aria-label={`${texto.slice(2)} vuelven de ${poza.nombre} a ${ETAPAS[poza.desde + 1].nombre}`}>
+                <path d={d} fill="none" stroke="var(--concreto)" strokeWidth={grosor + 5} strokeLinecap="round" />
+                <motion.path
+                  d={d}
+                  fill="none"
+                  stroke="var(--cauce)"
+                  strokeWidth={grosor}
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: reducir ? 0 : 0.7, delay: reducir ? 0 : entrada ? LLENADO + 0.6 : 0.1, ease: EASE_SALIDA }}
+                />
+                <motion.g
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: reducir ? 0 : entrada ? LLENADO + 1.1 : 0.6 }}
+                >
+                  <circle cx={fin.x} cy={fin.y} r={grosor / 2 + 3} fill="var(--cauce)" stroke="var(--papel)" strokeWidth={2} />
+                  <rect
+                    x={etiqueta.x - anchoTexto / 2}
+                    y={etiqueta.y - 12}
+                    width={anchoTexto}
+                    height={22}
+                    rx={11}
+                    fill="var(--papel)"
+                    stroke="var(--cauce)"
+                  />
+                  <text x={etiqueta.x} y={etiqueta.y + 3} textAnchor="middle" className="cifra fill-cauce text-xs font-semibold">
+                    {texto}
+                  </text>
+                </motion.g>
+              </g>
+            );
+          })}
       </svg>
 
       {tooltip && ancla && <TooltipCauce contenido={tooltip} x={ancla.x} y={ancla.y} arriba={ancla.arriba} anchoContenedor={ancho} />}
