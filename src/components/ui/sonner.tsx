@@ -1,44 +1,36 @@
 "use client"
 
-import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
-import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
+/**
+ * Avisos de Cauce: abajo al centro, invertidos en tinta, con la acción subrayada
+ * y una barra de latón que se vacía mientras dura (ver .toast-cauce en globals.css).
+ * Los colores salen de los tokens, así que siguen al tema sin leerlo.
+ */
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
-
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      position="bottom-center"
+      containerAriaLabel="Avisos"
+      offset={{ bottom: "var(--offset-aviso)" }}
+      mobileOffset={{ bottom: "var(--offset-aviso)" }}
+      visibleToasts={1}
       className="toaster group"
-      icons={{
-        success: (
-          <CircleCheckIcon className="size-4" />
-        ),
-        info: (
-          <InfoIcon className="size-4" />
-        ),
-        warning: (
-          <TriangleAlertIcon className="size-4" />
-        ),
-        error: (
-          <OctagonXIcon className="size-4" />
-        ),
-        loading: (
-          <Loader2Icon className="size-4 animate-spin" />
-        ),
-      }}
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
+          "--normal-bg": "var(--tinta)",
+          "--normal-text": "var(--concreto)",
+          "--normal-border": "var(--tinta)",
+          "--border-radius": "var(--radio-panel)",
+          "--width": "min(30rem, calc(100vw - 32px))",
         } as React.CSSProperties
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
+          toast: "toast-cauce shadow-lg! gap-4! py-3! pr-2! pl-4! overflow-hidden",
+          title: "text-sm! font-normal!",
+          actionButton:
+            "bg-transparent! text-(--normal-text)! h-auto! rounded-control! px-2.5! py-1! text-sm! font-semibold! underline underline-offset-2 hover:bg-concreto/10!",
         },
       }}
       {...props}

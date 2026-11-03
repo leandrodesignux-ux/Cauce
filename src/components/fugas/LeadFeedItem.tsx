@@ -6,6 +6,7 @@ import type { KeyboardEvent, MouseEvent } from "react";
 import { SECTORES } from "@/config/dimensiones";
 import { formatearEntero } from "@/lib/formato";
 import { type LeadFeed, DIAS_VENTANA_CRITICA, diasSinActividad, textoAntiguedad } from "@/lib/leads";
+import { Badge } from "@/components/ui/badge";
 import { ScoreBadge } from "./ScoreBadge";
 
 export type EstadoLead = "pendiente" | "rescatado" | "descartado";
@@ -103,18 +104,16 @@ export function LeadFeedItem({
       <div className="col-start-2 flex flex-wrap items-center gap-2 md:col-start-auto">
         <ScoreBadge score={lead.score} />
         {lead.urgencia && (
-          <span className="inline-flex h-6 items-center gap-1 rounded-control border border-oxido px-2 text-xs text-oxido-texto">
-            <AlarmClock className="size-3" aria-hidden />
+          <Badge variant="urgente">
+            <AlarmClock aria-hidden />
             Urgente
-          </span>
+          </Badge>
         )}
-        <span
-          className={`inline-flex h-6 items-center rounded-control px-2 text-xs ${
-            critico ? "bg-laton-suave font-medium text-laton-texto" : "text-niebla"
-          }`}
-        >
-          {textoAntiguedad(dias)}
-        </span>
+        {critico ? (
+          <Badge variant="critica">{textoAntiguedad(dias)}</Badge>
+        ) : (
+          <span className="inline-flex h-6 items-center px-2 text-xs text-niebla">{textoAntiguedad(dias)}</span>
+        )}
         <span className="cifra inline-flex items-center gap-1 text-xs text-niebla" title={`${lead.mensajes} mensajes, ${lead.espaciosVistos} espacios vistos`}>
           <MessageSquare className="size-3" aria-hidden />
           {lead.mensajes} · {lead.espaciosVistos} espacios

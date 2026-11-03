@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useMemo, type ReactNode } from "r
 import { type DatosCompactos, type LeadIndice, expandirFlujo } from "@/lib/datos-cliente";
 import { rehidratarStores } from "@/lib/stores";
 import { ColorDeBarra } from "./shell/SwitchTema";
+import { Toaster } from "./ui/sonner";
 import { TooltipProvider } from "./ui/tooltip";
 import type { Experimento, Fuga, SemanaEtapa } from "@/lib/tipos";
 
@@ -49,6 +50,7 @@ export function Proveedores({ datos, children }: { datos: DatosCompactos; childr
         {/* "user": respeta prefers-reduced-motion en todas las animaciones de motion. */}
         <MotionConfig reducedMotion="user">
           <TooltipProvider delayDuration={300}>{children}</TooltipProvider>
+          <Toaster />
         </MotionConfig>
       </ContextoDatos.Provider>
     </ThemeProvider>

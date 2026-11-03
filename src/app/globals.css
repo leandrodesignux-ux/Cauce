@@ -157,6 +157,34 @@
   }
 }
 
+/* Avisos (sonner): sobre la barra inferior en móvil; la barra de latón se vacía en 5 s y se pausa con el hover. */
+:root {
+  --offset-aviso: calc(var(--alto-barra-movil) + 12px);
+}
+@media (min-width: 768px) {
+  :root {
+    --offset-aviso: 24px;
+  }
+}
+.toast-cauce::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--laton);
+  transform-origin: left;
+  animation: aviso-vaciar 5s linear forwards;
+}
+[data-sonner-toaster]:hover .toast-cauce::after {
+  animation-play-state: paused;
+}
+@keyframes aviso-vaciar {
+  to {
+    transform: scaleX(0);
+  }
+}
+
 /* Las animaciones de tw-animate-css (entrada y salida de popovers, dialogs, acordeones) respetan reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   .animate-in,
@@ -171,5 +199,8 @@
   [data-sonner-toast] {
     animation: none !important;
     transition: none !important;
+  }
+  .toast-cauce::after {
+    display: none;
   }
 }

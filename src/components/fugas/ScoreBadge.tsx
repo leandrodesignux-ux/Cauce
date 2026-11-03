@@ -1,10 +1,5 @@
+import { Badge } from "@/components/ui/badge";
 import { banda } from "@/lib/leads";
-
-const ESTILO = {
-  alto: "border-cauce bg-cauce text-sobre-cauce",
-  medio: "border-laton text-laton-texto",
-  bajo: "border-linea-fuerte text-niebla",
-} as const;
 
 const NOMBRE = { alto: "Alto", medio: "Medio", bajo: "Bajo" } as const;
 
@@ -12,12 +7,9 @@ const NOMBRE = { alto: "Alto", medio: "Medio", bajo: "Bajo" } as const;
 export function ScoreBadge({ score }: { score: number }) {
   const b = banda(score);
   return (
-    <span
-      title={`Score de intención ${score} de 100`}
-      className={`inline-flex h-6 items-center gap-1.5 rounded-control border px-2 text-xs font-medium ${ESTILO[b]}`}
-    >
+    <Badge variant={b} title={`Score de intención ${score} de 100`}>
       {NOMBRE[b]}
       <span className="cifra">{score}</span>
-    </span>
+    </Badge>
   );
 }

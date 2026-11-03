@@ -32,6 +32,8 @@ const badgeVariants = cva(
         refutado: TONO.oxido,
         // Señales de un lead
         urgente: TONO.oxido,
+        // Contador de pendientes en la pestaña activa de una poza
+        pendientes: TONO.oxido,
         critica: TONO.laton,
       },
     },
