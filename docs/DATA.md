@@ -45,6 +45,7 @@ type Fuga = {               // src/data/fugas.json
   desde: EtapaId; hacia: EtapaId;
   causa: string;            // p. ej. "Espacio no disponible"
   experimentoId?: string;
+  proporcionCaida: number;  // fracción de la caída de la transición atribuida a esta fuga (demo)
 };
 
 type Lead = {               // src/data/leads.json (~400 registros)
@@ -60,6 +61,9 @@ type Lead = {               // src/data/leads.json (~400 registros)
   mensajes: number; espaciosVistos: number;
   creadoEl: string; ultimaActividad: string;
   touchpoints: { fecha: string; tipo: string; detalle: string }[];
+  senales: {                // explican el score; null = el lead no lo declaró
+    superficieM2: number | null; zona: string | null; presupuestoMxn: number | null;
+  };
 };
 
 type Experimento = {        // src/data/experimentos.json
