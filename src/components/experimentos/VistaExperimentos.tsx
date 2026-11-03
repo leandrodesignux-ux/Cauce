@@ -97,7 +97,7 @@ export function VistaExperimentos() {
         {visibles.length === 0 ? (
           <p className="rounded-panel border border-dashed border-linea-fuerte px-4 py-10 text-center text-sm text-niebla">
             No hay experimentos {estado ? `en estado «${ETIQUETA_ESTADO_EXPERIMENTO[estado]}»` : ""} todavía.{" "}
-            <button type="button" onClick={() => poner({ estado: null })} className="text-cauce underline underline-offset-2">
+            <button type="button" onClick={() => poner({ estado: null })} className="text-cauce-texto underline underline-offset-2">
               Ver todos
             </button>
           </p>
@@ -128,7 +128,7 @@ function Chip({ activo, onClick, children }: { activo: boolean; onClick: () => v
       aria-pressed={activo}
       onClick={onClick}
       className={`inline-flex h-8 items-center gap-1.5 rounded-control border px-3 text-sm motion-safe:transition-colors ${
-        activo ? "border-cauce bg-cauce-suave text-cauce" : "border-linea-fuerte hover:border-niebla hover:bg-papel"
+        activo ? "border-cauce bg-cauce-suave text-cauce-texto" : "border-linea-fuerte hover:border-niebla hover:bg-papel"
       }`}
     >
       {children}

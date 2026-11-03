@@ -89,7 +89,7 @@ export function LossModel() {
         </ol>
         <div className="border-t border-linea-fuerte pt-4">
           <p className="text-sm text-niebla">Valor en riesgo en la poza de fantasmas</p>
-          <p className="cifra mt-1 text-3xl font-semibold text-laton" aria-live="polite">
+          <p className="cifra mt-1 text-3xl font-semibold text-laton-texto" aria-live="polite">
             {formatearMxn(Math.round(montoAnimado))}
           </p>
           <p className="mt-2 text-xs text-niebla">Mismo monto que muestra la poza de fantasmas en el cauce con los valores iniciales.</p>

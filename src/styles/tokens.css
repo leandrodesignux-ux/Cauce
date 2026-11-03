@@ -1,6 +1,13 @@
 /*
  * Tokens de diseño de Cauce. Fuente de verdad: docs/DESIGN.md.
  * Tailwind los expone como utilidades en src/app/globals.css (@theme inline).
+ *
+ * Dos familias conviven:
+ * - Cauce (concreto, papel, tinta, cauce, latón, óxido…): las usa el río y la UI propia.
+ * - Semántica de shadcn/ui (background, primary, muted…): apunta a las de Cauce, nunca al revés.
+ *
+ * Regla de color: cauce, latón y óxido base son solo para rellenos y trazos.
+ * Todo texto en esos tonos usa su variante -texto (AA garantizado por `npm run contraste`).
  */
 
 :root {
@@ -13,14 +20,25 @@
   --laton: #a9822f;
   --oxido: #b4472f;
 
+  /* Texto en los tonos de acento */
+  --cauce-texto: #24573f;
+  --laton-texto: #7a5a1f;
+  --oxido-texto: #9a3a24;
+
   /* Derivados */
   --cauce-suave: color-mix(in srgb, var(--cauce) 14%, transparent);
+  --laton-suave: color-mix(in srgb, var(--laton) 14%, transparent);
   --oxido-suave: color-mix(in srgb, var(--oxido) 12%, transparent);
   --linea: #d3d8d4;
   --linea-fuerte: #b9c1bc;
-  /* Texto sobre fondos de acento (botones, chips activos): AA en ambos modos */
+
+  /* Texto sobre fondos de acento sólidos (botones, chips activos) */
   --sobre-cauce: var(--papel);
   --sobre-laton: var(--tinta);
+  --sobre-oxido: var(--papel);
+
+  /* Velo de overlays (Dialog, Sheet, Drawer, ⌘K): siempre la tinta oscura, en ambos modos */
+  --tinta-profunda: #142019;
 
   /* Tipografía (las variables --font-* las inyecta next/font en <html>) */
   --fuente-cifra: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
@@ -56,31 +74,70 @@
   --duracion-media: 300ms;
   --curva-salida: cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* Sombras (solo popovers y panel lateral) */
+  /* Sombras (solo popovers, panel lateral, sheet y drawer) */
   --sombra-flotante: 0 8px 24px rgb(20 32 25 / 0.1);
+
+  /* ---- Semántica de shadcn/ui → tokens de Cauce ---- */
+  --background: var(--concreto);
+  --foreground: var(--tinta);
+  --card: var(--papel);
+  --card-foreground: var(--tinta);
+  --popover: var(--papel);
+  --popover-foreground: var(--tinta);
+  --primary: var(--cauce);
+  --primary-foreground: var(--sobre-cauce);
+  --secondary: color-mix(in srgb, var(--niebla) 10%, var(--papel));
+  --secondary-foreground: var(--tinta);
+  --muted: color-mix(in srgb, var(--niebla) 10%, var(--papel));
+  --muted-foreground: var(--niebla);
+  --accent: var(--cauce-suave);
+  --accent-foreground: var(--tinta);
+  --destructive: var(--oxido);
+  --border: var(--linea);
+  --input: var(--linea);
+  --ring: var(--cauce);
+  --radius: var(--radio-control);
+  --chart-1: var(--cauce);
+  --chart-2: var(--laton);
+  --chart-3: var(--oxido);
+  --chart-4: var(--niebla);
+  --chart-5: var(--tinta);
+  --sidebar: var(--concreto);
+  --sidebar-foreground: var(--tinta);
+  --sidebar-primary: var(--cauce);
+  --sidebar-primary-foreground: var(--sobre-cauce);
+  --sidebar-accent: var(--cauce-suave);
+  --sidebar-accent-foreground: var(--tinta);
+  --sidebar-border: var(--linea);
+  --sidebar-ring: var(--cauce);
 
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --concreto: #18211d;
-    --papel: #1f2a25;
-    --tinta: #e4e9e6;
-    --niebla: #8a9a93;
-    /* cauce, latón y óxido: +12 de L en HSL respecto del modo claro */
-    --cauce: #409673;
-    --laton: #cca249;
-    --oxido: #d1674f;
+/* Modo oscuro por clase (.dark en <html>, lo pone next-themes con el switch) */
+.dark {
+  --concreto: #18211d;
+  --papel: #1f2a25;
+  --tinta: #e4e9e6;
+  /* +4 de L sobre el #8A9A93 original: con 10 % de niebla en muted, el original daba 4.3:1 */
+  --niebla: #95a39d;
+  /* cauce, latón y óxido: +12 de L en HSL respecto del modo claro */
+  --cauce: #409673;
+  --laton: #cca249;
+  --oxido: #d1674f;
 
-    --linea: #2e3a34;
-    --linea-fuerte: #3c4943;
+  --cauce-texto: #5cb58f;
+  --laton-texto: #d9b35f;
+  --oxido-texto: #e8846d;
 
-    --sobre-cauce: #0e1411;
-    --sobre-laton: #0e1411;
+  --linea: #2e3a34;
+  --linea-fuerte: #3c4943;
 
-    --sombra-flotante: 0 8px 24px rgb(0 0 0 / 0.4);
+  --sobre-cauce: #0e1411;
+  --sobre-laton: #0e1411;
+  --sobre-oxido: #0e1411;
 
-    color-scheme: dark;
-  }
+  --sombra-flotante: 0 8px 24px rgb(0 0 0 / 0.4);
+
+  color-scheme: dark;
 }

@@ -16,7 +16,7 @@ export const claseControl =
 
 export function claseEstadoControl(activo: boolean): string {
   return activo
-    ? "border-cauce bg-cauce-suave text-cauce"
+    ? "border-cauce bg-cauce-suave text-cauce-texto"
     : "border-linea-fuerte text-tinta hover:border-niebla hover:bg-papel";
 }
 

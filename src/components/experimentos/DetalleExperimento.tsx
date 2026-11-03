@@ -12,6 +12,14 @@ import { serieSemanal } from "@/lib/selectors";
 import type { Experimento } from "@/lib/tipos";
 import { ChipEstado, PredichoObservado, tonoObservado } from "./comunes";
 
+// El relleno de la barra usa el tono base (no la variante de texto).
+const RELLENO_OBSERVADO: Record<string, string> = {
+  "text-cauce-texto": "bg-cauce",
+  "text-laton-texto": "bg-laton",
+  "text-oxido-texto": "bg-oxido",
+  "text-niebla": "bg-niebla",
+};
+
 /** Detalle de un experimento: hipótesis, métrica, resultado y la transición en el cauce. */
 export function DetalleExperimento({ e }: { e: Experimento }) {
   const { flujo, semanas, ultimaSemana } = useDatos();
@@ -62,7 +70,7 @@ export function DetalleExperimento({ e }: { e: Experimento }) {
             etiqueta="Observado"
             valor={e.observadoPp ?? 0}
             escala={escala}
-            clase={e.observadoPp === undefined ? "bg-transparent" : tonoObservado(e).replace("text-", "bg-")}
+            clase={e.observadoPp === undefined ? "bg-transparent" : RELLENO_OBSERVADO[tonoObservado(e)]}
             texto={e.observadoPp === undefined ? "Sin lectura todavía" : formatearPp(e.observadoPp)}
           />
           <PredichoObservado e={e} compacto />
@@ -82,7 +90,7 @@ export function DetalleExperimento({ e }: { e: Experimento }) {
         />
         <Link
           href={`/?transicion=${e.transicion.desde}-${e.transicion.hacia}`}
-          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-cauce hover:underline"
+          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-cauce-texto hover:underline"
         >
           Ver la transición en el cauce
           <ArrowUpRight className="size-4" aria-hidden />

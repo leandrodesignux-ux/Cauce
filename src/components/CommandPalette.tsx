@@ -58,7 +58,7 @@ export function CommandPalette() {
       onOpenChange={fijar}
       label="Buscar o saltar a"
       loop
-      overlayClassName="fixed inset-0 z-40 bg-tinta/30 backdrop-blur-[2px]"
+      overlayClassName="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px]"
       contentClassName="fixed inset-x-3 top-[12vh] z-50 mx-auto max-w-xl overflow-hidden rounded-panel border border-linea bg-papel shadow-flotante"
     >
       <Command.Input
@@ -120,7 +120,7 @@ export function CommandPalette() {
               key={f.id}
               valor={`poza ${f.causa}`}
               onSelect={() => ir(`/fugas?poza=${f.id}`)}
-              icono={<Droplet className="text-oxido" />}
+              icono={<Droplet className="text-oxido-texto" />}
               detalle={`${nombreEtapa(f.desde)} → ${nombreEtapa(f.hacia)}`}
             >
               {f.causa}

@@ -195,7 +195,7 @@ function RangoPersonalizado({ estado, actualizar }: { estado: EstadoFiltros; act
           ))}
         </select>
       </label>
-      {!valido && <p className="text-xs text-oxido">La semana inicial tiene que ser anterior a la final.</p>}
+      {!valido && <p className="text-xs text-oxido-texto">La semana inicial tiene que ser anterior a la final.</p>}
       <button type="submit" disabled={!valido} className={`${claseControl} justify-center border-cauce bg-cauce font-medium text-sobre-cauce disabled:opacity-50`}>
         Aplicar período
       </button>
@@ -238,7 +238,7 @@ function ListaOpciones({
         >
           Ver todos
         </button>
-        <button type="button" onClick={alTerminar} className="rounded-control px-1 text-sm font-medium text-cauce">
+        <button type="button" onClick={alTerminar} className="rounded-control px-1 text-sm font-medium text-cauce-texto">
           Listo
         </button>
       </div>

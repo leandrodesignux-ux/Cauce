@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { useMontado } from "@/hooks/useMontado";
 import { useMedia } from "@/hooks/useMedia";
 
 const ENFOCABLES = 'a[href], button:not([disabled]), input, select, [tabindex]:not([tabindex="-1"])';
@@ -30,6 +31,7 @@ export function StagePanel({
   onCerrar: () => void;
   children: ReactNode;
 }) {
+  const montado = useMontado();
   const escritorio = useMedia("(min-width: 1280px)", true);
   const reducir = useReducedMotion() ?? false;
   const encabezado = useRef<HTMLHeadingElement>(null);
@@ -113,13 +115,13 @@ export function StagePanel({
     );
   }
 
-  if (typeof document === "undefined") return null;
+  if (!montado) return null;
   return createPortal(
     <AnimatePresence>
       {abierto && (
         <div className="fixed inset-0 z-40">
           <motion.div
-            className="absolute inset-0 bg-tinta/30"
+            className="absolute inset-0 bg-black/50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useMontado } from "@/hooks/useMontado";
 
 export type DatosToast = { id: number; mensaje: string; accion?: { etiqueta: string; alHacer: () => void } };
 
@@ -10,13 +11,14 @@ const DURACION = 5000;
 
 /** Aviso abajo al centro, con acción (Deshacer) disponible durante 5 s. */
 export function Toast({ toast, onCerrar }: { toast: DatosToast | null; onCerrar: () => void }) {
+  const montado = useMontado();
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(onCerrar, DURACION);
     return () => clearTimeout(t);
   }, [toast, onCerrar]);
 
-  if (typeof document === "undefined") return null;
+  if (!montado) return null;
   return createPortal(
     <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-[calc(var(--alto-barra-movil)+12px)] z-50 flex justify-center px-4 md:bottom-6">
       <AnimatePresence mode="wait">

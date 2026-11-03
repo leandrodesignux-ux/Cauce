@@ -37,17 +37,17 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
+// Claro por defecto; <ColorDeBarra> lo actualiza al cambiar de tema con el switch.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: COLOR.concreto },
-    { media: "(prefers-color-scheme: dark)", color: COLOR.concretoOscuro },
-  ],
+  themeColor: COLOR.concreto,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // next-themes agrega la clase del tema antes de hidratar: el atributo class difiere a propósito.
     <html
       lang="es-MX"
+      suppressHydrationWarning
       className={`${spaceGrotesk.variable} ${geist.variable} h-full antialiased`}
     >
       <body className="min-h-full">

@@ -7,6 +7,7 @@ import { usePaleta } from "@/components/CommandPalette";
 import { useInterfaz } from "@/lib/stores";
 import { Marca } from "./Marca";
 import { SelloDemo } from "./SelloDemo";
+import { SwitchTema } from "./SwitchTema";
 import { TeclaAtajo } from "./TeclaAtajo";
 import { VISTAS, vistaActiva } from "./vistas";
 
@@ -70,7 +71,7 @@ export function NavRail() {
                 aria-label={nombre}
                 title={nombre}
                 className={`relative flex h-9 items-center gap-3 rounded-control px-2.5 text-sm font-medium ${
-                  activa ? "bg-cauce-suave text-cauce" : "text-niebla hover:bg-papel hover:text-tinta"
+                  activa ? "bg-cauce-suave text-cauce-texto" : "text-niebla hover:bg-papel hover:text-tinta"
                 }`}
               >
                 <Icono className="size-[18px] shrink-0" aria-hidden />
@@ -82,16 +83,20 @@ export function NavRail() {
       </ul>
 
       <div className="mt-auto flex flex-col gap-3 p-3">
-        <button
-          type="button"
-          onClick={alternar}
-          aria-label={compacta ? "Expandir navegación" : "Colapsar navegación"}
-          title={compacta ? "Expandir navegación" : "Colapsar navegación"}
-          className={`hidden h-9 items-center gap-3 rounded-control px-2.5 text-sm text-niebla hover:bg-papel hover:text-tinta ${panelAbierto ? "" : "xl:flex"}`}
-        >
-          {compacta ? <PanelLeftOpen className="size-[18px] shrink-0" aria-hidden /> : <PanelLeftClose className="size-[18px] shrink-0" aria-hidden />}
-          <span className={conEtiqueta}>Colapsar</span>
-        </button>
+        {/* Colapsar y tema comparten fila; en íconos se apilan. El sello va solo, debajo. */}
+        <div className={`flex items-center gap-1 ${compacta ? "flex-col" : "max-xl:flex-col"}`}>
+          <button
+            type="button"
+            onClick={alternar}
+            aria-label={compacta ? "Expandir navegación" : "Colapsar navegación"}
+            title={compacta ? "Expandir navegación" : "Colapsar navegación"}
+            className={`hidden h-9 flex-1 items-center gap-3 rounded-control px-2.5 text-sm text-niebla hover:bg-papel hover:text-tinta ${panelAbierto ? "" : "xl:flex"}`}
+          >
+            {compacta ? <PanelLeftOpen className="size-[18px] shrink-0" aria-hidden /> : <PanelLeftClose className="size-[18px] shrink-0" aria-hidden />}
+            <span className={conEtiqueta}>Colapsar</span>
+          </button>
+          <SwitchTema />
+        </div>
         <SelloDemo compacto={compacta} />
       </div>
     </nav>

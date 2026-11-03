@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePaleta } from "@/components/CommandPalette";
 import { Marca } from "./Marca";
+import { SwitchTema } from "./SwitchTema";
 import { VISTAS, vistaActiva } from "./vistas";
 
 /** Móvil (<768 px): barra superior con marca y búsqueda. */
@@ -17,6 +18,7 @@ export function BarraSuperiorMovil() {
       </Link>
       <div className="flex items-center gap-2">
         <span className="rounded-control border border-dashed border-linea-fuerte px-2 py-0.5 text-xs text-niebla">Datos demo</span>
+        <SwitchTema />
         <button
           type="button"
           onClick={abrirPaleta}
@@ -47,7 +49,7 @@ export function BarraInferiorMovil() {
                 href={href}
                 aria-current={activa ? "page" : undefined}
                 className={`flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium ${
-                  activa ? "text-cauce" : "text-niebla"
+                  activa ? "text-cauce-texto" : "text-niebla"
                 }`}
               >
                 <Icono className="size-5" aria-hidden />

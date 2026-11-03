@@ -13,19 +13,28 @@ Base fría tipo concreto (no crema), un verde de cauce, latón para el dinero y 
 | `--concreto` | `#E9EBE8` | `#18211D` | Fondo de la app |
 | `--papel` | `#F7F8F6` | `#1F2A25` | Panel lateral, tablas, popovers |
 | `--tinta` | `#142019` | `#E4E9E6` | Texto principal, ejes |
-| `--niebla` | `#5A6862` | `#8A9A93` | Texto secundario, período anterior, líneas guía |
+| `--niebla` | `#5A6862` | `#95A39D` | Texto secundario, período anterior, líneas guía |
 | `--cauce` | `#2E6B52` | `#409673` | Volumen que avanza, acciones primarias, foco |
 | `--laton` | `#A9822F` | `#CCA249` | Montos en MXN, valor en riesgo, comisiones |
 | `--oxido` | `#B4472F` | `#D1674F` | Fugas, pozas, deltas negativos |
+| `--cauce-texto` | `#24573F` | `#5CB58F` | Texto en tono cauce (deltas positivos, links, estado activo) |
+| `--laton-texto` | `#7A5A1F` | `#D9B35F` | Texto en tono latón (montos en MXN, ventana crítica) |
+| `--oxido-texto` | `#9A3A24` | `#E8846D` | Texto en tono óxido (deltas negativos, perdidos, urgente) |
 | `--linea` | `#D3D8D4` | `#2E3A34` | Separadores de 1 px |
 | `--linea-fuerte` | `#B9C1BC` | `#3C4943` | Bordes de controles, ejes marcados |
 | `--sobre-cauce` | `#F7F8F6` | `#0E1411` | Texto sobre fondo `--cauce` (botones, chips activos): 5.9:1 y 5.2:1 |
 | `--sobre-laton` | `#142019` | `#0E1411` | Texto sobre fondo `--laton` (papel daba 3.3:1) |
+| `--sobre-oxido` | `#F7F8F6` | `#0E1411` | Texto sobre fondo `--oxido` (`text-white` de shadcn) |
+| `--tinta-profunda` | `#142019` | `#142019` | Velo de overlays (Dialog, Sheet, Drawer, ⌘K) al 40 %: `bg-black/50` |
 | `--sombra-flotante` | `0 8px 24px rgb(20 32 25 / 0.10)` | `0 8px 24px rgb(0 0 0 / 0.40)` | Popovers y panel lateral |
 
-Derivados con `color-mix()` sobre el token base, así siguen al modo oscuro: `--cauce-suave` (cauce al 14 %), `--oxido-suave` (óxido al 12 %). Deltas positivos en `--cauce`, negativos en `--oxido`; nunca el color solo: siempre con signo y flecha.
+Derivados con `color-mix()` sobre el token base, así siguen al modo oscuro: `--cauce-suave` (cauce al 14 %), `--laton-suave` (latón al 14 %), `--oxido-suave` (óxido al 12 %). Son los fondos de chips, badges y filas seleccionadas. Deltas positivos en cauce, negativos en óxido; nunca el color solo: siempre con signo y flecha.
 
-Modo oscuro (secundario, solo vía `prefers-color-scheme`, sin toggle): cauce, latón y óxido suben +12 de L en HSL. `--niebla` usa `#5A6862` en claro (4.9:1 sobre concreto) y `#8A9A93` en oscuro (5.6:1 sobre el fondo); las líneas bajan a verdes casi negros para seguir siendo sutiles.
+**Regla de uso:** `--cauce`, `--laton` y `--oxido` base son solo para rellenos y trazos (el río, hilos, pozas, barras, bordes, íconos de forma). Todo **texto** en esos tonos usa su variante `-texto` (`text-cauce-texto`, `fill-laton-texto` en SVG…). `npm run contraste` verifica cada par texto/fondo en ambos modos y falla por debajo de 4.5:1.
+
+**Semántica de shadcn/ui:** sus tokens apuntan a los de Cauce, nunca al revés: `background` = concreto, `foreground` = tinta, `card` y `popover` = papel, `primary` = cauce, `primary-foreground` = sobre-cauce, `muted` y `secondary` = niebla al 10 % sobre papel, `muted-foreground` = niebla, `accent` = cauce-suave, `destructive` = óxido, `border` e `input` = linea, `ring` = cauce, `chart-1…5` = cauce, latón, óxido, niebla, tinta. `--radius` = 6 px (sm 2, md 4, lg 6, xl 10; `rounded-control` y `rounded-panel` siguen existiendo). Sombras por token: `shadow-xs` y `shadow-sm` no proyectan; `shadow-md`, `shadow-lg` y `shadow-flotante` = `--sombra-flotante`.
+
+**Modo oscuro por switch:** la app arranca siempre en claro (`defaultTheme="light"`, `enableSystem={false}`: no sigue la preferencia del sistema). El switch sol/luna del pie de la navegación y de la barra móvil pone la clase `.dark` en `<html>` (next-themes) y la elección persiste. El `theme-color` de la barra del navegador se actualiza con el tema. En oscuro, cauce, latón y óxido suben +12 de L en HSL; `--niebla` pasa a `#95A39D` (+4 de L sobre el `#8A9A93` original, que daba 4.3:1 sobre `muted`); las líneas bajan a verdes casi negros para seguir siendo sutiles.
 
 ## Tipografía
 
@@ -73,7 +82,7 @@ Móvil (<768 px): el cauce se vuelve vertical, de arriba hacia abajo; las pozas 
 - Controles (botones, inputs, chips): 6 px.
 - Panel lateral y popovers: 10 px en el borde visible.
 - Regiones de visualización: sin radio, sin borde; las separa el espacio.
-- Sombras: solo en popovers y en el panel lateral (`0 8px 24px rgb(20 32 25 / 0.10)`).
+- Sombras: solo en popovers, panel lateral, sheet y drawer, y se cumple por token (`shadow-md`/`shadow-lg` = `--sombra-flotante`; `xs` y `sm` no proyectan).
 
 ## El cauce (componente estrella)
 
@@ -94,7 +103,7 @@ Motion como respuesta a acciones:
 - Rescatar: la tarjeta sale del feed y el contador sube; en el cauce aparece el hilo de retorno.
 - Abrir panel: deslizamiento de 200 ms.
 
-Con `prefers-reduced-motion`: todo aparece en su estado final, sin interpolación.
+Con `prefers-reduced-motion`: todo aparece en su estado final, sin interpolación. Las animaciones de tw-animate-css (`animate-in`, `animate-out`, acordeones) se anulan con una regla global.
 
 ## Componentes
 
