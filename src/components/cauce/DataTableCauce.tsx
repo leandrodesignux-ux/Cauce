@@ -1,7 +1,7 @@
 import { ETAPAS } from "@/config/etapas";
 import { formatearEntero, formatearMxn, formatearPct, formatearPp } from "@/lib/formato";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, TableRowHead } from "@/components/ui/table";
-import type { PozaRio } from "./RiverChart";
+import type { PozaJourney } from "@/lib/journey";
 
 /** Alternativa accesible del río: exactamente las mismas cifras, en tablas. */
 export function DataTableCauce({
@@ -15,7 +15,7 @@ export function DataTableCauce({
   anterior: readonly number[] | null;
   tasas: readonly (number | null)[];
   deltas: readonly (number | null)[];
-  pozas: readonly PozaRio[];
+  pozas: readonly PozaJourney[];
 }) {
   return (
     <div className="flex flex-col gap-8">

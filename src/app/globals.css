@@ -125,6 +125,10 @@
   --radius-tarjeta: var(--radio-tarjeta);
   --radius-panel: var(--radio-panel);
 
+  /* Breakpoints del board (los de la referencia): tres columnas desde 1181 px, experimentos al costado desde 1500 px. */
+  --breakpoint-tablero: 73.8125rem;
+  --breakpoint-ancho: 93.75rem;
+
   /* Sombras por token: paneles y tarjetas con la suave; lo flotante (popovers, sheet, drawer, avisos) con la marcada. */
   --shadow-*: initial;
   --shadow-xs: none;
