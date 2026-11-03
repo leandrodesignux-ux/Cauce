@@ -77,10 +77,16 @@ const FONDOS_UI = ["concreto", "papel", "muted", "secondary"];
 const pares: [texto: string, fondo: string][] = [
   // Texto de la UI sobre las superficies.
   ...TEXTOS_UI.flatMap((t) => FONDOS_UI.map((f) => [t, f] as [string, string])),
-  // Cada variante -texto sobre su -suave (fondos de badges), apoyada en papel y en concreto.
-  ...(["cauce", "laton", "oxido"] as const).flatMap((c) => [
-    [`${c}-texto`, `${c}-suave/papel`] as [string, string],
-    [`${c}-texto`, `${c}-suave/concreto`] as [string, string],
+  // Variantes del Badge: texto sobre su relleno tintado, apoyado en papel y en concreto.
+  ...([
+    ["cauce-texto", "cauce-suave"],
+    ["laton-texto", "laton-suave"],
+    ["oxido-texto", "oxido-suave"],
+    ["niebla-texto", "niebla-suave"],
+    ["cauce-texto", "cauce-fuerte"],
+  ] as const).flatMap(([t, f]) => [
+    [t, `${f}/papel`] as [string, string],
+    [t, `${f}/concreto`] as [string, string],
   ]),
   // Elementos seleccionados: filas y tarjetas en cauce-suave sobre papel; tasa y nav activa sobre concreto.
   ...TEXTOS_UI.map((t) => [t, "cauce-suave/papel"] as [string, string]),

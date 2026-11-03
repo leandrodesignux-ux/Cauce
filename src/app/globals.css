@@ -22,6 +22,7 @@
   --color-papel: var(--papel);
   --color-tinta: var(--tinta);
   --color-niebla: var(--niebla);
+  --color-niebla-texto: var(--niebla-texto);
   --color-cauce: var(--cauce);
   --color-laton: var(--laton);
   --color-oxido: var(--oxido);
@@ -31,6 +32,8 @@
   --color-cauce-suave: var(--cauce-suave);
   --color-laton-suave: var(--laton-suave);
   --color-oxido-suave: var(--oxido-suave);
+  --color-niebla-suave: var(--niebla-suave);
+  --color-cauce-fuerte: var(--cauce-fuerte);
   --color-linea: var(--linea);
   --color-linea-fuerte: var(--linea-fuerte);
   --color-sobre-cauce: var(--sobre-cauce);
