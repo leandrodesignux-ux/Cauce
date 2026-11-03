@@ -16,7 +16,7 @@ import { VISTAS, vistaActiva } from "./vistas";
  */
 export function NavRail() {
   const pathname = usePathname();
-  const compacta = useInterfaz((s) => s.navCompacta);
+  const compacta = useInterfaz((s) => s.navCompacta || s.panelAbierto);
   const alternar = useInterfaz((s) => s.alternarNav);
   const abrirPaleta = usePaleta((s) => s.abrir);
 

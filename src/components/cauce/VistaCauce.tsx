@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { FilterBar } from "@/components/filtros/FilterBar";
 import { useDatos } from "@/components/Proveedores";
 import { ETAPAS, ORDEN_ETAPAS, TRANSICIONES } from "@/config/etapas";
@@ -20,7 +20,10 @@ import {
   valorEnRiesgoTotal,
   volumenPorEtapa,
 } from "@/lib/selectors";
-import { useRescatadosHoy } from "@/lib/stores";
+import { ContenidoPanel, encabezadoPanel } from "@/components/panel/ContenidoPanel";
+import { StagePanel } from "@/components/panel/StagePanel";
+import { useMedia } from "@/hooks/useMedia";
+import { useInterfaz, useRescatadosHoy } from "@/lib/stores";
 import { DataTableCauce } from "./DataTableCauce";
 import { RiverChart, type Activo, type PozaRio } from "./RiverChart";
 import type { ContenidoTooltip } from "./TooltipCauce";
@@ -33,6 +36,14 @@ export function VistaCauce() {
   const { estado, filtros } = useFiltros();
   const { seleccion, seleccionar } = useSeleccion();
   const rescatadosHoy = useRescatadosHoy();
+  const escritorio = useMedia("(min-width: 1280px)", true);
+  const fijarPanelAbierto = useInterfaz((s) => s.fijarPanelAbierto);
+
+  // En escritorio el panel empuja el río: la nav se compacta para dejarle lugar.
+  useEffect(() => {
+    fijarPanelAbierto(escritorio && seleccion !== null);
+    return () => fijarPanelAbierto(false);
+  }, [escritorio, seleccion, fijarPanelAbierto]);
 
   const anteriorFiltros = useMemo(() => ({ ...filtros, periodo: periodoAnterior(filtros.periodo) }), [filtros]);
 
@@ -150,48 +161,72 @@ export function VistaCauce() {
     [seleccionar],
   );
 
+  /** Cierra el panel y devuelve el foco al elemento del río que lo abrió. */
+  const cerrarPanel = useCallback(() => {
+    if (!seleccion) return;
+    const clave =
+      seleccion.tipo === "etapa"
+        ? `etapa:${ORDEN_ETAPAS.indexOf(seleccion.etapa)}`
+        : `transicion:${ORDEN_ETAPAS.indexOf(seleccion.desde)}`;
+    seleccionar(null);
+    requestAnimationFrame(() => document.querySelector<SVGElement>(`[data-clave="${clave}"]`)?.focus());
+  }, [seleccion, seleccionar]);
+
+  const encabezado = seleccion ? encabezadoPanel(seleccion) : null;
+
   return (
-    <div className="flex flex-1 flex-col">
-      <h1 className="sr-only">El cauce: journey de adquisición</h1>
-      <div className="border-b border-linea px-4 py-3 md:px-6 xl:px-8">
-        <FilterBar />
-      </div>
-
-      <section aria-label="Contexto del período" className="flex flex-wrap items-end gap-x-10 gap-y-4 px-4 pt-6 md:px-6 xl:px-8">
-        <Cifra etiqueta="Valor en riesgo" valor={formatearMxnCorto(datos.valorEnRiesgo)} tono="text-laton" />
-        <Cifra etiqueta="Rescatados hoy" valor={formatearEntero(rescatadosHoy)} tono="text-cauce" />
-        <p className="hidden text-sm text-niebla md:ml-auto md:block">
-          {formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)} · {semanas} {semanas === 1 ? "semana" : "semanas"}
-        </p>
-      </section>
-
-      <section aria-label={estado.tabla ? "Cauce en tabla" : "Cauce"} className="px-4 pb-10 pt-8 md:px-6 xl:px-8">
-        {estado.tabla ? (
-          <DataTableCauce
-            volumen={datos.volumen}
-            anterior={estado.comparar ? datos.anterior : null}
-            tasas={datos.tasas}
-            deltas={datos.deltas}
-            pozas={datos.pozas}
-          />
-        ) : (
-          <>
-            <RiverChart
+    <div className="flex flex-1">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <h1 className="sr-only">El cauce: journey de adquisición</h1>
+        <div className="border-b border-linea px-4 py-3 md:px-6 xl:px-8">
+          <FilterBar />
+        </div>
+  
+        <section aria-label="Contexto del período" className="flex flex-wrap items-end gap-x-10 gap-y-4 px-4 pt-6 md:px-6 xl:px-8">
+          <Cifra etiqueta="Valor en riesgo" valor={formatearMxnCorto(datos.valorEnRiesgo)} tono="text-laton" />
+          <Cifra etiqueta="Rescatados hoy" valor={formatearEntero(rescatadosHoy)} tono="text-cauce" />
+          <p className="hidden text-sm text-niebla md:ml-auto md:block">
+            {formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)} · {semanas} {semanas === 1 ? "semana" : "semanas"}
+          </p>
+        </section>
+  
+        <section aria-label={estado.tabla ? "Cauce en tabla" : "Cauce"} className="px-4 pb-10 pt-8 md:px-6 xl:px-8">
+          {estado.tabla ? (
+            <DataTableCauce
               volumen={datos.volumen}
               anterior={estado.comparar ? datos.anterior : null}
-              referencia={datos.referencia}
               tasas={datos.tasas}
               deltas={datos.deltas}
               pozas={datos.pozas}
-              seleccion={seleccionIndice}
-              onSeleccionar={alSeleccionar}
-              onAbrirPoza={(id) => router.push(`/fugas?poza=${id}`)}
-              describir={describir}
             />
-            <Leyenda comparar={estado.comparar} />
-          </>
-        )}
-      </section>
+          ) : (
+            <>
+              <RiverChart
+                volumen={datos.volumen}
+                anterior={estado.comparar ? datos.anterior : null}
+                referencia={datos.referencia}
+                tasas={datos.tasas}
+                deltas={datos.deltas}
+                pozas={datos.pozas}
+                seleccion={seleccionIndice}
+                onSeleccionar={alSeleccionar}
+                onAbrirPoza={(id) => router.push(`/fugas?poza=${id}`)}
+                describir={describir}
+              />
+              <Leyenda comparar={estado.comparar} />
+            </>
+          )}
+        </section>
+      </div>
+      <StagePanel
+        abierto={seleccion !== null}
+        clave={seleccion ? `${seleccion.tipo}:${seleccion.tipo === "etapa" ? seleccion.etapa : seleccion.desde}` : null}
+        titulo={encabezado?.titulo ?? ""}
+        subtitulo={encabezado?.subtitulo}
+        onCerrar={cerrarPanel}
+      >
+        {seleccion && <ContenidoPanel seleccion={seleccion} filtros={filtros} tabla={estado.tabla} />}
+      </StagePanel>
     </div>
   );
 }

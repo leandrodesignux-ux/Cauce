@@ -60,6 +60,8 @@ export type Geometria = {
   pozas: PozaGeo[];
   /** Vertical: borde izquierdo de la columna de pozas. */
   columnaPozas: number;
+  /** Horizontal angosto (panel abierto, tablet): rótulos más chicos. */
+  compacto: boolean;
 };
 
 const GROSOR_MINIMO = 6;
@@ -115,7 +117,7 @@ export function calcularGeometria(e: EntradaGeometria): Geometria {
   let inicio: number, fin: number, paso: number, centro: number, grosorMax: number, alto: number;
   if (horizontal) {
     const m = MEDIDAS.horizontal;
-    paso = (ancho - 2 * m.margen) / (n - 1);
+    paso = (ancho - 2 * (ancho < 1000 ? 52 : m.margen)) / (n - 1);
     inicio = 0;
     fin = ancho;
     centro = m.centro;
@@ -130,7 +132,7 @@ export function calcularGeometria(e: EntradaGeometria): Geometria {
     centro = m.columnaEtiquetas + grosorMax / 2 + 4;
     alto = fin;
   }
-  const margen = horizontal ? MEDIDAS.horizontal.margen : MEDIDAS.vertical.margen;
+  const margen = horizontal ? (ancho < 1000 ? 52 : MEDIDAS.horizontal.margen) : MEDIDAS.vertical.margen;
   const s = Array.from({ length: n }, (_, i) => margen + i * paso);
 
   // Raíz cuadrada: el río se angosta visiblemente en todas las etapas aunque el volumen caiga dos órdenes de magnitud.
@@ -248,7 +250,7 @@ export function calcularGeometria(e: EntradaGeometria): Geometria {
   }
 
   const columnaPozas = centro + grosorMax / 2 + 22;
-  return { orientacion, ancho, alto, centro, grosorMax, paso, inicio, fin, etapas, transiciones, rio, rioAnterior, corrientes, finCorrientes, pozas, columnaPozas };
+  return { orientacion, ancho, alto, centro, grosorMax, paso, inicio, fin, etapas, transiciones, rio, rioAnterior, corrientes, finCorrientes, pozas, columnaPozas, compacto: horizontal && paso < 120 };
 }
 
 /** Parte un texto en renglones de hasta `max` caracteres, sin cortar palabras. */

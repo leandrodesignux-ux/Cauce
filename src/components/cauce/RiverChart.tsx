@@ -30,7 +30,7 @@ const LLENADO = 1.2;
 const CAIDA = 0.4;
 const ESCALON = 0.08;
 const EASE_SALIDA = [0.33, 1, 0.68, 1] as const;
-const ANCHO_VERTICAL = 760;
+const ANCHO_VERTICAL = 700;
 
 // El llenado se orquesta una sola vez por carga de página, no en cada navegación.
 let llenadoHecho = false;
@@ -113,6 +113,7 @@ function Rio({
         key={clave}
         role="button"
         tabIndex={0}
+        data-clave={clave}
         aria-label={etiqueta}
         aria-pressed={a.tipo !== "poza" ? esSeleccion(a.tipo, a.indice) : undefined}
         className="cursor-pointer outline-none"
@@ -272,19 +273,19 @@ function Rio({
                   <>
                     <rect x={e.x - geo.paso * 0.22} y={0} width={geo.paso * 0.44} height={geo.centro + geo.grosorMax / 2} fill="transparent" />
                     <rect
-                      x={e.x - 62}
+                      x={e.x - Math.min(62, geo.paso * 0.48)}
                       y={-2}
-                      width={124}
+                      width={Math.min(124, geo.paso * 0.96)}
                       height={54}
                       rx={8}
                       fill={seleccionada ? "var(--cauce-suave)" : "transparent"}
                       className={focoVisible === `etapa:${i}` ? "stroke-cauce" : ""}
                       strokeWidth={2}
                     />
-                    <text x={e.x} y={18} textAnchor="middle" className={`text-sm ${seleccionada ? "fill-cauce font-medium" : "fill-niebla"}`}>
+                    <text x={e.x} y={18} textAnchor="middle" className={`${geo.compacto ? "text-xs" : "text-sm"} ${seleccionada ? "fill-cauce font-medium" : "fill-niebla"}`}>
                       {etapa.nombre}
                     </text>
-                    <text x={e.x} y={42} textAnchor="middle" className="cifra fill-tinta text-lg font-semibold">
+                    <text x={e.x} y={42} textAnchor="middle" className={`cifra fill-tinta font-semibold ${geo.compacto ? "text-base" : "text-lg"}`}>
                       {formatearEntero(volumen[i])}
                     </text>
                   </>
@@ -339,7 +340,7 @@ function Rio({
           const poza = pozas[i];
           const a: Activo = { tipo: "poza", id: p.id };
           const marcada = esActivo(a);
-          const lineas = partirTexto(poza.nombre, horizontal ? 24 : 20);
+          const lineas = partirTexto(poza.nombre, horizontal ? (geo.compacto ? 14 : 24) : 20);
           const textoX = horizontal ? p.x : geo.columnaPozas;
           const anclaje = horizontal ? "middle" : "start";
           const y0 = p.y + p.ry + 16;
@@ -353,9 +354,9 @@ function Rio({
               transition={{ duration: 0.3, delay: caida(i) + CAIDA * 0.8 }}
             >
               <rect
-                x={horizontal ? p.x - 80 : geo.columnaPozas - 6}
+                x={horizontal ? p.x - (geo.compacto ? 58 : 80) : geo.columnaPozas - 6}
                 y={p.y - p.ry - 8}
-                width={horizontal ? 160 : ancho - geo.columnaPozas + 6}
+                width={horizontal ? (geo.compacto ? 116 : 160) : ancho - geo.columnaPozas + 6}
                 height={p.ry * 2 + 30 + lineas.length * 16 + 22}
                 rx={10}
                 fill="transparent"
@@ -429,9 +430,9 @@ function Tasa({
       <>
         <rect x={izquierda} y={56} width={ancho} height={geo.centro + geo.grosorMax / 2 - 56} fill="transparent" />
         <rect
-          x={t.x - 46}
+          x={t.x - Math.min(46, geo.paso * 0.45)}
           y={64}
-          width={92}
+          width={Math.min(92, geo.paso * 0.9)}
           height={44}
           rx={8}
           fill={fondo}

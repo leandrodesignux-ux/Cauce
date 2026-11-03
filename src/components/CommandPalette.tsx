@@ -10,6 +10,7 @@ import { ETAPAS, TRANSICIONES, nombreEtapa } from "@/config/etapas";
 import { useFiltros } from "@/hooks/useFiltros";
 import { useDatos } from "./Proveedores";
 import { VISTAS } from "./shell/vistas";
+import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
 
 type Paleta = { abierta: boolean; abrir: () => void; fijar: (abierta: boolean) => void };
 
@@ -18,14 +19,6 @@ export const usePaleta = create<Paleta>()((set) => ({
   abrir: () => set({ abierta: true }),
   fijar: (abierta) => set({ abierta }),
 }));
-
-const ETIQUETA_ESTADO_EXPERIMENTO = {
-  diseno: "Diseño",
-  en_curso: "En curso",
-  leyendo: "Leyendo",
-  validado: "Validado",
-  refutado: "Refutado",
-} as const;
 
 /** Paleta de comandos ⌘K / Ctrl+K: saltar a una vista, etapa, poza, experimento o lead. */
 export function CommandPalette() {

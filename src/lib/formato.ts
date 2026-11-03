@@ -41,3 +41,8 @@ export function formatearRangoSemanas(desde: string, hasta: string): string {
 export function formatearSemana(lunes: string): string {
   return fechaConAnio.format(new Date(`${lunes}T00:00:00Z`)).replace(/\./g, "");
 }
+
+/** "17 ago". */
+export function formatearSemanaCorta(lunes: string): string {
+  return fechaCorta.format(new Date(`${lunes}T00:00:00Z`)).replace(".", "");
+}

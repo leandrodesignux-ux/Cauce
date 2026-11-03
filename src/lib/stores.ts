@@ -63,6 +63,9 @@ export function useRescatadosHoy(): number {
 type Interfaz = {
   navCompacta: boolean;
   alternarNav: () => void;
+  /** Panel de etapa abierto en escritorio: la nav se compacta para dejarle lugar al río. No se persiste. */
+  panelAbierto: boolean;
+  fijarPanelAbierto: (abierto: boolean) => void;
 };
 
 export const useInterfaz = create<Interfaz>()(
@@ -70,8 +73,15 @@ export const useInterfaz = create<Interfaz>()(
     (set) => ({
       navCompacta: false,
       alternarNav: () => set((s) => ({ navCompacta: !s.navCompacta })),
+      panelAbierto: false,
+      fijarPanelAbierto: (panelAbierto) => set({ panelAbierto }),
     }),
-    { name: "cauce-interfaz", storage: createJSONStorage(() => localStorage), skipHydration: true },
+    {
+      name: "cauce-interfaz",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (s) => ({ navCompacta: s.navCompacta }),
+      skipHydration: true,
+    },
   ),
 );
 
