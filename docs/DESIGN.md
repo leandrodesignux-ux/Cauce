@@ -13,7 +13,7 @@ Base fría tipo concreto (no crema), un verde de cauce, latón para el dinero y 
 | `--concreto` | `#E9EBE8` | `#18211D` | Fondo de la app |
 | `--papel` | `#F7F8F6` | `#1F2A25` | Panel lateral, tablas, popovers |
 | `--tinta` | `#142019` | `#E4E9E6` | Texto principal, ejes |
-| `--niebla` | `#8A9A93` | `#8A9A93` | Texto secundario, período anterior, líneas guía |
+| `--niebla` | `#5A6862` | `#8A9A93` | Texto secundario, período anterior, líneas guía |
 | `--cauce` | `#2E6B52` | `#409673` | Volumen que avanza, acciones primarias, foco |
 | `--laton` | `#A9822F` | `#CCA249` | Montos en MXN, valor en riesgo, comisiones |
 | `--oxido` | `#B4472F` | `#D1674F` | Fugas, pozas, deltas negativos |
@@ -23,7 +23,7 @@ Base fría tipo concreto (no crema), un verde de cauce, latón para el dinero y 
 
 Derivados con `color-mix()` sobre el token base, así siguen al modo oscuro: `--cauce-suave` (cauce al 14 %), `--oxido-suave` (óxido al 12 %). Deltas positivos en `--cauce`, negativos en `--oxido`; nunca el color solo: siempre con signo y flecha.
 
-Modo oscuro (secundario, solo vía `prefers-color-scheme`, sin toggle): cauce, latón y óxido suben +12 de L en HSL. `--niebla` se mantiene porque ya contrasta 5.6:1 sobre el fondo oscuro; las líneas bajan a verdes casi negros para seguir siendo sutiles.
+Modo oscuro (secundario, solo vía `prefers-color-scheme`, sin toggle): cauce, latón y óxido suben +12 de L en HSL. `--niebla` usa `#5A6862` en claro (4.9:1 sobre concreto) y `#8A9A93` en oscuro (5.6:1 sobre el fondo); las líneas bajan a verdes casi negros para seguir siendo sutiles.
 
 ## Tipografía
 

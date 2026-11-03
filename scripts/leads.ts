@@ -49,16 +49,27 @@ const ESPACIO: Record<Sector, { m2: [number, number]; precioM2: number }> = {
   coworking: { m2: [10, 80], precioM2: 600 },
 };
 
-// 7 plantillas por sector (42 en total). {m2}, {zona} y {presupuesto} solo se usan si el lead declaró esa señal.
+// Banco de mensajes: apertura + núcleo por sector + cierre (14 núcleos por sector, 84 en total), para que el feed
+// no repita frases a simple vista. {m2}, {zona} y {presupuesto} solo se usan si el lead declaró esa señal.
+const APERTURAS = ["", "", "Hola, ", "Buen día, ", "Buenas tardes, ", "Qué tal, ", "Hola, los contacto por el anuncio. ", "Saludos. ", "Hola, buenas noches. "];
+const CIERRES = ["", "", "", " Gracias.", " Quedo pendiente.", " ¿Me pueden llamar?", " Saludos.", " Gracias por la información."];
+
 const MENSAJES: Record<Sector, readonly string[]> = {
   oficina: [
-    "Hola, busco oficina de unos {m2} m² en {zona}. ¿Qué opciones tienen?",
+    "Busco oficina de unos {m2} m² en {zona}. ¿Qué opciones tienen?",
     "¿La oficina sigue disponible? Nos urge mudarnos este mes.",
-    "Somos un equipo de 25 personas, buscamos algo en {zona}.",
+    "Somos un equipo de 25 personas y buscamos algo en {zona}.",
     "¿Cuánto es el mantenimiento mensual de la oficina?",
     "Mi presupuesto es de {presupuesto} al mes, ¿hay algo en {zona}?",
     "¿Se puede agendar visita esta semana?",
     "¿Aceptan contrato a 2 años con opción a renovar?",
+    "¿La oficina se entrega acondicionada o en obra gris?",
+    "¿Cuántos cajones de estacionamiento incluye?",
+    "Necesitamos mudarnos antes de fin de mes, ¿qué tienen listo?",
+    "¿El edificio tiene certificación LEED?",
+    "Me interesa la de {m2} m², ¿el precio es negociable?",
+    "¿Se puede dividir el piso en dos oficinas?",
+    "Estamos comparando opciones en {zona}, ¿me mandan la ficha técnica?",
   ],
   industrial: [
     "Necesito una nave de {m2} m² cerca de {zona}, con andén.",
@@ -66,8 +77,15 @@ const MENSAJES: Record<Sector, readonly string[]> = {
     "¿La nave cuenta con subestación eléctrica?",
     "Buscamos nave para operación logística, entrada inmediata.",
     "Presupuesto de {presupuesto} mensuales, ¿qué tienen en {zona}?",
-    "¿El parque industrial tiene seguridad 24/7?",
+    "¿El parque industrial tiene seguridad las 24 horas?",
     "¿Puedo visitar la nave el jueves?",
+    "¿Cuántos andenes tiene y de qué tipo son?",
+    "¿El piso soporta racks de carga pesada?",
+    "Buscamos algo con patio de maniobras amplio en {zona}.",
+    "¿Tiene permisos para manufactura ligera?",
+    "¿Cuál es la resistencia del piso por metro cuadrado?",
+    "Necesitamos {m2} m² para centro de distribución.",
+    "¿Qué tan lejos queda de la autopista?",
   ],
   bodega: [
     "Busco bodega de {m2} m² en {zona}.",
@@ -77,6 +95,13 @@ const MENSAJES: Record<Sector, readonly string[]> = {
     "Tengo {presupuesto} al mes para la bodega.",
     "¿La bodega tiene oficina incluida?",
     "¿Me pueden mandar más fotos de la bodega?",
+    "¿Se puede rentar solo por seis meses?",
+    "¿Tiene cortina eléctrica y rampa?",
+    "¿Hay vigilancia en la zona de {zona}?",
+    "Necesito espacio para almacenar mercancía de temporada.",
+    "¿Incluye baño y medio de servicio?",
+    "¿Cuánto piden de depósito?",
+    "¿La bodega tiene mezzanine?",
   ],
   local: [
     "Busco local comercial de {m2} m² en {zona}.",
@@ -86,6 +111,13 @@ const MENSAJES: Record<Sector, readonly string[]> = {
     "¿El local se renta con cortina y baño?",
     "Mi presupuesto es de {presupuesto} mensuales.",
     "¿Puedo verlo este sábado?",
+    "¿Tiene salida de humo para cocina?",
+    "¿El local está en planta baja con vista a la calle?",
+    "¿Permiten anuncio luminoso en fachada?",
+    "Buscamos algo en esquina dentro de {zona}.",
+    "¿Cuánto es la cuota de mantenimiento de la plaza?",
+    "¿El local cuenta con estacionamiento para clientes?",
+    "¿Hay periodo de gracia para adecuaciones?",
   ],
   terreno: [
     "Me interesa un terreno de {m2} m² en {zona}.",
@@ -95,6 +127,13 @@ const MENSAJES: Record<Sector, readonly string[]> = {
     "Buscamos terreno para desarrollar, presupuesto de {presupuesto} al mes.",
     "¿Tiene escrituras en regla?",
     "¿Se puede visitar el terreno esta semana?",
+    "¿El terreno es plano o tiene pendiente?",
+    "¿Qué frente tiene hacia la avenida?",
+    "¿Aceptan esquema de renta a largo plazo?",
+    "¿Hay restricciones de construcción en {zona}?",
+    "¿Tiene acceso para transporte pesado?",
+    "Nos interesa para un patio de maniobras.",
+    "¿Me comparten el plano topográfico?",
   ],
   coworking: [
     "Busco espacio para 6 personas en {zona}.",
@@ -104,6 +143,13 @@ const MENSAJES: Record<Sector, readonly string[]> = {
     "Presupuesto de {presupuesto} al mes para el equipo.",
     "¿Puedo usar la dirección como domicilio fiscal?",
     "¿Me pueden dar un recorrido mañana?",
+    "¿El internet es dedicado o compartido?",
+    "Somos tres personas, ¿tienen escritorios fijos?",
+    "¿Hay acceso las 24 horas?",
+    "¿Incluye café y área de cocina?",
+    "¿Cuántas horas de sala de juntas vienen en el plan?",
+    "Buscamos algo flexible en {zona} por tres meses.",
+    "¿Tienen cabinas para llamadas?",
   ],
 };
 
@@ -167,10 +213,14 @@ function elegirMensaje(rng: Rng, sector: Sector, s: SenalesLead): string {
       (!m.includes("{zona}") || s.zona !== null) &&
       (!m.includes("{presupuesto}") || s.presupuestoMxn !== null),
   );
-  return elegir(rng, posibles)
+  const nucleo = elegir(rng, posibles)
     .replace("{m2}", String(s.superficieM2))
     .replace("{zona}", String(s.zona))
     .replace("{presupuesto}", formatearMxn(s.presupuestoMxn ?? 0));
+  const apertura = elegir(rng, APERTURAS);
+  // Tras una apertura con coma, la frase sigue en minúscula (respetando ¿ inicial).
+  const cuerpo = apertura.endsWith(", ") ? nucleo.replace(/^(¿?)(\p{Lu})/u, (_, signo, letra) => signo + letra.toLowerCase()) : nucleo;
+  return `${apertura}${cuerpo}${elegir(rng, CIERRES)}`;
 }
 
 /** n instantes ordenados entre inicio y fin, con el primero en inicio y el último en fin. */

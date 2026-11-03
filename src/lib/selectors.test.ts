@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { PARAMETROS_PERDIDA_INICIALES as P } from "../config/modelo";
-import { modeloPerdida, periodoAnterior, periodoDesdePreset, tasaTransicion, volumenVacio } from "./selectors";
+import {
+  modeloPerdida,
+  periodoAnterior,
+  periodoDesdePreset,
+  tasaTransicion,
+  valorEnRiesgoPorPoza,
+  volumenVacio,
+} from "./selectors";
 
 describe("modeloPerdida", () => {
   const iniciales = {
@@ -40,5 +47,14 @@ describe("períodos y tasas", () => {
 
   it("la tasa es null sin volumen de origen", () => {
     assert.equal(tasaTransicion(volumenVacio(), { desde: "visita", hacia: "cierre" }), null);
+  });
+});
+
+describe("valorEnRiesgoPorPoza", () => {
+  it("la poza de fantasmas muestra el mismo monto que el modelo de pérdida inicial", () => {
+    const fuga = { id: "fantasmas", desde: "calificacion", hacia: "asignacion", causa: "", proporcionCaida: 0.75 } as const;
+    const [poza] = valorEnRiesgoPorPoza([], [fuga], { periodo: periodoDesdePreset("30d", "2026-10-26") });
+    assert.equal(poza.valorMxn, 347_220);
+    assert.equal(poza.volumen, 643);
   });
 });

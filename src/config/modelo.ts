@@ -13,6 +13,9 @@ export const PARAMETROS_PERDIDA_INICIALES = {
   comisionMxn: { valor: 18_000, origen: "Supuesto del modelo Ghost" },
 } as const;
 
+/** Poza que se valúa con el modelo de pérdida, para mostrar el mismo monto en el cauce y en /fugas. */
+export const FUGA_MODELO_PERDIDA = "fantasmas";
+
 /**
  * Demo: multiplicador de la comisión promedio por sector (industrial y terreno con ticket más alto,
  * coworking al revés). Se usa para valuar las pozas del cauce.

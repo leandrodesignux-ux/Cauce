@@ -1,7 +1,7 @@
 // Selectores puros: todo número que muestra la UI se deriva de acá.
 
 import { ORDEN_ETAPAS, TRANSICIONES } from "../config/etapas";
-import { comisionPorSector } from "../config/modelo";
+import { FUGA_MODELO_PERDIDA, PARAMETROS_PERDIDA_INICIALES, comisionPorSector } from "../config/modelo";
 import type { Canal, EtapaId, Estado, Fuga, Sector, SemanaEtapa, Transicion } from "./tipos";
 
 // ---------------------------------------------------------------------------
@@ -145,6 +145,11 @@ export function valorEnRiesgoPorPoza(flujo: readonly SemanaEtapa[], fugas: reado
   }
 
   return fugas.map((fuga) => {
+    // La poza de fantasmas se valúa con el modelo de pérdida (valores iniciales), igual que /fugas.
+    if (fuga.id === FUGA_MODELO_PERDIDA) {
+      const p = parametrosPerdidaIniciales();
+      return { fugaId: fuga.id, volumen: p.fantasmas, valorMxn: modeloPerdida(p).montoMxn };
+    }
     const probabilidad = probabilidadCierreDesde(total, fuga.hacia);
     let volumen = 0;
     let valor = 0;
@@ -199,6 +204,16 @@ export type ResultadoPerdida = {
   /** fantasmas × lead→cita × cita→contrato × comisión, redondeado al peso. */
   montoMxn: number;
 };
+
+export function parametrosPerdidaIniciales(): ParametrosPerdida {
+  const P = PARAMETROS_PERDIDA_INICIALES;
+  return {
+    fantasmas: P.fantasmas.valor,
+    leadACita: P.leadACita.valor,
+    citaAContrato: P.citaAContrato.valor,
+    comisionMxn: P.comisionMxn.valor,
+  };
+}
 
 export function modeloPerdida(p: ParametrosPerdida): ResultadoPerdida {
   const citas = p.fantasmas * p.leadACita;
