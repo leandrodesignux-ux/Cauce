@@ -45,7 +45,7 @@ export function TimelineExperimentos({
   const xHoy = x(fecha(HOY));
 
   return (
-    <div ref={ref} className="rounded-panel border border-linea bg-tarjeta p-4 md:p-5">
+    <div ref={ref} className="rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta md:p-5">
       {ancho > 0 && (
         <>
           {/* Eje de meses */}

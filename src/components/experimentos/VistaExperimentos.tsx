@@ -6,6 +6,7 @@ import { useCallback, useMemo, type ReactNode } from "react";
 import { StagePanel } from "@/components/panel/StagePanel";
 import { useDatos } from "@/components/Proveedores";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
+import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { nombreEtapa } from "@/config/etapas";
 import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
@@ -55,67 +56,69 @@ export function VistaExperimentos() {
 
   return (
     <div className="flex flex-1">
-      <div className="flex min-w-0 flex-1 flex-col gap-6 px-4 py-6 md:px-6 xl:px-8">
+      <div className="flex min-w-0 flex-1 flex-col gap-6">
         <header>
-          <h1 className="font-cifra text-xl font-semibold md:text-2xl">Registro de hipótesis</h1>
-          <p className="mt-1 max-w-2xl text-sm text-tinta-2">
+          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold tracking-tight md:text-2xl">Registro de hipótesis</h1>
+          <p className="mt-1.5 max-w-3xl text-tinta-2">
             Cada iniciativa declara antes de desplegarse qué espera mover y cuándo se va a poder leer. Así se sabe si lo que se dijo que iba a pasar,
             pasó.
           </p>
         </header>
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div role="group" aria-label="Filtrar por estado" className="flex flex-wrap gap-2">
-            <Chip activo={estado === null} onClick={() => poner({ estado: null })}>
-              Todos <span className="cifra text-xs opacity-70">{experimentos.length}</span>
-            </Chip>
-            {ESTADOS.map((e) => {
-              const n = experimentos.filter((x) => x.estado === e).length;
-              return (
-                <Chip key={e} activo={estado === e} onClick={() => poner({ estado: estado === e ? null : e })}>
-                  {ETIQUETA_ESTADO_EXPERIMENTO[e]} <span className="cifra text-xs opacity-70">{n}</span>
-                </Chip>
-              );
-            })}
+        <section aria-label="Experimentos" className="vidrio flex flex-col gap-5 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div role="group" aria-label="Filtrar por estado" className="flex flex-wrap gap-2">
+              <Chip activo={estado === null} onClick={() => poner({ estado: null })}>
+                Todos <span className="cifra text-xs opacity-70">{experimentos.length}</span>
+              </Chip>
+              {ESTADOS.map((e) => {
+                const n = experimentos.filter((x) => x.estado === e).length;
+                return (
+                  <Chip key={e} activo={estado === e} onClick={() => poner({ estado: estado === e ? null : e })}>
+                    {ETIQUETA_ESTADO_EXPERIMENTO[e]} <span className="cifra text-xs opacity-70">{n}</span>
+                  </Chip>
+                );
+              })}
+            </div>
+            <ToggleGroup
+              type="single"
+              variant="segmentado"
+              spacing={1}
+              aria-label="Vista"
+              value={vista}
+              onValueChange={(v) => v && poner({ vista: v === "timeline" ? "timeline" : null })}
+            >
+              <ToggleGroupItem value="tabla">
+                <Table2 data-icon="inline-start" />
+                Tabla
+              </ToggleGroupItem>
+              <ToggleGroupItem value="timeline">
+                <GanttChart data-icon="inline-start" />
+                Timeline
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
-          <ToggleGroup
-            type="single"
-            variant="segmentado"
-            spacing={1}
-            aria-label="Vista"
-            value={vista}
-            onValueChange={(v) => v && poner({ vista: v === "timeline" ? "timeline" : null })}
-          >
-            <ToggleGroupItem value="tabla">
-              <Table2 data-icon="inline-start" />
-              Tabla
-            </ToggleGroupItem>
-            <ToggleGroupItem value="timeline">
-              <GanttChart data-icon="inline-start" />
-              Timeline
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-
-        {visibles.length === 0 ? (
-          <Empty className="flex-none py-10">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <FlaskConical />
-              </EmptyMedia>
-              <EmptyDescription>
-                No hay experimentos {estado ? `en estado «${ETIQUETA_ESTADO_EXPERIMENTO[estado]}»` : ""} todavía.{" "}
-                <button type="button" onClick={() => poner({ estado: null })} className="text-azul-texto underline underline-offset-2">
-                  Ver todos
-                </button>
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        ) : vista === "tabla" ? (
-          <TablaExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
-        ) : (
-          <TimelineExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
-        )}
+  
+          {visibles.length === 0 ? (
+            <Empty className="flex-none py-10">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <FlaskConical />
+                </EmptyMedia>
+                <EmptyDescription>
+                  No hay experimentos {estado ? `en estado «${ETIQUETA_ESTADO_EXPERIMENTO[estado]}»` : ""} todavía.{" "}
+                  <button type="button" onClick={() => poner({ estado: null })} className="font-medium text-azul-texto underline underline-offset-2">
+                    Ver todos
+                  </button>
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          ) : vista === "tabla" ? (
+            <TablaExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
+          ) : (
+            <TimelineExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
+          )}
+        </section>
       </div>
 
       <StagePanel
@@ -133,15 +136,8 @@ export function VistaExperimentos() {
 
 function Chip({ activo, onClick, children }: { activo: boolean; onClick: () => void; children: ReactNode }) {
   return (
-    <button
-      type="button"
-      aria-pressed={activo}
-      onClick={onClick}
-      className={`inline-flex h-8 items-center gap-1.5 rounded-control border px-3 text-sm motion-safe:transition-colors ${
-        activo ? "border-azul bg-azul-suave text-azul-texto" : "border-linea-fuerte hover:border-tenue hover:bg-tarjeta"
-      }`}
-    >
+    <Toggle variant="outline" pressed={activo} onPressedChange={onClick}>
       {children}
-    </button>
+    </Toggle>
   );
 }

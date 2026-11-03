@@ -28,7 +28,7 @@ export function TablaExperimentos({
               data-exp={e.id}
               onClick={() => onAbrir(e.id)}
               aria-expanded={seleccionado === e.id}
-              className={`flex w-full flex-col gap-2 rounded-panel border p-4 text-left ${seleccionado === e.id ? "border-azul bg-azul-suave" : "border-linea bg-tarjeta"}`}
+              className={`flex w-full flex-col gap-2 rounded-tile border p-4 text-left shadow-tarjeta ${seleccionado === e.id ? "border-azul bg-azul-suave" : "border-tarjeta-borde bg-tarjeta"}`}
             >
               <span className="flex items-start justify-between gap-3">
                 <span>
