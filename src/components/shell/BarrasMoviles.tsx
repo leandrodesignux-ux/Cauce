@@ -18,7 +18,7 @@ export function BarraSuperiorMovil() {
       </Link>
       <div className="flex items-center gap-2">
         <span className="rounded-control border border-dashed border-linea-fuerte px-2 py-0.5 text-xs text-niebla">Datos demo</span>
-        <SwitchTema />
+        <SwitchTema lado="bottom" />
         <button
           type="button"
           onClick={abrirPaleta}
