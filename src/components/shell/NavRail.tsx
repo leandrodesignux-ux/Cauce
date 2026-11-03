@@ -18,6 +18,8 @@ export function NavRail() {
   const pathname = usePathname();
   const compacta = useInterfaz((s) => s.navCompacta || s.panelAbierto);
   const alternar = useInterfaz((s) => s.alternarNav);
+  // Con el panel abierto la nav queda compacta a la fuerza: no se ofrece expandirla.
+  const panelAbierto = useInterfaz((s) => s.panelAbierto);
   const abrirPaleta = usePaleta((s) => s.abrir);
 
   // Clases que solo se aplican cuando la nav muestra etiquetas (escritorio y no compacta).
@@ -85,7 +87,7 @@ export function NavRail() {
           onClick={alternar}
           aria-label={compacta ? "Expandir navegación" : "Colapsar navegación"}
           title={compacta ? "Expandir navegación" : "Colapsar navegación"}
-          className="hidden h-9 items-center gap-3 rounded-control px-2.5 text-sm text-niebla hover:bg-papel hover:text-tinta xl:flex"
+          className={`hidden h-9 items-center gap-3 rounded-control px-2.5 text-sm text-niebla hover:bg-papel hover:text-tinta ${panelAbierto ? "" : "xl:flex"}`}
         >
           {compacta ? <PanelLeftOpen className="size-[18px] shrink-0" aria-hidden /> : <PanelLeftClose className="size-[18px] shrink-0" aria-hidden />}
           <span className={conEtiqueta}>Colapsar</span>

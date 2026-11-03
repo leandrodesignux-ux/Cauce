@@ -18,6 +18,9 @@
   --oxido-suave: color-mix(in srgb, var(--oxido) 12%, transparent);
   --linea: #d3d8d4;
   --linea-fuerte: #b9c1bc;
+  /* Texto sobre fondos de acento (botones, chips activos): AA en ambos modos */
+  --sobre-cauce: var(--papel);
+  --sobre-laton: var(--tinta);
 
   /* Tipografía (las variables --font-* las inyecta next/font en <html>) */
   --fuente-cifra: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
@@ -72,6 +75,9 @@
 
     --linea: #2e3a34;
     --linea-fuerte: #3c4943;
+
+    --sobre-cauce: #0e1411;
+    --sobre-laton: #0e1411;
 
     --sombra-flotante: 0 8px 24px rgb(0 0 0 / 0.4);
 

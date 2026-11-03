@@ -21,6 +21,8 @@
   --color-oxido-suave: var(--oxido-suave);
   --color-linea: var(--linea);
   --color-linea-fuerte: var(--linea-fuerte);
+  --color-sobre-cauce: var(--sobre-cauce);
+  --color-sobre-laton: var(--sobre-laton);
 
   --font-*: initial;
   --font-sans: var(--fuente-ui);

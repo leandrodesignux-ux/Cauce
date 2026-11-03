@@ -324,7 +324,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                     </span>
                     {filtros.bandeja === "pendientes" ? (
                       <>
-                        <button type="button" onClick={() => aplicar("rescatar", [...seleccion])} className="rounded-control bg-cauce px-3 py-1.5 font-medium text-papel">
+                        <button type="button" onClick={() => aplicar("rescatar", [...seleccion])} className="rounded-control bg-cauce px-3 py-1.5 font-medium text-sobre-cauce">
                           Rescatar {seleccion.size} lead{seleccion.size === 1 ? "" : "s"}
                         </button>
                         <button type="button" onClick={() => aplicar("descartar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-concreto/10">
@@ -412,7 +412,7 @@ function Chip({ activo, destacado, onClick, children }: { activo: boolean; desta
       className={`inline-flex h-8 items-center gap-1.5 rounded-control border px-3 text-sm motion-safe:transition-colors ${
         activo
           ? destacado
-            ? "border-laton bg-laton text-papel"
+            ? "border-laton bg-laton text-sobre-laton"
             : "border-cauce bg-cauce-suave text-cauce"
           : destacado
             ? "border-laton text-laton hover:bg-laton/10"

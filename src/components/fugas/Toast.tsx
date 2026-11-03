@@ -38,7 +38,7 @@ export function Toast({ toast, onCerrar }: { toast: DatosToast | null; onCerrar:
                   toast.accion!.alHacer();
                   onCerrar();
                 }}
-                className="rounded-control px-2.5 py-1 font-medium text-laton hover:bg-concreto/10"
+                className="rounded-control px-2.5 py-1 font-semibold underline underline-offset-2 hover:bg-concreto/10"
               >
                 {toast.accion.etiqueta}
               </button>

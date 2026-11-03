@@ -1,7 +1,7 @@
 import { banda } from "@/lib/leads";
 
 const ESTILO = {
-  alto: "border-cauce bg-cauce text-papel",
+  alto: "border-cauce bg-cauce text-sobre-cauce",
   medio: "border-laton text-laton",
   bajo: "border-linea-fuerte text-niebla",
 } as const;

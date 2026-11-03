@@ -19,6 +19,8 @@ Base fría tipo concreto (no crema), un verde de cauce, latón para el dinero y 
 | `--oxido` | `#B4472F` | `#D1674F` | Fugas, pozas, deltas negativos |
 | `--linea` | `#D3D8D4` | `#2E3A34` | Separadores de 1 px |
 | `--linea-fuerte` | `#B9C1BC` | `#3C4943` | Bordes de controles, ejes marcados |
+| `--sobre-cauce` | `#F7F8F6` | `#0E1411` | Texto sobre fondo `--cauce` (botones, chips activos): 5.9:1 y 5.2:1 |
+| `--sobre-laton` | `#142019` | `#0E1411` | Texto sobre fondo `--laton` (papel daba 3.3:1) |
 | `--sombra-flotante` | `0 8px 24px rgb(20 32 25 / 0.10)` | `0 8px 24px rgb(0 0 0 / 0.40)` | Popovers y panel lateral |
 
 Derivados con `color-mix()` sobre el token base, así siguen al modo oscuro: `--cauce-suave` (cauce al 14 %), `--oxido-suave` (óxido al 12 %). Deltas positivos en `--cauce`, negativos en `--oxido`; nunca el color solo: siempre con signo y flecha.

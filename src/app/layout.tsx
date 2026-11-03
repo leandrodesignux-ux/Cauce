@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Space_Grotesk } from "next/font/google";
 import { Proveedores } from "@/components/Proveedores";
 import { AppShell } from "@/components/shell/AppShell";
+import { COLOR } from "@/config/colores";
 import { datosCompactos } from "@/lib/datos";
 import "./globals.css";
 
@@ -16,10 +17,31 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
+// En Vercel se usa el dominio de producción; en local, el servidor de desarrollo.
+const dominio = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+const descripcion =
+  "El journey de adquisición de un marketplace B2B de inmuebles comerciales como un río: dónde se pierde la demanda, cuánto vale y qué experimentos la atacan. Prototipo con datos demo.";
+
 export const metadata: Metadata = {
-  title: { default: "Cauce", template: "%s · Cauce" },
-  description:
-    "Journey de adquisición de la primera visita al contrato, con las fugas a la vista. Prototipo con datos demo.",
+  metadataBase: new URL(dominio ? `https://${dominio}` : "http://localhost:3000"),
+  title: { default: "Cauce · De la primera visita al contrato", template: "%s · Cauce" },
+  description: descripcion,
+  applicationName: "Cauce",
+  openGraph: {
+    type: "website",
+    locale: "es_MX",
+    siteName: "Cauce",
+    title: "Cauce · De la primera visita al contrato",
+    description: descripcion,
+  },
+  twitter: { card: "summary_large_image" },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: COLOR.concreto },
+    { media: "(prefers-color-scheme: dark)", color: COLOR.concretoOscuro },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

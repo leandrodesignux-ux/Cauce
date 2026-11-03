@@ -50,7 +50,7 @@ export function FilterBar() {
         <button type="button" onClick={() => setHoja(true)} className={`${claseControl} ${claseEstadoControl(activos > 0)} h-10`}>
           <SlidersHorizontal className="size-4" aria-hidden />
           Filtros
-          {activos > 0 && <span className="rounded-full bg-cauce px-1.5 text-xs text-papel">{activos}</span>}
+          {activos > 0 && <span className="rounded-full bg-cauce px-1.5 text-xs text-sobre-cauce">{activos}</span>}
         </button>
         <span className="truncate text-sm text-niebla">{formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}</span>
       </div>
@@ -67,7 +67,7 @@ export function FilterBar() {
             <button
               type="button"
               onClick={() => setHoja(false)}
-              className={`${claseControl} h-11 flex-[2] justify-center border-cauce bg-cauce font-medium text-papel`}
+              className={`${claseControl} h-11 flex-[2] justify-center border-cauce bg-cauce font-medium text-sobre-cauce`}
             >
               Ver resultados
             </button>
@@ -196,7 +196,7 @@ function RangoPersonalizado({ estado, actualizar }: { estado: EstadoFiltros; act
         </select>
       </label>
       {!valido && <p className="text-xs text-oxido">La semana inicial tiene que ser anterior a la final.</p>}
-      <button type="submit" disabled={!valido} className={`${claseControl} justify-center border-cauce bg-cauce font-medium text-papel disabled:opacity-50`}>
+      <button type="submit" disabled={!valido} className={`${claseControl} justify-center border-cauce bg-cauce font-medium text-sobre-cauce disabled:opacity-50`}>
         Aplicar período
       </button>
     </form>

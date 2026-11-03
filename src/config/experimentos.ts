@@ -13,6 +13,6 @@ export const TONO_ESTADO_EXPERIMENTO: Record<EstadoExperimento, string> = {
   diseno: "border-linea-fuerte text-niebla",
   en_curso: "border-cauce text-cauce",
   leyendo: "border-laton text-laton",
-  validado: "border-cauce bg-cauce text-papel",
+  validado: "border-cauce bg-cauce text-sobre-cauce",
   refutado: "border-oxido text-oxido",
 };

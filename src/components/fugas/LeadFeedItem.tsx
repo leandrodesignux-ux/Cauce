@@ -127,7 +127,7 @@ export function LeadFeedItem({
             <button
               type="button"
               onClick={() => onAccion("rescatar")}
-              className="inline-flex h-8 items-center rounded-control border border-cauce bg-cauce px-3 text-sm font-medium text-papel hover:opacity-90"
+              className="inline-flex h-8 items-center rounded-control border border-cauce bg-cauce px-3 text-sm font-medium text-sobre-cauce hover:opacity-90"
             >
               Rescatar lead
             </button>

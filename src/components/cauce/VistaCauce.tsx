@@ -39,10 +39,12 @@ export function VistaCauce() {
     for (const l of leads) if (l.fugaId && rescatados[l.id]) porPoza.set(l.fugaId, (porPoza.get(l.fugaId) ?? 0) + 1);
     return [...porPoza].map(([fugaId, cantidad]) => ({ fugaId, cantidad }));
   }, [leads, rescatados]);
-  const { estado, filtros } = useFiltros();
+  const { estado, filtros, restablecer } = useFiltros();
   const { seleccion, seleccionar } = useSeleccion();
   const rescatadosHoy = useRescatadosHoy();
   const escritorio = useMedia("(min-width: 1280px)", true);
+  const tactil = useMedia("(hover: none)");
+  const accion = tactil ? "Toque" : "Clic o Enter";
   const fijarPanelAbierto = useInterfaz((s) => s.fijarPanelAbierto);
 
   // En escritorio el panel empuja el río: la nav se compacta para dejarle lugar.
@@ -96,8 +98,8 @@ export function VistaCauce() {
           ],
           pie:
             p.id === FUGA_MODELO_PERDIDA
-              ? "Valuado con el modelo de pérdida (643 fantasmas). Clic para abrir en Fugas."
-              : "Clic para abrir la poza en Fugas.",
+              ? `Valuado con el modelo de pérdida (643 fantasmas). ${tactil ? "Toque" : "Clic"} para abrir en Fugas.`
+              : `${tactil ? "Toque" : "Clic"} para abrir la poza en Fugas.`,
         };
       }
       if (a.tipo === "etapa") {
@@ -122,7 +124,7 @@ export function VistaCauce() {
             },
           ],
           serie: { valores: serie, etiqueta: "Volumen semanal, últimas 12 semanas" },
-          pie: "Clic o Enter para seleccionar la etapa.",
+          pie: `${accion} para ver el detalle de la etapa.`,
         };
       }
       const t = TRANSICIONES[a.indice];
@@ -144,10 +146,10 @@ export function VistaCauce() {
           valores: serieSemanal(flujo, filtros, t, SEMANAS_SERIE).map((p) => (p.tasa === null ? null : p.tasa * 100)),
           etiqueta: "Conversión semanal, últimas 12 semanas",
         },
-        pie: "Clic o Enter para seleccionar la transición.",
+        pie: `${accion} para ver el detalle de la transición.`,
       };
     },
-    [datos, flujo, filtros],
+    [datos, flujo, filtros, accion, tactil],
   );
 
   const seleccionIndice = useMemo(() => {
@@ -197,7 +199,21 @@ export function VistaCauce() {
         </section>
   
         <section aria-label={estado.tabla ? "Cauce en tabla" : "Cauce"} className="px-4 pb-10 pt-8 md:px-6 xl:px-8">
-          {estado.tabla ? (
+          {datos.volumen[0] === 0 ? (
+            <div className="flex flex-col items-center gap-3 rounded-panel border border-dashed border-linea-fuerte px-6 py-16 text-center">
+              <p className="font-cifra text-lg font-semibold">El cauce está seco con estos filtros</p>
+              <p className="max-w-md text-sm text-niebla">
+                No hay sesiones para esta combinación de canal, sector y estado en el período. Pruebe ampliar a 90 días o quitar un filtro.
+              </p>
+              <button
+                type="button"
+                onClick={restablecer}
+                className="mt-2 inline-flex h-9 items-center rounded-control border border-cauce bg-cauce px-4 text-sm font-medium text-sobre-cauce"
+              >
+                Restablecer filtros
+              </button>
+            </div>
+          ) : estado.tabla ? (
             <DataTableCauce
               volumen={datos.volumen}
               anterior={estado.comparar ? datos.anterior : null}
@@ -274,7 +290,10 @@ function Leyenda({ comparar, retorno }: { comparar: boolean; retorno: boolean })
           Período anterior
         </li>
       )}
-      <li className="md:ml-auto">Pase el cursor o use Tab para ver el detalle; Enter selecciona.</li>
+      <li className="md:ml-auto">
+        <span className="hidden [@media(hover:hover)]:inline">Pase el cursor o use Tab para ver el detalle; Enter abre el panel.</span>
+        <span className="[@media(hover:hover)]:hidden">Toque una etapa o una tasa para ver el detalle.</span>
+      </li>
     </ul>
   );
 }

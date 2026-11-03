@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <style>.agua{fill:#2E6B52}.gota{fill:#B4472F}@media (prefers-color-scheme: dark){.agua{fill:#409673}.gota{fill:#D1674F}}</style>
+  <path class="agua" d="M2 4.5C9 4.5 11.5 9 22 10v4C11.5 15 9 19.5 2 19.5z"/>
+  <circle class="gota" cx="14.5" cy="21" r="1.6"/>
+</svg>
