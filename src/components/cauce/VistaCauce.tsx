@@ -43,8 +43,8 @@ export function VistaCauce() {
 
   return (
     <div className="flex flex-col">
-      <h1 className="mt-2 mb-1.5 font-cifra text-xl leading-tight font-bold tracking-tight md:text-2xl">Journey de adquisición</h1>
-      <p className="mb-6 max-w-5xl text-tinta-2">
+      <h1 className="mt-2 mb-1.5 font-cifra text-xl leading-tight font-bold tracking-tight text-balance md:text-2xl">Journey de adquisición</h1>
+      <p className="mb-6 max-w-5xl text-pretty text-tinta-2">
         {formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}. De la primera visita al contrato: cuánto avanza en cada paso, dónde se
         pierde y qué se está haciendo para recuperarlo.
       </p>

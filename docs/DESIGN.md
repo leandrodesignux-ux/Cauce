@@ -112,7 +112,22 @@ Semicírculos SVG propios (no shadcn) de 22 px de grosor sobre un arco en `--lin
 
 ## Motion
 
-Nada se anima solo. Respuestas a acciones: hover de filas, tiles y botones (150 ms de color), apertura del panel (Sheet/Drawer) y de popovers. Con `prefers-reduced-motion` todo aparece en su estado final: una regla global anula las animaciones de tw-animate-css, vaul y sonner, y la barra de tiempo del aviso.
+Nada se anima solo. Las animaciones responden a acciones y se deciden por frecuencia: lo que se usa cientos de veces por día no anima.
+
+| Pieza | Animación | Duración y curva |
+|---|---|---|
+| Paleta ⌘K | **Ninguna** (se abre por teclado, muchas veces por día) | — |
+| Botones, toggles, pestañas, filas del board, tiles, avatares, nav | Escala al presionar (`scale(0.97)`; filas grandes 0.99) | `--duracion-presion` (160 ms), `ease-salida` |
+| Popovers, menús, selects | Entran desde su trigger (`transform-origin` de Radix); salen más rápido | 150 ms entrar / 100 ms salir, `ease-salida` |
+| Tooltips | Retraso de 300 ms solo para el primero; los siguientes abren al instante y sin animación | — |
+| Sheet del panel | Desliza desde la derecha | 300 ms entrar / 200 ms salir, `ease-cajon` |
+| Lead que sale del feed | Se desliza hacia el lado de la acción y se desvanece | 200 ms, `ease-salida` |
+| Barras del desglose | `transform: translateX`, nunca `width` | `--duracion-media`, `ease-salida` |
+| Hover de filas, tiles y chips | Solo color | 150–160 ms |
+
+**Curvas propias** (las de CSS son débiles): `--curva-salida` `cubic-bezier(0.23, 1, 0.32, 1)` para entrar y salir, `--curva-movimiento` `cubic-bezier(0.77, 0, 0.175, 1)` para lo que se mueve en pantalla y `--curva-cajon` `cubic-bezier(0.32, 0.72, 0, 1)` para sheets. En Tailwind: `ease-salida`, `ease-movimiento`, `ease-cajon`. Nunca `ease-in` en UI, nunca `transition-all` (siempre propiedades explícitas) y solo se animan `transform` y `opacity` (más colores en hovers).
+
+Con `prefers-reduced-motion` todo aparece en su estado final: la escala al presionar va bajo `motion-safe:`, y una regla global anula las animaciones de tw-animate-css, vaul y sonner, y la barra de tiempo del aviso. Los hovers ya van detrás de `@media (hover: hover)` (lo hace Tailwind v4), así que no quedan pegados en pantallas táctiles.
 
 ## Componentes
 

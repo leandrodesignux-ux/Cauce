@@ -63,10 +63,12 @@ export function Desglose({
               <li key={f.id} className="grid grid-cols-[6.5rem_1fr_auto] items-center gap-3">
                 <span className="truncate text-sm">{f.nombre}</span>
                 <span className="relative h-2 rounded-full bg-linea" aria-hidden>
-                  <span
-                    className="absolute inset-y-0 left-0 rounded-full bg-azul-relleno motion-safe:transition-[width] motion-safe:duration-(--duracion-media)"
-                    style={{ width: `${((f.valor ?? 0) / max) * 100}%` }}
-                  />
+                  <span className="absolute inset-0 overflow-hidden rounded-full">
+                    <span
+                      className="absolute inset-0 rounded-full bg-azul-relleno motion-safe:transition-transform motion-safe:duration-(--duracion-media) motion-safe:ease-salida"
+                      style={{ transform: `translateX(${((f.valor ?? 0) / max) * 100 - 100}%)` }}
+                    />
+                  </span>
                   {referencia != null && (
                     <span className="absolute -inset-y-1 w-px bg-activo" style={{ left: `${(referencia / max) * 100}%` }} />
                   )}

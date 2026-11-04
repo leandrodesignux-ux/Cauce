@@ -48,7 +48,7 @@ export function TiraFantasmas() {
                   <Link
                     href={`/fugas?poza=${FUGA_MODELO_PERDIDA}&lead=${l.id}`}
                     aria-label={`${descripcion}. Abrir el lead.`}
-                    className="relative grid size-10 place-items-center rounded-full border-2 border-tarjeta bg-azul-suave text-xs font-semibold text-azul-texto"
+                    className="relative grid size-10 place-items-center rounded-full border-2 border-tarjeta bg-azul-suave text-xs font-semibold text-azul-texto motion-safe:transition-transform motion-safe:duration-(--duracion-presion) motion-safe:ease-salida motion-safe:active:scale-[0.94]"
                   >
                     {iniciales(l.nombre)}
                     <span
