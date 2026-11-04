@@ -98,6 +98,7 @@
   --text-*: initial;
   --text-xs: var(--texto-xs);
   --text-xs--line-height: var(--interlineado-cuerpo);
+  --text-xs--letter-spacing: 0.01em;
   --text-sm: var(--texto-sm);
   --text-sm--line-height: var(--interlineado-cuerpo);
   --text-base: var(--texto-base);
@@ -106,10 +107,13 @@
   --text-lg--line-height: var(--interlineado-cuerpo);
   --text-xl: var(--texto-xl);
   --text-xl--line-height: var(--interlineado-cuerpo);
+  --text-xl--letter-spacing: -0.01em;
   --text-2xl: var(--texto-2xl);
   --text-2xl--line-height: var(--interlineado-cuerpo);
+  --text-2xl--letter-spacing: -0.02em;
   --text-3xl: var(--texto-3xl);
   --text-3xl--line-height: var(--interlineado-cuerpo);
+  --text-3xl--letter-spacing: -0.025em;
 
   /* Radios: --radius (12 px) para controles y menús; panel, tarjeta, tile y fila por jerarquía. Pills: rounded-full. */
   --radius-*: initial;
@@ -160,8 +164,40 @@
 @utility vidrio {
   background-color: var(--panel);
   border: 1px solid var(--panel-borde);
-  -webkit-backdrop-filter: blur(var(--vidrio));
-  backdrop-filter: blur(var(--vidrio));
+  border-top-color: var(--panel-brillo);
+  -webkit-backdrop-filter: blur(var(--vidrio)) saturate(var(--vidrio-saturacion));
+  backdrop-filter: blur(var(--vidrio)) saturate(var(--vidrio-saturacion));
+
+  /* Sin transparencia pedida: superficie sólida, sin desenfoque. */
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--tarjeta);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  @media (prefers-contrast: more) {
+    border-color: var(--linea-fuerte);
+  }
+}
+
+/*
+ * Cromo flotante (nav fija y barra móvil): el contenido pasa por debajo, así que el material es más
+ * denso y desenfoca más. Nunca se apila otro vidrio encima: sus botones van sin superficie propia.
+ */
+@utility vidrio-denso {
+  background-color: var(--panel-denso);
+  border: 1px solid var(--panel-borde);
+  border-top-color: var(--panel-brillo);
+  -webkit-backdrop-filter: blur(var(--vidrio-denso)) saturate(var(--vidrio-saturacion));
+  backdrop-filter: blur(var(--vidrio-denso)) saturate(var(--vidrio-saturacion));
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--tarjeta);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  @media (prefers-contrast: more) {
+    border-color: var(--linea-fuerte);
+  }
 }
 
 @layer base {
@@ -171,6 +207,26 @@
 
   html {
     @apply font-sans;
+    font-optical-sizing: auto;
+    /* iOS no agranda el texto al girar el teléfono. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* Sin destello gris al tocar: el feedback lo da :active. */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Sin la espera de doble toque: la respuesta llega al tocar. */
+  a,
+  button,
+  input,
+  label,
+  select,
+  summary,
+  textarea,
+  [role="button"],
+  [role="tab"],
+  [role="option"] {
+    touch-action: manipulation;
   }
 
   /* Degradé frío fijo detrás de todo; los paneles vidriados lo dejan ver. */
@@ -213,6 +269,13 @@
   to {
     transform: scaleX(0);
   }
+}
+
+/* Cambio de tema: fundido corto en vez de un salto de brillo (View Transitions; sin él, cambia directo). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: ease;
 }
 
 /* Las animaciones de tw-animate-css (entrada y salida de popovers, dialogs, acordeones) respetan reduced motion. */

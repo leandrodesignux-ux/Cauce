@@ -7,21 +7,35 @@ import { COLOR } from "@/config/colores";
 import { useMontado } from "@/hooks/useMontado";
 import { BotonRedondo } from "./BotonRedondo";
 
+/**
+ * Cambia el tema con un fundido corto (View Transitions) en vez de un salto de brillo.
+ * La clase se aplica dentro de la transición para que el navegador capture los dos estados;
+ * next-themes la vuelve a poner igual y guarda la elección. Sin soporte o con reduced motion, cambia directo.
+ */
 function useTema() {
   const { resolvedTheme, setTheme } = useTheme();
   const montado = useMontado();
-  return { oscuro: montado && resolvedTheme === "dark", setTheme };
+  const cambiar = (tema: "light" | "dark") => {
+    const aplicar = () => {
+      document.documentElement.classList.toggle("dark", tema === "dark");
+      document.documentElement.style.colorScheme = tema;
+      setTheme(tema);
+    };
+    if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) return aplicar();
+    document.startViewTransition(aplicar);
+  };
+  return { oscuro: montado && resolvedTheme === "dark", cambiar };
 }
 
 /** Rail: el par luna/sol. El modo vigente queda en pill negra (blanca en oscuro). La elección persiste. */
 export function ParTema() {
-  const { oscuro, setTheme } = useTema();
+  const { oscuro, cambiar } = useTema();
   return (
     <div role="group" aria-label="Tema" className="flex flex-col gap-3">
-      <BotonRedondo etiqueta="Modo oscuro" presionado={oscuro} onClick={() => setTheme("dark")}>
+      <BotonRedondo etiqueta="Modo oscuro" presionado={oscuro} onClick={() => cambiar("dark")}>
         <Moon aria-hidden />
       </BotonRedondo>
-      <BotonRedondo etiqueta="Modo claro" presionado={!oscuro} onClick={() => setTheme("light")}>
+      <BotonRedondo etiqueta="Modo claro" presionado={!oscuro} onClick={() => cambiar("light")}>
         <Sun aria-hidden />
       </BotonRedondo>
     </div>
@@ -29,10 +43,15 @@ export function ParTema() {
 }
 
 /** Barra móvil: un solo botón que alterna el tema. */
-export function SwitchTema({ lado = "top" }: { lado?: "top" | "right" | "bottom" }) {
-  const { oscuro, setTheme } = useTema();
+export function SwitchTema({ lado = "top", superficie = "vidrio" }: { lado?: "top" | "right" | "bottom"; superficie?: "vidrio" | "cromo" }) {
+  const { oscuro, cambiar } = useTema();
   return (
-    <BotonRedondo etiqueta={oscuro ? "Cambiar a modo claro" : "Cambiar a modo oscuro"} lado={lado} onClick={() => setTheme(oscuro ? "light" : "dark")}>
+    <BotonRedondo
+      etiqueta={oscuro ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+      lado={lado}
+      superficie={superficie}
+      onClick={() => cambiar(oscuro ? "light" : "dark")}
+    >
       {oscuro ? <Sun aria-hidden /> : <Moon aria-hidden />}
     </BotonRedondo>
   );

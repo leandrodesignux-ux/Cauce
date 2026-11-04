@@ -23,6 +23,10 @@
   /* Superficies */
   --panel: rgb(255 255 255 / 0.42);
   --panel-borde: rgb(255 255 255 / 0.75);
+  /* Borde superior más claro: la luz que toca el material */
+  --panel-brillo: rgb(255 255 255 / 0.95);
+  /* Cromo flotante (nav fija y barra móvil): más opaco, el contenido pasa por debajo y tiene que leerse */
+  --panel-denso: rgb(248 249 251 / 0.72);
   --tarjeta: #f8f9fb;
   --tarjeta-borde: #ffffff;
 
@@ -86,8 +90,10 @@
   --radio-fila: 18px;
   --radio-control: 12px;
 
-  /* Desenfoque del vidrio */
+  /* Desenfoque del vidrio: más grueso cuanto más grande o más arriba está la superficie */
   --vidrio: 18px;
+  --vidrio-denso: 28px;
+  --vidrio-saturacion: 180%;
 
   /* Layout */
   --ancho-rail: 88px;
@@ -151,6 +157,8 @@
 
   --panel: rgb(255 255 255 / 0.035);
   --panel-borde: rgb(255 255 255 / 0.07);
+  --panel-brillo: rgb(255 255 255 / 0.14);
+  --panel-denso: rgb(30 34 44 / 0.78);
   --tarjeta: #20242e;
   --tarjeta-borde: #2a2f3b;
 

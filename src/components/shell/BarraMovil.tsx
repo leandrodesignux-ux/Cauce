@@ -8,20 +8,20 @@ import { useAccionesCauce } from "./acciones";
 import { BotonRedondo } from "./BotonRedondo";
 import { SwitchTema } from "./SwitchTema";
 
-/** Móvil (<768 px): barra flotante vidriada con buscar, filtros, comparar (en el home) y tema. */
+/** Móvil (<768 px): barra flotante compacta y centrada (material denso) con buscar, filtros, comparar (en el home) y tema. */
 export function BarraMovil() {
   const pathname = usePathname();
   const abrirPaleta = usePaleta((s) => s.abrir);
   return (
     <nav
       aria-label="Acciones rápidas"
-      className="vidrio fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-20 flex h-(--alto-barra-movil) items-center justify-between rounded-full p-2 shadow-tarjeta md:hidden"
+      className="vidrio-denso fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-30 flex h-(--alto-barra-movil) -translate-x-1/2 items-center gap-2 rounded-full p-1.5 shadow-flotante md:hidden"
     >
-      <BotonRedondo etiqueta="Buscar o saltar a…" lado="top" onClick={abrirPaleta}>
+      <BotonRedondo etiqueta="Buscar o saltar a…" lado="top" superficie="cromo" onClick={abrirPaleta}>
         <Search aria-hidden />
       </BotonRedondo>
       {pathname === "/" && <AccionesHome />}
-      <SwitchTema />
+      <SwitchTema superficie="cromo" />
     </nav>
   );
 }
@@ -32,12 +32,12 @@ function AccionesHome() {
     <>
       <HojaFiltros
         disparador={
-          <BotonRedondo etiqueta="Filtros" lado="top">
+          <BotonRedondo etiqueta="Filtros" lado="top" superficie="cromo">
             <SlidersHorizontal aria-hidden />
           </BotonRedondo>
         }
       />
-      <BotonRedondo etiqueta="Comparar con período anterior" lado="top" presionado={comparar} onClick={alternarComparar}>
+      <BotonRedondo etiqueta="Comparar con período anterior" lado="top" superficie="cromo" presionado={comparar} onClick={alternarComparar}>
         <ArrowRightLeft aria-hidden />
       </BotonRedondo>
     </>
