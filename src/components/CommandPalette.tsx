@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightLeft, CircleDot, Droplet, FlaskConical, RotateCcw, Table2, User } from "lucide-react";
+import { ArrowRightLeft, CircleDot, CircleHelp, Droplet, FlaskConical, RotateCcw, Table2, User } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, type ReactNode } from "react";
 import { create } from "zustand";
@@ -10,6 +10,8 @@ import { useFiltros } from "@/hooks/useFiltros";
 import { useDatos } from "./Proveedores";
 import { VISTAS } from "./shell/vistas";
 import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
+import { causaVisible } from "@/config/pozas";
+import { useOnboarding } from "./onboarding/Onboarding";
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
 
 type Paleta = { abierta: boolean; abrir: () => void; fijar: (abierta: boolean) => void };
@@ -47,7 +49,7 @@ export function CommandPalette() {
     router.push(href);
   };
 
-  /** Las acciones de filtro aplican al cauce: si no está en /, lleva ahí. */
+  /** Las acciones de filtro aplican al recorrido: si no está en /, lleva ahí. */
   const enCauce = (accion: () => void, href: string) => {
     fijar(false);
     if (pathname === "/") accion();
@@ -59,7 +61,7 @@ export function CommandPalette() {
       open={abierta}
       onOpenChange={fijar}
       title="Buscar o saltar a"
-      description="Vistas, etapas, pozas, experimentos y leads."
+      description="Vistas, etapas, fugas, experimentos y leads."
       className="top-[12vh] sm:max-w-xl"
       onOpenAutoFocus={() => {
         previo.current = document.activeElement as HTMLElement | null;
@@ -72,7 +74,7 @@ export function CommandPalette() {
       }}
     >
       <Command loop label="Buscar o saltar a">
-        <CommandInput placeholder="Buscar vista, etapa, poza, experimento o lead…" />
+        <CommandInput placeholder="Buscar vista, etapa, fuga, experimento o lead…" />
         <CommandList className="max-h-[min(60vh,420px)] overscroll-contain">
           <CommandEmpty>
             Sin resultados. Pruebe con el nombre de una etapa o un lead.
@@ -86,7 +88,7 @@ export function CommandPalette() {
             ))}
           </Grupo>
 
-          <Grupo titulo="Acciones en el cauce">
+          <Grupo titulo="Acciones en el recorrido">
             <Item
               valor="comparar con período anterior"
               onSelect={() => enCauce(() => actualizar((a) => ({ comparar: !a.comparar })), "/?comparar=1")}
@@ -99,7 +101,7 @@ export function CommandPalette() {
               onSelect={() => enCauce(() => actualizar((a) => ({ tabla: !a.tabla })), "/?vista=tabla")}
               icono={<Table2 />}
             >
-              {estado.tabla ? "Ver como flujo" : "Ver como tabla"}
+              {estado.tabla ? "Ver como recorrido" : "Ver como tabla"}
             </Item>
             <Item valor="restablecer filtros" onSelect={() => enCauce(restablecer, "/")} icono={<RotateCcw />}>
               Restablecer filtros
@@ -122,18 +124,31 @@ export function CommandPalette() {
             })}
           </Grupo>
 
-          <Grupo titulo="Pozas">
+          <Grupo titulo="Fugas">
             {fugas.map((f) => (
               <Item
                 key={f.id}
-                valor={`poza ${f.causa}`}
+                valor={`fuga ${causaVisible(f)}`}
                 onSelect={() => ir(`/fugas?poza=${f.id}`)}
                 icono={<Droplet className="text-coral-texto" />}
                 detalle={`${nombreEtapa(f.desde)} → ${nombreEtapa(f.hacia)}`}
               >
-                {f.causa}
+                {causaVisible(f)}
               </Item>
             ))}
+          </Grupo>
+
+          <Grupo titulo="Ayuda">
+            <Item
+              valor="ver cómo funciona ayuda onboarding"
+              onSelect={() => {
+                fijar(false);
+                useOnboarding.getState().abrir();
+              }}
+              icono={<CircleHelp />}
+            >
+              Ver cómo funciona
+            </Item>
           </Grupo>
 
           <Grupo titulo="Experimentos">
@@ -150,7 +165,7 @@ export function CommandPalette() {
             ))}
           </Grupo>
 
-          <Grupo titulo="Leads en pozas">
+          <Grupo titulo="Leads en fugas">
             {leads
               .filter((l) => l.fugaId)
               .map((l) => (

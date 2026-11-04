@@ -1,5 +1,6 @@
 import { Suspense, type ReactNode } from "react";
 import { CommandPalette } from "@/components/CommandPalette";
+import { Onboarding } from "@/components/onboarding/Onboarding";
 import { BarraMovil } from "./BarraMovil";
 import { BarraSuperior } from "./BarraSuperior";
 import { NavVistas } from "./NavVistas";
@@ -35,6 +36,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <Suspense>
         <CommandPalette />
       </Suspense>
+      <Onboarding />
     </div>
   );
 }

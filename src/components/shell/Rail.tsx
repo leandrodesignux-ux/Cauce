@@ -1,9 +1,10 @@
 "use client";
 
-import { ArrowRightLeft, Search, SlidersHorizontal, Table2, Upload } from "lucide-react";
+import { ArrowRightLeft, CircleHelp, Search, SlidersHorizontal, Table2, Upload } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePaleta } from "@/components/CommandPalette";
+import { useOnboarding } from "@/components/onboarding/Onboarding";
 import { PanelFiltros } from "@/components/filtros/FilterBar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -19,6 +20,7 @@ import { ParTema } from "./SwitchTema";
 export function Rail() {
   const pathname = usePathname();
   const abrirPaleta = usePaleta((s) => s.abrir);
+  const abrirOnboarding = useOnboarding((s) => s.abrir);
 
   return (
     <aside aria-label="Acciones" className="sticky top-0 hidden h-dvh flex-col items-center gap-3 py-6 md:flex">
@@ -30,6 +32,9 @@ export function Rail() {
       </BotonRedondo>
       {pathname === "/" && <AccionesHome />}
       <div className="mt-auto flex flex-col items-center gap-3">
+        <BotonRedondo etiqueta="Cómo funciona" onClick={abrirOnboarding}>
+          <CircleHelp aria-hidden />
+        </BotonRedondo>
         <ParTema />
         <Tooltip>
           <TooltipTrigger asChild>

@@ -1,7 +1,7 @@
 // Cifras del journey board (home) y de su exportación. Puro: todo sale de los selectores.
 
 import { FASES, ORDEN_ETAPAS, TRANSICIONES } from "../config/etapas";
-import { NOMBRE_CORTO_POZA } from "../config/pozas";
+import { NOMBRE_CORTO_POZA, causaVisible } from "../config/pozas";
 import { type Filtros, periodoAnterior, tasaTransicion, valorEnRiesgoPorPoza, valorEnRiesgoTotal, volumenPorEtapa } from "./selectors";
 import type { EstadoExperimento, EtapaId, Experimento, Fuga, SemanaEtapa } from "./tipos";
 
@@ -57,7 +57,7 @@ export function calcularJourney(flujo: readonly SemanaEtapa[], fugas: readonly F
     volumen: valores[i].volumen,
     valor: valores[i].valorMxn,
     nombre: NOMBRE_CORTO_POZA[f.id] ?? f.causa,
-    causa: f.causa,
+    causa: causaVisible(f),
   }));
 
   return { etapas, tasas, deltas, pozas, valorEnRiesgo: valorEnRiesgoTotal(valores) };
