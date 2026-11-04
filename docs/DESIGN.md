@@ -73,7 +73,7 @@ El home es el **Recorrido**: un resumen de tres cifras, las 8 etapas agrupadas e
 | Sheet y drawer | 20 px en el borde visible | popover | `shadow-flotante` |
 | Avisos | 10 px | activo | `shadow-flotante` |
 
-Quedan redondos (`rounded-full`) solo los botones de ícono circulares, los puntos del escenario del onboarding, los avatares e íconos en círculo y el checkbox.
+Quedan redondos (`rounded-full`) solo los botones de ícono circulares, los avatares e íconos en círculo y el checkbox.
 
 `vidrio` es una utilidad propia (`globals.css`): `--panel` + borde `--panel-borde` + `backdrop-filter: blur(var(--vidrio))`.
 
@@ -163,15 +163,15 @@ Nada se anima solo. Las animaciones responden a acciones y se deciden por frecue
 | Barras del desglose | `transform: translateX`, nunca `width` | `--duracion-media`, `ease-salida` |
 | Hover de filas, tiles y chips | Solo color | 150–160 ms |
 
-**Onboarding** (la única pieza con coreografía; recetas de motionsites-web-builder adaptadas a `motion/react`):
+**Onboarding** (la única pieza con coreografía; canvas 2D nativo + `motion/react` para el texto HTML):
 
-- Entradas blur-rise: opacidad, `y` 20 px y `blur(10px)` → reposo en 0.6–0.8 s con `--curva-entrada` `cubic-bezier(0.22, 1, 0.36, 1)`; los 8 nodos, escalonados 80 ms. El blur va solo en el HTML (nombres, cifras, chip y textos), nunca como filtro SVG.
-- Título del acto palabra por palabra (100 ms de escalonado) y el texto 0.2 s después. Contadores con count-up ease-out cúbico de 1.2 s.
-- Cambio entre actos: los actos cambian el estado del mismo SVG. Volver o saltar reconstruye el estado final en 0.4 s con `--curva-estado` `cubic-bezier(0.4, 0, 0.2, 1)`, sin replay.
-- Puntos: un solo loop en el frameloop de motion, que mueve hasta 36 círculos (20 en móvil) sobre posiciones precalculadas con `getPointAtLength`; `will-change` solo en esa capa. Se detienen con la pausa, con la pestaña oculta y al cerrar. Es el único movimiento ambiental: sin pulsos ni fondos animados. La fuga de mayor valor recibe un realce único en el acto 2.
-- El autoplay lo lleva la animación CSS `llenar-segmento` del segmento activo (`animation-play-state` sigue a la pausa).
-- Ver mi recorrido: el diálogo sale con escala 0.96, `blur(8px)` y opacidad 0 en 0.35 s mientras `<main id="contenido">` recibe `data-entrada` y se asienta (escala 1.02 → 1, `blur(6px)` → 0, `--duracion-entrada` 600 ms).
-- Con reduced motion: sin autoplay (sin botón de pausa), sin puntos en movimiento ni count-up. Cada acto muestra su composición final, el cambio es un crossfade de 150 ms y la salida no lleva blur ni escala.
+- Motor sin React (`particulas.ts`): estado en `Float32Array` (x, y, vx, vy, tx, ty, alpha, talpha) y `Uint8Array` (color: azul, coral o tenue), sin objetos por partícula. 2400 partículas en desktop, 1000 en móvil y 600 si `hardwareConcurrency <= 4`.
+- Física: resorte hacia el target (k 0.06–0.09, amortiguación 0.86), ruido de 0.4 px con fase propia y alpha que se acerca a `talpha` al 8 % por cuadro. Se dibuja con `fillRect` de 1.6 px (2 px con DPR 1, DPR máx. 2); el azul suma brillo (`lighter`). Los colores se leen una vez de `--azul`, `--coral` y `--tinta-2` del contenedor `.dark`.
+- Formaciones: enjambre (entra por la izquierda), texto (Geist 700 en un canvas aparte, paso de muestreo adaptativo, targets asignados por x para que el morph barra de izquierda a derecha, en caché por cadena y tamaño), caída a pozas (gravedad + montículo elíptico), nube baja, arco balístico y explosión.
+- Un solo `requestAnimationFrame`, detenido con la pausa, la pestaña oculta o al cerrar. `ResizeObserver` vuelve a aplicar las formaciones activas sin reiniciar el acto. Volver a un acto lleva las partículas a su estado final en ~0.5 s.
+- Título del acto palabra por palabra (90 ms, `y` 24 px, `blur(10px)` → 0, 0.7 s con `--curva-entrada`); el texto entra 0.25 s después. El título viejo sale con opacidad y `blur(6px)` en 0.25 s. Etiquetas de cifras, fugas (80 ms entre una y otra) y chip con blur-rise.
+- Ver mi recorrido: explosión radial y fade del overlay en 600 ms, mientras `<main id="contenido">` recibe `data-entrada` y se asienta (escala 1.02 → 1, `blur(6px)` → 0, `--duracion-entrada`).
+- Con reduced motion: sin rAF continuo ni autoplay (sin botón de pausa) ni explosión; cada acto se dibuja una sola vez en su estado final y el cambio es un crossfade de 150 ms. Si el canvas falla, el título con las cifras, el texto y los controles se ven igual.
 
 **Curvas propias** (las de CSS son débiles): `--curva-salida` `cubic-bezier(0.23, 1, 0.32, 1)` para entrar y salir, `--curva-movimiento` `cubic-bezier(0.77, 0, 0.175, 1)` para lo que se mueve en pantalla y `--curva-cajon` `cubic-bezier(0.32, 0.72, 0, 1)` para sheets. En Tailwind: `ease-salida`, `ease-movimiento`, `ease-cajon`. Nunca `ease-in` en UI, nunca `transition-all` (siempre propiedades explícitas) y solo se animan `transform` y `opacity` (más colores en hovers).
 
@@ -195,7 +195,7 @@ Las primitivas salen de shadcn/ui (`src/components/ui`); colores y variantes se 
 | Paso a simular | `Select` | 7 transiciones. |
 | Páginas del feed de Rescate | `Pagination` | Botones (la URL cambia sin navegar), copy en español. |
 | Paleta ⌘K | `CommandDialog` | Incluye "Ver cómo funciona". |
-| Onboarding (escenario de 3 actos) | `Dialog` sin botón de cierre propio (`sm:max-w-5xl`, alto `min(680px, 88dvh)`; pantalla completa en móvil), fondo `bg-tarjeta` con borde `tarjeta-borde` | Arriba, progreso de 3 segmentos + Saltar; al centro, `EscenaCauce` (SVG 16:9; vertical en móvil); abajo, título y texto del acto, y Anterior · Pausar · Siguiente / Ver mi recorrido. Copy y duraciones en `onboarding/actos.ts`; autoplay y pausa en `useActos`. |
+| Onboarding (partículas, 3 actos) | `Dialog` a pantalla completa (`fixed inset-0`, sin borde, radio ni sombra) con `.dark` local; fondo `fondo-onboarding` (`--tinta-profunda` + radial de `--azul` al 10 % arriba) | Capas: `<canvas>` (motor en `onboarding/particulas.ts`), progreso de 3 segmentos de 2 px + Saltar, título y texto abajo a la izquierda, controles de ícono + Siguiente / Ver mi recorrido abajo a la derecha, etiquetas HTML de cifras, fugas y chip sobre el lienzo. La zona de formación ocupa el 60 % superior (55 % en móvil). Copy y duraciones en `actos.ts`; autoplay y pausa en `useActos`. |
 | Modelo de pérdida en Rescate | `Dialog` ("Cómo se calcula") | Sliders y fórmula sin cambios. |
 | Vista de experimentos | `ToggleGroup variant="segmentado"`: Tarjetas · Tabla · Timeline | Tarjetas por defecto. |
 | Parámetros numéricos | `Slider` | |
