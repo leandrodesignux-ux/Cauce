@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableRow, TableRowHead } from "@/component
 import { CANALES, ESTADOS, SECTORES } from "@/config/dimensiones";
 import { ETAPAS, NIVELES_LEAD, ORDEN_ETAPAS, PRIORIDADES, TRANSICIONES, nombreEtapa } from "@/config/etapas";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
+import { causaVisible } from "@/config/pozas";
 import type { Seleccion } from "@/hooks/useSeleccion";
 import { formatearEntero, formatearMxn, formatearPct, formatearPp, formatearSemanaCorta } from "@/lib/formato";
 import {
@@ -183,7 +184,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
 
       <Seccion titulo={transicion ? "Fugas de esta transición" : `Fugas al salir de ${nombreEtapa(etapa)}`}>
         {d.fugasAqui.length === 0 ? (
-          <Vacio icono={<Droplet />} titulo="Sin pozas registradas">
+          <Vacio icono={<Droplet />} titulo="Sin fugas registradas">
             El volumen que no avanza se reparte sin una causa atribuida.
           </Vacio>
         ) : (
@@ -193,7 +194,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
                 <Link href={`/fugas?poza=${f.id}`} className="group flex items-center gap-3 px-3 py-3 hover:bg-neutro-suave">
                   <Droplet className="size-4 shrink-0 text-coral-texto" aria-hidden />
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm">{f.causa}</span>
+                    <span className="block text-sm">{causaVisible(f)}</span>
                     <span className="cifra text-xs text-tinta-2">
                       {formatearEntero(f.poza.volumen)} perdidos
                       {f.id === FUGA_MODELO_PERDIDA ? " · modelo de pérdida" : ""}

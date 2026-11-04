@@ -1,17 +1,19 @@
 "use client";
 
-import { ArrowRightLeft, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowRightLeft, CircleHelp, Search, SlidersHorizontal } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { usePaleta } from "@/components/CommandPalette";
+import { useOnboarding } from "@/components/onboarding/Onboarding";
 import { HojaFiltros } from "@/components/filtros/FilterBar";
 import { useAccionesCauce } from "./acciones";
 import { BotonRedondo } from "./BotonRedondo";
 import { SwitchTema } from "./SwitchTema";
 
-/** Móvil (<768 px): barra flotante compacta y centrada (material denso) con buscar, filtros, comparar (en el home) y tema. */
+/** Móvil (<768 px): barra flotante compacta y centrada (material denso) con buscar, filtros y comparar (en el home), cómo funciona y tema. */
 export function BarraMovil() {
   const pathname = usePathname();
   const abrirPaleta = usePaleta((s) => s.abrir);
+  const abrirOnboarding = useOnboarding((s) => s.abrir);
   return (
     <nav
       aria-label="Acciones rápidas"
@@ -21,6 +23,9 @@ export function BarraMovil() {
         <Search aria-hidden />
       </BotonRedondo>
       {pathname === "/" && <AccionesHome />}
+      <BotonRedondo etiqueta="Cómo funciona" lado="top" superficie="cromo" onClick={abrirOnboarding}>
+        <CircleHelp aria-hidden />
+      </BotonRedondo>
       <SwitchTema superficie="cromo" />
     </nav>
   );

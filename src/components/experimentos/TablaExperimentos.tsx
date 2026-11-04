@@ -19,39 +19,8 @@ export function TablaExperimentos({
 }) {
   return (
     <>
-      {/* Móvil: una ficha por experimento con las mismas columnas */}
-      <ul className="flex flex-col gap-3 md:hidden">
-        {experimentos.map((e) => (
-          <li key={e.id}>
-            <button
-              type="button"
-              data-exp={e.id}
-              onClick={() => onAbrir(e.id)}
-              aria-expanded={seleccionado === e.id}
-              className={`flex w-full flex-col gap-2 rounded-tile border p-4 text-left shadow-tarjeta ${seleccionado === e.id ? "border-azul bg-azul-suave" : "border-tarjeta-borde bg-tarjeta"}`}
-            >
-              <span className="flex items-start justify-between gap-3">
-                <span>
-                  <span className="block font-medium">{e.nombre}</span>
-                  <span className="block text-xs text-tinta-2">{e.palanca}</span>
-                </span>
-                <ChipEstado estado={e.estado} />
-              </span>
-              <span className="text-sm">
-                {nombreEtapa(e.transicion.desde)} → {nombreEtapa(e.transicion.hacia)}
-              </span>
-              <span className="text-sm text-tinta-2">{e.hipotesis}</span>
-              <span className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-tinta-2">
-                <span className="whitespace-nowrap">Despliegue {formatearSemanaCorta(e.despliegue)}</span>
-                <span className="whitespace-nowrap">
-                  Lectura {formatearSemanaCorta(inicioLectura(e))} – {formatearSemanaCorta(finLectura(e))}
-                </span>
-              </span>
-              <PredichoObservado e={e} compacto />
-            </button>
-          </li>
-        ))}
-      </ul>
+      {/* Móvil: la tabla no entra; se ven las mismas fichas que en la vista Tarjetas. */}
+      <TarjetasExperimentos experimentos={experimentos} seleccionado={seleccionado} onAbrir={onAbrir} className="flex flex-col gap-3 md:hidden" />
       <div className="hidden md:block">
         <Table marco className="min-w-[980px]">
           <TableCaption className="sr-only">Registro de hipótesis de Growth</TableCaption>
@@ -106,5 +75,56 @@ export function TablaExperimentos({
         </Table>
       </div>
     </>
+  );
+}
+
+/**
+ * Una ficha por experimento con las mismas columnas que la tabla. Es la vista Tarjetas (por defecto, en grilla)
+ * y lo que la vista Tabla muestra en móvil.
+ */
+export function TarjetasExperimentos({
+  experimentos,
+  seleccionado,
+  onAbrir,
+  className = "grid gap-3 sm:grid-cols-2 xl:grid-cols-3",
+}: {
+  experimentos: Experimento[];
+  seleccionado: string | null;
+  onAbrir: (id: string) => void;
+  className?: string;
+}) {
+  return (
+    <ul className={className}>
+      {experimentos.map((e) => (
+        <li key={e.id}>
+          <button
+            type="button"
+            data-exp={e.id}
+            onClick={() => onAbrir(e.id)}
+            aria-expanded={seleccionado === e.id}
+            className={`flex h-full w-full flex-col gap-2 rounded-tile border p-4 text-left shadow-tarjeta ${seleccionado === e.id ? "border-azul bg-azul-suave" : "border-tarjeta-borde bg-tarjeta"}`}
+          >
+            <span className="flex items-start justify-between gap-3">
+              <span>
+                <span className="block font-medium">{e.nombre}</span>
+                <span className="block text-xs text-tinta-2">{e.palanca}</span>
+              </span>
+              <ChipEstado estado={e.estado} />
+            </span>
+            <span className="text-sm">
+              {nombreEtapa(e.transicion.desde)} → {nombreEtapa(e.transicion.hacia)}
+            </span>
+            <span className="text-sm text-tinta-2">{e.hipotesis}</span>
+            <span className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-tinta-2">
+              <span className="whitespace-nowrap">Despliegue {formatearSemanaCorta(e.despliegue)}</span>
+              <span className="whitespace-nowrap">
+                Lectura {formatearSemanaCorta(inicioLectura(e))} – {formatearSemanaCorta(finLectura(e))}
+              </span>
+            </span>
+            <PredichoObservado e={e} compacto />
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }

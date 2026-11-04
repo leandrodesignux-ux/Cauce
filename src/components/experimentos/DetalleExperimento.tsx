@@ -20,7 +20,7 @@ const RELLENO_OBSERVADO: Record<string, string> = {
   "text-tinta-2": "bg-tenue",
 };
 
-/** Detalle de un experimento: hipótesis, métrica, resultado y la transición en el cauce. */
+/** Detalle de un experimento: hipótesis, métrica, resultado y la transición en el recorrido. */
 export function DetalleExperimento({ e }: { e: Experimento }) {
   const { flujo, semanas, ultimaSemana } = useDatos();
   const s = situacion(e);
@@ -92,7 +92,7 @@ export function DetalleExperimento({ e }: { e: Experimento }) {
           href={`/?transicion=${e.transicion.desde}-${e.transicion.hacia}`}
           className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-azul-texto hover:underline"
         >
-          Ver la transición en el cauce
+          Ver la transición en el recorrido
           <ArrowUpRight className="size-4" aria-hidden />
         </Link>
       </Bloque>

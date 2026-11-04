@@ -1,36 +1,43 @@
 "use client";
 
-import { ArrowRightLeft, Table2 } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import Link from "next/link";
+import { useCallback, useMemo, useState } from "react";
 import { useDatos } from "@/components/Proveedores";
 import { ContenidoPanel, encabezadoPanel } from "@/components/panel/ContenidoPanel";
 import { StagePanel } from "@/components/panel/StagePanel";
-import { useAccionesCauce } from "@/components/shell/acciones";
-import { BotonRedondo } from "@/components/shell/BotonRedondo";
+import { SiguientePaso } from "@/components/shell/SiguientePaso";
 import { Button } from "@/components/ui/button";
 import { useJourney } from "@/hooks/useJourney";
 import { useSeleccion } from "@/hooks/useSeleccion";
-import { formatearMxnCorto, formatearRangoSemanas } from "@/lib/formato";
-import { experimentoDestacado, experimentosDelBoard } from "@/lib/journey";
+import { formatearRangoSemanas } from "@/lib/formato";
+import { experimentosDelBoard } from "@/lib/journey";
 import type { EtapaId } from "@/lib/tipos";
 import { DataTableCauce } from "./DataTableCauce";
-import { FilaInferior } from "./FilaInferior";
+import { DondeSePierde } from "./DondeSePierde";
+import { ExperimentosHome } from "./ExperimentosHome";
 import { JourneyBoard } from "./JourneyBoard";
-import { TiraFantasmas } from "./TiraFantasmas";
+import { LeadsSinAtender } from "./LeadsSinAtender";
+import { ResumenCauce } from "./ResumenCauce";
+import { SeccionHome } from "./SeccionHome";
 
+/** Experimentos que se muestran en el home (el destacado primero). */
+const EXPERIMENTOS_HOME = 3;
+
+/**
+ * Recorrido (home), en el orden de lectura: título, resumen, recorrido por etapas, dónde se pierde,
+ * experimentos, leads sin atender y siguiente paso.
+ */
 export function VistaCauce() {
   const { experimentos } = useDatos();
   const { journey, estado, filtros, restablecer } = useJourney();
   const { seleccion, seleccionar } = useSeleccion();
-  const { comparar, tabla, alternarComparar, alternarTabla } = useAccionesCauce();
+  const [resaltada, setResaltada] = useState<EtapaId | null>(null);
 
-  const tiles = useMemo(() => experimentosDelBoard(experimentos), [experimentos]);
-  const destacado = useMemo(() => experimentoDestacado(experimentos), [experimentos]);
-  const pozasConValor = journey.pozas.filter((p) => p.valor > 0).length;
+  const tiles = useMemo(() => experimentosDelBoard(experimentos, EXPERIMENTOS_HOME), [experimentos]);
 
   const abrirEtapa = useCallback((etapa: EtapaId) => seleccionar({ tipo: "etapa", etapa }), [seleccionar]);
 
-  /** Cierra el panel y devuelve el foco a la fila de la etapa (en la tabla no hay fila: el panel lo devuelve solo). */
+  /** Cierra el panel y devuelve el foco a la tarjeta de la etapa (en la tabla no hay tarjeta: el panel lo devuelve solo). */
   const cerrarPanel = useCallback(() => {
     if (!seleccion) return;
     const etapa = seleccion.tipo === "etapa" ? seleccion.etapa : seleccion.desde;
@@ -43,34 +50,23 @@ export function VistaCauce() {
 
   return (
     <div className="flex flex-col">
-      <h1 className="mt-2 mb-1.5 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Journey de adquisición</h1>
+      <h1 className="mt-2 mb-1.5 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Recorrido de adquisición</h1>
       <p className="mb-6 max-w-5xl text-pretty text-tinta-2">
-        {formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}. De la primera visita al contrato: cuánto avanza en cada paso, dónde se
-        pierde y qué se está haciendo para recuperarlo.
+        {formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}. De la primera visita al contrato: cuánto avanza en cada paso y dónde se
+        pierde.
       </p>
 
-      <section aria-labelledby="t-journey" className="vidrio rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
-        <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-4 px-1 pt-1 md:flex md:flex-wrap md:gap-5 md:p-0">
-          <div>
-            <h2 id="t-journey" className="font-cifra text-lg font-semibold">
-              Recorrido del lead
-            </h2>
-            <p className="text-xs text-tinta-2">
-              <b className="cifra text-sm font-semibold text-tinta">{formatearMxnCorto(journey.valorEnRiesgo)}</b> en riesgo en {pozasConValor}{" "}
-              {pozasConValor === 1 ? "poza" : "pozas"}
-            </p>
-          </div>
-          <TiraFantasmas />
-          <div className="ml-auto flex gap-2.5">
-            <BotonRedondo etiqueta="Comparar con período anterior" lado="bottom" superficie="tarjeta" presionado={comparar} onClick={alternarComparar}>
-              <ArrowRightLeft aria-hidden />
-            </BotonRedondo>
-            <BotonRedondo etiqueta="Ver como tabla" lado="bottom" superficie="tarjeta" presionado={tabla} onClick={alternarTabla}>
-              <Table2 aria-hidden />
-            </BotonRedondo>
-          </div>
-        </div>
+      <ResumenCauce journey={journey} />
 
+      <SeccionHome
+        id="t-recorrido"
+        titulo="Recorrido"
+        descripcion={
+          estado.tabla
+            ? "Volumen y conversión de cada etapa, en tablas."
+            : "Cuántos llegan a cada etapa y qué porcentaje avanza a la siguiente. Abra una etapa para ver el detalle."
+        }
+      >
         {seco ? (
           <div className="flex flex-col items-center gap-3 rounded-tarjeta border border-dashed border-linea-fuerte bg-tarjeta px-6 py-16 text-center">
             <p className="font-cifra text-lg font-semibold">No hay sesiones con estos filtros</p>
@@ -90,23 +86,37 @@ export function VistaCauce() {
             pozas={journey.pozas}
           />
         ) : (
-          <>
-            <JourneyBoard journey={journey} comparar={estado.comparar} experimentos={tiles} destacado={destacado} onAbrirEtapa={abrirEtapa} />
-            <ul aria-label="Leyenda" className="mt-4 flex flex-wrap gap-x-4 gap-y-2 px-1 text-xs text-tinta-2 md:px-0">
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden className="w-6 border-t-2 border-azul" />
-                Avanza al paso siguiente (porcentaje que pasa)
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <span aria-hidden className="w-6 border-t-2 border-dashed border-coral" />
-                Fuga hacia una poza, con su valor estimado
-              </li>
-            </ul>
-          </>
+          <JourneyBoard journey={journey} comparar={estado.comparar} resaltada={resaltada} onAbrirEtapa={abrirEtapa} />
         )}
-      </section>
+      </SeccionHome>
 
-      <FilaInferior journey={journey} />
+      {!seco && !estado.tabla && (
+        <SeccionHome id="t-pierde" titulo="Dónde se pierde" descripcion="Cada fuga con su valor estimado en el período, de la más cara a la más barata.">
+          <DondeSePierde journey={journey} />
+        </SeccionHome>
+      )}
+
+      <SeccionHome
+        id="t-experimentos"
+        titulo="Experimentos"
+        descripcion={
+          <>
+            <span className="hidden [@media(hover:hover)]:inline">Pase el cursor o enfoque uno para ver qué etapa ataca.</span>
+            <span className="[@media(hover:hover)]:hidden">Qué se está probando para recuperar la demanda.</span>
+          </>
+        }
+        accion={
+          <Button asChild variant="outline" size="lg">
+            <Link href="/experimentos">Ver todos los experimentos</Link>
+          </Button>
+        }
+      >
+        <ExperimentosHome experimentos={tiles} onResaltar={setResaltada} />
+      </SeccionHome>
+
+      <LeadsSinAtender />
+
+      <SiguientePaso desde="/" className="mt-6" />
 
       <StagePanel
         abierto={seleccion !== null}

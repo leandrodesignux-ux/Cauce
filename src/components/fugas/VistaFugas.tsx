@@ -1,22 +1,25 @@
 "use client";
 
-import { Inbox, Keyboard, SearchX } from "lucide-react";
+import { Calculator, Inbox, Keyboard, SearchX } from "lucide-react";
 import Link from "next/link";
 import { AnimatePresence } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { useDatos } from "@/components/Proveedores";
+import { SiguientePaso } from "@/components/shell/SiguientePaso";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toggle } from "@/components/ui/toggle";
 import { nombreEtapa } from "@/config/etapas";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
-import { NOMBRE_CORTO_POZA } from "@/config/pozas";
+import { NOMBRE_CORTO_POZA, causaVisible } from "@/config/pozas";
 import { formatearEntero, formatearMxn } from "@/lib/formato";
 import { type Banda, type LeadFeed, type RangoAntiguedad, banda, diasSinActividad, rangoAntiguedad } from "@/lib/leads";
 import { periodoDesdePreset, valorEnRiesgoPorPoza } from "@/lib/selectors";
-import { useRescatadosHoy, useSesion } from "@/lib/stores";
+import { useSesion } from "@/lib/stores";
 import { LeadFeedItem, type Accion, type EstadoLead } from "./LeadFeedItem";
 import { LossModel } from "./LossModel";
 import { type Bandeja, useFiltrosFugas } from "./useFiltrosFugas";
@@ -47,7 +50,6 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
   const rescatados = useSesion((s) => s.rescatados);
   const descartados = useSesion((s) => s.descartados);
   const { rescatar, descartar, restaurar } = useSesion.getState();
-  const rescatadosHoy = useRescatadosHoy();
 
   const [seleccion, setSeleccion] = useState<Set<string>>(new Set());
   const [enfocado, setEnfocado] = useState<string | null>(null);
@@ -101,10 +103,10 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
       const plural = n === 1 ? "" : "s";
       const mensaje =
         accion === "rescatar"
-          ? `${n} lead${plural} rescatado${plural}: vuelve${n === 1 ? "" : "n"} al cauce en ${nombreEtapa(poza.hacia)}.`
+          ? `${n} lead${plural} rescatado${plural}: vuelve${n === 1 ? "" : "n"} al recorrido en ${nombreEtapa(poza.hacia)}.`
           : accion === "descartar"
             ? `${n} lead${plural} descartado${plural}.`
-            : `${n} lead${plural} devuelto${plural} a la poza.`;
+            : `${n} lead${plural} devuelto${plural} a la fuga.`;
       // Un aviso por vez: el nuevo reemplaza al anterior y reinicia los 5 s.
       toast.dismiss();
       toast(mensaje, {
@@ -167,7 +169,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
     return () => window.removeEventListener("keydown", alPresionar);
   }, [visibles, enfocado, seleccion, filtros.bandeja, aplicar, enfocar]);
 
-  // Llegada desde ⌘K o desde el cauce con ?lead=: lo lleva a la vista y le da el foco.
+  // Llegada desde ⌘K o desde el recorrido con ?lead=: lo lleva a la vista y le da el foco.
   useEffect(() => {
     if (!filtros.lead) return;
     const id = requestAnimationFrame(() => {
@@ -188,35 +190,19 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Pozas y rescate</h1>
-          <p className="mt-1.5 max-w-xl text-pretty text-tinta-2">
-            Lo que se escapa del cauce, cuánto vale y qué leads con intención conviene rescatar primero.
-          </p>
-        </div>
-        <dl className="flex gap-3">
-          <div className="rounded-tile border border-tarjeta-borde bg-tarjeta px-5 py-3 shadow-tarjeta">
-            <dt className="text-xs text-tinta-2">Rescatados hoy</dt>
-            <dd className="cifra text-xl font-semibold text-azul-texto">{formatearEntero(rescatadosHoy)}</dd>
-          </div>
-          <div className="rounded-tile border border-tarjeta-borde bg-tarjeta px-5 py-3 shadow-tarjeta">
-            <dt className="text-xs text-tinta-2">Pendientes en pozas</dt>
-            <dd className="cifra text-xl font-semibold">{formatearEntero(Object.values(pendientesPorPoza).reduce((s, n) => s + n, 0))}</dd>
-          </div>
-        </dl>
+      <header>
+        <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Rescate de leads</h1>
+        <p className="mt-1.5 max-w-2xl text-pretty text-tinta-2">Cuánto vale cada fuga y qué leads con intención conviene rescatar primero.</p>
       </header>
 
-      <LossModel />
-
-      <section aria-label="Pozas" className="vidrio flex flex-col gap-4 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
+      <section aria-label="Fugas" className="vidrio flex flex-col gap-4 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
         <Tabs value={filtros.poza} onValueChange={cambiarPoza}>
-          <TabsList variant="pill" aria-label="Pozas" className="max-w-full justify-start overflow-x-auto">
+          <TabsList variant="pill" aria-label="Fugas" className="max-w-full justify-start overflow-x-auto">
             {fugas.map((f) => {
               const pendientes = pendientesPorPoza[f.id] ?? null;
               return (
                 <TabsTrigger key={f.id} value={f.id} className="flex-none">
-                  {NOMBRE_CORTO_POZA[f.id] ?? f.causa}
+                  {NOMBRE_CORTO_POZA[f.id] ?? causaVisible(f)}
                   {pendientes !== null && (
                     <Badge variant={f.id === filtros.poza ? "pendientes" : "neutro"} className="cifra h-5 px-2">
                       {pendientes}
@@ -229,21 +215,24 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
           <TabsContent value={filtros.poza} className="flex flex-col gap-4 px-1 pt-2 md:px-0">
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
               <p className="text-sm">
-                <span className="font-medium">{poza.causa}</span>
+                <span className="font-medium">{causaVisible(poza)}</span>
                 <span className="text-tinta-2">
                   {" "}
                   · {nombreEtapa(poza.desde)} → {nombreEtapa(poza.hacia)}
                 </span>
               </p>
-              <p className="cifra text-sm text-tinta-2">
-                Últimos 30 días: {formatearEntero(valorPoza.volumen)} perdidos ·{" "}
-                <span className="font-semibold text-tinta">{formatearMxn(valorPoza.valorMxn)}</span>
-              </p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <p className="cifra text-sm text-tinta-2">
+                  Valor estimado: <span className="font-semibold text-tinta">{formatearMxn(valorPoza.valorMxn)}</span> ·{" "}
+                  {formatearEntero(valorPoza.volumen)} {poza.id === FUGA_MODELO_PERDIDA ? "sin atender" : "perdidos"} en 30 días
+                </p>
+                {poza.id === FUGA_MODELO_PERDIDA && <ComoSeCalcula />}
+              </div>
             </div>
 
             {enPoza.length === 0 ? (
               <Vacio icono={<Inbox />}>
-                Esta poza mide sesiones anónimas: no hay leads con datos de contacto para rescatar.
+                Esta fuga mide sesiones anónimas: no hay leads con datos de contacto para rescatar.
                 {experimento && (
                   <>
                     {" "}
@@ -299,8 +288,8 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                 {visibles.length === 0 ? (
                   <Vacio icono={filtrosActivos ? <SearchX /> : <Inbox />}>
                     {filtros.bandeja === "pendientes"
-                      ? `No hay ${filtrosActivos ? "leads con esos filtros" : "leads pendientes"} en esta poza.`
-                      : `Todavía no hay leads ${filtros.bandeja} en esta poza.`}{" "}
+                      ? `No hay ${filtrosActivos ? "leads con esos filtros" : "leads pendientes"} en esta fuga.`
+                      : `Todavía no hay leads ${filtros.bandeja} en esta fuga.`}{" "}
                     {filtrosActivos ? (
                       <button type="button" onClick={() => actualizar({ banda: null, antiguedad: null })} className="text-azul-texto underline underline-offset-2">
                         Quitar filtros de score y antigüedad
@@ -313,7 +302,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                   </Vacio>
                 ) : (
                   <div className="relative">
-                    <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? poza.causa}`} className="overflow-hidden rounded-tarjeta border border-tarjeta-borde bg-tarjeta shadow-tarjeta">
+                    <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? causaVisible(poza)}`} className="overflow-hidden rounded-tarjeta border border-tarjeta-borde bg-tarjeta shadow-tarjeta">
                       <AnimatePresence initial={false} custom={ultimaAccion}>
                         {visibles.map((l) => (
                           <LeadFeedItem
@@ -350,7 +339,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                           </>
                         ) : (
                           <button type="button" onClick={() => aplicar("restaurar", [...seleccion])} className="rounded-full px-3 py-1.5 hover:bg-sobre-activo/10">
-                            Devolver a la poza
+                            Devolver a la fuga
                           </button>
                         )}
                         <button type="button" onClick={() => setSeleccion(new Set())} className="rounded-full px-3 py-1.5 text-sobre-activo/70 hover:bg-sobre-activo/10">
@@ -365,7 +354,30 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
           </TabsContent>
         </Tabs>
       </section>
+
+      <SiguientePaso desde="/fugas" />
     </div>
+  );
+}
+
+/** El modelo de pérdida (sliders y fórmula) en un Dialog: se consulta, no ocupa la vista. */
+function ComoSeCalcula() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Calculator data-icon="inline-start" />
+          Cómo se calcula
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-h-[90dvh] overflow-y-auto p-5 sm:max-w-4xl md:p-6">
+        <DialogHeader>
+          <DialogTitle className="font-cifra text-lg font-semibold">Cómo se calcula el valor</DialogTitle>
+          <DialogDescription>Cuánto vale lo que se queda en leads sin atender. Mueva los parámetros para ver cómo cambia.</DialogDescription>
+        </DialogHeader>
+        <LossModel />
+      </DialogContent>
+    </Dialog>
   );
 }
 

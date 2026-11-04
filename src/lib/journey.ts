@@ -1,7 +1,7 @@
 // Cifras del journey board (home) y de su exportación. Puro: todo sale de los selectores.
 
 import { FASES, ORDEN_ETAPAS, TRANSICIONES } from "../config/etapas";
-import { NOMBRE_CORTO_POZA } from "../config/pozas";
+import { NOMBRE_CORTO_POZA, causaVisible } from "../config/pozas";
 import { type Filtros, periodoAnterior, tasaTransicion, valorEnRiesgoPorPoza, valorEnRiesgoTotal, volumenPorEtapa } from "./selectors";
 import type { EstadoExperimento, EtapaId, Experimento, Fuga, SemanaEtapa } from "./tipos";
 
@@ -57,7 +57,7 @@ export function calcularJourney(flujo: readonly SemanaEtapa[], fugas: readonly F
     volumen: valores[i].volumen,
     valor: valores[i].valorMxn,
     nombre: NOMBRE_CORTO_POZA[f.id] ?? f.causa,
-    causa: f.causa,
+    causa: causaVisible(f),
   }));
 
   return { etapas, tasas, deltas, pozas, valorEnRiesgo: valorEnRiesgoTotal(valores) };
@@ -86,7 +86,12 @@ export function experimentosDelBoard(experimentos: readonly Experimento[], maxim
     .slice(0, maximo);
 }
 
-/** El tile en pill negra: el experimento más reciente en estado "leyendo". */
+/** Experimentos activos: desplegados (en curso) o en ventana de lectura. */
+export function experimentosActivos(experimentos: readonly Experimento[]): number {
+  return experimentos.filter((e) => e.estado === "en_curso" || e.estado === "leyendo").length;
+}
+
+/** El experimento destacado: el más reciente en estado "leyendo". */
 export function experimentoDestacado(experimentos: readonly Experimento[]): string | null {
   const leyendo = experimentos.filter((e) => e.estado === "leyendo").sort((x, y) => y.despliegue.localeCompare(x.despliegue));
   return leyendo[0]?.id ?? null;

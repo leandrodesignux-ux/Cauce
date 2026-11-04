@@ -73,7 +73,7 @@ export function imagenCauce() {
   const y1 = Math.max(...geo.pozas.map((p) => p.y + p.ry + 4));
   return new ImageResponse(
     (
-      <Marco titulo="La demanda como un río" subtitulo={`Del primer clic al contrato, con las fugas a la vista: ${formatoM(valorEnRiesgoTotal(pozas))} en riesgo en 30 días.`}>
+      <Marco titulo="Recorrido de adquisición" subtitulo={`De la primera visita al contrato, con las fugas a la vista: ${formatoM(valorEnRiesgoTotal(pozas))} en riesgo en 30 días.`}>
         <svg width={1072} height={230} viewBox={`0 ${y0} 1072 ${y1 - y0}`} preserveAspectRatio="none">
           {geo.pozas.map((p) => (
             <path key={p.id} d={p.hilo} fill="none" stroke={COLOR.coral} strokeWidth={p.grosorHilo} strokeLinecap="round" />
@@ -89,20 +89,20 @@ export function imagenCauce() {
   );
 }
 
-/** El modelo de pérdida: el monto de la poza de fantasmas y los leads en pozas. */
+/** Rescate de leads: el monto de los leads sin atender (modelo de pérdida) y los leads en fugas. */
 export function imagenFugas() {
   const leads = obtenerLeads().filter((l) => l.fugaId);
   const monto = modeloPerdida(parametrosPerdidaIniciales()).montoMxn;
   return new ImageResponse(
     (
-      <Marco titulo="Pozas y rescate" subtitulo="Cuánto vale lo que se escapa y qué leads con intención conviene rescatar primero.">
+      <Marco titulo="Rescate de leads" subtitulo="Cuánto vale cada fuga y qué leads con intención conviene rescatar primero.">
         <div style={{ display: "flex", alignItems: "flex-end", gap: 56, width: "100%" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: 24, color: COLOR.tinta2 }}>Valor en riesgo en la poza de fantasmas</span>
+            <span style={{ fontSize: 24, color: COLOR.tinta2 }}>Valor en riesgo en leads sin atender</span>
             <span style={{ fontSize: 96, fontWeight: 700, color: COLOR.tinta, letterSpacing: -2 }}>{`$${monto.toLocaleString("en-US")} MXN`}</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", marginLeft: "auto", alignItems: "flex-end" }}>
-            <span style={{ fontSize: 24, color: COLOR.tinta2 }}>Leads en pozas</span>
+            <span style={{ fontSize: 24, color: COLOR.tinta2 }}>Leads en fugas</span>
             <span style={{ fontSize: 72, fontWeight: 700, color: COLOR.azulRelleno }}>{leads.length}</span>
           </div>
         </div>
@@ -121,7 +121,7 @@ export function imagenExperimentos(experimentos: { nombre: string; estado: strin
   const tono: Record<string, string> = { diseno: COLOR.tinta2, en_curso: COLOR.azulRelleno, leyendo: COLOR.tinta, validado: COLOR.azulRelleno, refutado: COLOR.coral };
   return new ImageResponse(
     (
-      <Marco titulo="Registro de hipótesis" subtitulo="Qué espera mover cada experimento, cuándo se puede leer y qué pasó de verdad.">
+      <Marco titulo="Experimentos" subtitulo="Qué se está probando, cuándo se puede medir y si funcionó.">
         <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%" }}>
           {ordenados.map((e) => {
             const d = Date.parse(e.despliegue);

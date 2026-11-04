@@ -51,3 +51,9 @@ Sin `/leads/[id]`. Los leads se ven en el feed de `/fugas` y se buscan desde ⌘
 ## Fase 8 — Pulido y deploy
 
 > Pulido visual, modo oscuro, estados vacíos con dirección, sello "Prototipo con datos demo", metadata y Open Graph de cada vista para que el link se vea bien al compartirlo. Sin Lighthouse.
+
+## Fase 9 — Simplificación y onboarding
+
+> Simplificá la lectura sin tocar URLs, search params, ids de datos, el store `cauce-sesion` ni la lógica de selectores. Onboarding de 3 slides en un `Dialog` (primera visita; se reabre desde el rail, la barra móvil y ⌘K; ← → y Esc; marca `onboardingVisto` en el mismo persist). Nav numerada 1 Recorrido, 2 Rescate, 3 Experimentos (los href no cambian), con una tarjeta Siguiente paso al final de cada vista. Vocabulario visible: fuga en vez de poza, leads sin atender en vez de fantasmas, puntos en vez de pp en texto corrido. Home: resumen de 3 cifras, stepper de 8 etapas por fase (sin SVG de conectores), dónde se pierde, hasta 3 experimentos, leads sin atender y siguiente paso. Rescate: el modelo de pérdida pasa a un Dialog (Cómo se calcula) y el feed muestra arriba solo lo clave. Experimentos: vista Tarjetas por defecto (Tarjetas | Tabla | Timeline).
+
+**Listo cuando:** lint, build, test y contraste en verde; a 1440 y 390, y con teclado, el onboarding se abre en la primera visita y se reabre desde el rail y ⌘K, una etapa abre su panel y devuelve el foco, rescatar 3 leads en /fugas deja "3 rescatados hoy" en el resumen de /, y los links de Siguiente paso recorren las tres vistas.

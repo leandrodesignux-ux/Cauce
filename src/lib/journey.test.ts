@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { calcularConectores, SEPARACION_FUGA } from "../components/cauce/conectores";
 import { ORDEN_ETAPAS } from "../config/etapas";
-import { formatearMxnCompacto } from "./formato";
-import { csvJourney, experimentoDestacado, experimentosDelBoard, iniciales, pendientesDePoza, valorPorFase, type Journey, type PozaJourney } from "./journey";
+import { formatearMxnCompacto, formatearPuntos } from "./formato";
+import { csvJourney, experimentoDestacado, experimentosActivos, experimentosDelBoard, iniciales, pendientesDePoza, valorPorFase, type Journey, type PozaJourney } from "./journey";
 import type { EtapaId, Experimento } from "./tipos";
 
 const poza = (id: string, desde: EtapaId, valor: number): PozaJourney => ({ id, desde: ORDEN_ETAPAS.indexOf(desde), volumen: 1, valor, nombre: id, causa: id });
@@ -43,6 +42,10 @@ describe("experimentos del board", () => {
     assert.equal(experimentoDestacado([exp("x", "en_curso", "2026-01-05")]), null);
   });
 
+  it("cuenta como activos los en curso y los que están en lectura", () => {
+    assert.equal(experimentosActivos(lista), 4);
+  });
+
   it("ordena por estado y recencia y recorta a 6", () => {
     assert.deepEqual(
       experimentosDelBoard(lista).map((e) => e.id),
@@ -72,6 +75,9 @@ describe("formatos del board", () => {
     assert.equal(iniciales("José Luis P."), "JP");
     assert.equal(iniciales("Ana"), "A");
   });
+  it("puntos en texto corrido", () => {
+    assert.equal(formatearPuntos(1.5), "+1.5 puntos");
+  });
   it("montos compactos", () => {
     assert.equal(formatearMxnCompacto(2_310_000), "$2.31 M");
     assert.equal(formatearMxnCompacto(351_616), "$352 K");
@@ -89,64 +95,5 @@ describe("formatos del board", () => {
     const csv = csvJourney(journey, nombres);
     assert.match(csv, /^Etapa,Volumen/);
     assert.match(csv, /"Cancelada, sin aviso",visita,1,1000/);
-  });
-});
-
-describe("conectores", () => {
-  const caja = (x: number, y: number, lado = 44) => ({ x, y, ancho: lado, alto: lado });
-  const tarjetaA = { x: 0, y: 0, ancho: 300, alto: 400 };
-  const tarjetaB = { x: 340, y: 0, ancho: 300, alto: 400 };
-  const tarjetaAbajo = { x: 0, y: 440, ancho: 300, alto: 400 };
-
-  it("espina recta dentro de una tarjeta, de borde a borde de los íconos", () => {
-    const r = calcularConectores(
-      [
-        { id: "a", icono: caja(10, 10), tarjeta: tarjetaA },
-        { id: "b", icono: caja(10, 110), tarjeta: tarjetaA },
-      ],
-      [],
-    );
-    assert.deepEqual(r.espina, ["M32 54L32 110"]);
-    assert.equal(r.puentes.length, 0);
-  });
-
-  it("curva entre tarjetas lado a lado y recta si están apiladas, con un punto en cada borde", () => {
-    const lado = calcularConectores(
-      [
-        { id: "a", icono: caja(10, 10), tarjeta: tarjetaA },
-        { id: "b", icono: caja(350, 10), tarjeta: tarjetaB },
-      ],
-      [],
-    );
-    assert.match(lado.puentes[0].d, /^M300 32C320 32 320 32 340 32$/);
-    assert.deepEqual(lado.puentes[0].puntos, [
-      [300, 32],
-      [340, 32],
-    ]);
-    const apiladas = calcularConectores(
-      [
-        { id: "a", icono: caja(10, 10), tarjeta: tarjetaA },
-        { id: "b", icono: caja(10, 450), tarjeta: tarjetaAbajo },
-      ],
-      [],
-    );
-    assert.equal(apiladas.puentes[0].d, "M32 400L32 440");
-  });
-
-  it("las fugas caen separadas de la espina y se encadenan desde la misma etapa", () => {
-    const r = calcularConectores(
-      [{ id: "a", icono: caja(10, 10), tarjeta: tarjetaA }],
-      [
-        { id: "f1", desde: "a", icono: caja(24, 80, 36) },
-        { id: "f2", desde: "a", icono: caja(24, 140, 36) },
-      ],
-    );
-    const x = 32 + SEPARACION_FUGA;
-    assert.equal(r.fugas.length, 2);
-    assert.ok(r.fugas[0].startsWith(`M${x} `));
-    // La segunda arranca donde termina el ícono de la primera.
-    const finPrimera = Number(r.fugas[0].split("V")[1]);
-    const inicioSegunda = Number(r.fugas[1].split(" ")[1].split("V")[0]);
-    assert.ok(inicioSegunda > finPrimera);
   });
 });
