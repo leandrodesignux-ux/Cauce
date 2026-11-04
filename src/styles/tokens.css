@@ -111,6 +111,10 @@
   --curva-salida: cubic-bezier(0.23, 1, 0.32, 1);
   --curva-movimiento: cubic-bezier(0.77, 0, 0.175, 1);
   --curva-cajon: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Onboarding (Fase 11): entradas blur-rise, cambios de estado entre actos y asentado del contenido al cerrar. */
+  --curva-entrada: cubic-bezier(0.22, 1, 0.36, 1);
+  --curva-estado: cubic-bezier(0.4, 0, 0.2, 1);
+  --duracion-entrada: 600ms;
 
   /* Sombras: suave en paneles y tarjetas, más marcada en lo flotante */
   --sombra-tarjeta: 0 1px 2px rgb(17 19 24 / 0.04), 0 8px 24px rgb(40 52 90 / 0.06);

@@ -286,6 +286,37 @@
   }
 }
 
+/* Onboarding: segmento de progreso (esta animación lleva el autoplay) y asentado de <main> al cerrar con "Ver mi recorrido". */
+@keyframes llenar-segmento {
+  from {
+    scale: 0 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+
+#contenido[data-entrada] {
+  animation: asentar-contenido var(--duracion-entrada) var(--curva-entrada) both;
+}
+
+@keyframes asentar-contenido {
+  from {
+    scale: 1.02;
+    filter: blur(6px);
+  }
+  to {
+    scale: 1;
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #contenido[data-entrada] {
+    animation: none;
+  }
+}
+
 /* Cambio de tema: fundido corto en vez de un salto de brillo (View Transitions; sin él, cambia directo). */
 ::view-transition-old(root),
 ::view-transition-new(root) {
