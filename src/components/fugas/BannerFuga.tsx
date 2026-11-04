@@ -52,7 +52,7 @@ export function BannerFuga({
 }) {
   const hayFiltros = filtroBanda !== null || filtroAntiguedad !== null;
   return (
-    <div className="grid gap-6 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-5 shadow-tarjeta md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:gap-10">
+    <div className="grid gap-6 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-6 shadow-tarjeta md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:gap-10">
       <div className="flex flex-col items-start gap-1">
         <p className="text-sm text-tinta-2">Valor estimado</p>
         <p className="cifra text-2xl font-semibold md:text-3xl">{formatearUsd(valorUsd)}</p>

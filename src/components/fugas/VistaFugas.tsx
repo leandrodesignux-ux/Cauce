@@ -224,7 +224,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
   const filtrosActivos = filtros.banda !== null || filtros.antiguedad !== null;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <EncabezadoVista titulo="Rescate de leads" subtitulo="Cuánto vale cada fuga y qué leads con intención conviene rescatar primero." />
 
       <section aria-label="Fugas" className="vidrio flex flex-col gap-4 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
@@ -308,7 +308,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                     ) : null}
                   </Vacio>
                 ) : (
-                  <div className="relative flex flex-col gap-4">
+                  <div className="relative mt-2 flex flex-col gap-4">
                     <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? causaVisible(poza)}`} className="overflow-hidden rounded-tarjeta border border-tarjeta-borde bg-tarjeta shadow-tarjeta">
                       <AnimatePresence initial={false} custom={ultimaAccion}>
                         {enPagina.map((l) => (
