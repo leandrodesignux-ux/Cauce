@@ -4,7 +4,7 @@ import { useId, useMemo, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { TRANSICIONES, nombreEtapa } from "@/config/etapas";
-import { formatearEntero, formatearMxn } from "@/lib/formato";
+import { formatearEntero, formatearUsd } from "@/lib/formato";
 import { type Journey, volumenDeJourney } from "@/lib/journey";
 import { parametrosPerdidaIniciales, simularMejora } from "@/lib/selectors";
 
@@ -31,7 +31,7 @@ export function SimuladorMejora({
   const id = useId();
   const [puntos, setPuntos] = useState(PUNTOS_INICIALES);
   const volumen = useMemo(() => volumenDeJourney(journey), [journey]);
-  const comision = parametrosPerdidaIniciales().comisionMxn;
+  const comision = parametrosPerdidaIniciales().comisionUsd;
   const t = TRANSICIONES[transicion];
   const r = simularMejora(volumen, t, puntos, comision);
   const etiquetaPuntos = `${decimales(puntos, 1)} puntos`;
@@ -87,14 +87,14 @@ export function SimuladorMejora({
           </div>
           <div className="flex flex-col-reverse gap-1">
             <dt className="text-sm text-tinta-2">en comisión</dt>
-            <dd className="cifra text-2xl font-semibold text-azul-texto">+{formatearMxn(r.mxn)}</dd>
+            <dd className="cifra text-2xl font-semibold text-azul-texto">+{formatearUsd(r.usd)}</dd>
           </div>
         </dl>
         <p className="text-xs text-pretty text-tinta-2">
           <span className="cifra">
             {formatearEntero(volumen[t.desde])} en {nombreEtapa(t.desde)} × {decimales(puntos, 1)} / 100 ×{" "}
             {decimales(r.probabilidad * 100, 2)} % de cierre desde {nombreEtapa(t.hacia)} = {decimales(r.cierres, 1)} cierres ×{" "}
-            {formatearMxn(comision)} de comisión
+            {formatearUsd(comision)} de comisión
           </span>
           . Las tasas son las del período; la comisión, la del modelo de pérdida.
         </p>

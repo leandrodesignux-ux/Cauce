@@ -1,4 +1,4 @@
-// Formatos de DESIGN.md: "$1.29 M MXN", "$1,287,400 MXN", "23.4 %", "+1.8 pp".
+// Formatos de DESIGN.md: "$2.31M USD", "$128.4K USD", "$19,290 USD", "23.4 %", "+1.8 pp".
 
 const entero = new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 });
 const dosDecimales = new Intl.NumberFormat("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -8,21 +8,17 @@ export function formatearEntero(n: number): string {
   return entero.format(n);
 }
 
-export function formatearMxn(n: number): string {
-  return `$${entero.format(n)} MXN`;
+/** "$19,290 USD": siempre entero (montos redondos). */
+export function formatearUsd(n: number): string {
+  return `$${entero.format(Math.round(n))} USD`;
 }
 
-/** Resúmenes: millones con dos decimales; por debajo del millón, el monto completo. */
-export function formatearMxnCorto(n: number): string {
-  return Math.abs(n) >= 1_000_000 ? `$${dosDecimales.format(n / 1_000_000)} M MXN` : formatearMxn(n);
-}
-
-/** Filas del board: "$2.31 M", "$352 K", "$950". */
-export function formatearMxnCompacto(n: number): string {
+/** Resúmenes: "$2.31M USD" (≥1,000,000), "$128.4K USD" (≥10,000); por debajo, el monto completo. */
+export function formatearUsdCorto(n: number): string {
   const abs = Math.abs(n);
-  if (abs >= 1_000_000) return `$${dosDecimales.format(n / 1_000_000)} M`;
-  if (abs >= 1_000) return `$${entero.format(n / 1_000)} K`;
-  return `$${entero.format(n)}`;
+  if (abs >= 1_000_000) return `$${dosDecimales.format(n / 1_000_000)}M USD`;
+  if (abs >= 10_000) return `$${unDecimal.format(n / 1_000)}K USD`;
+  return formatearUsd(n);
 }
 
 /** Tasa 0–1 → "23.4 %". */

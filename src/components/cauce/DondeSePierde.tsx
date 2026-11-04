@@ -8,7 +8,7 @@ import { useDatos } from "@/components/Proveedores";
 import { Button } from "@/components/ui/button";
 import { nombreEtapa } from "@/config/etapas";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
-import { formatearEntero, formatearMxnCorto } from "@/lib/formato";
+import { formatearEntero, formatearUsdCorto } from "@/lib/formato";
 import type { Journey } from "@/lib/journey";
 import { type OnResaltar, type Resaltado, propsResaltar } from "./resaltado";
 
@@ -70,7 +70,7 @@ export function DondeSePierde({ journey, resaltado, onResaltar }: { journey: Jou
             </div>
             <div className="flex items-end justify-between gap-3">
               <p>
-                <span className="cifra block text-xl font-semibold">{formatearMxnCorto(t.valor)}</span>
+                <span className="cifra block text-xl font-semibold">{formatearUsdCorto(t.valor)}</span>
                 <span className="cifra block text-xs text-tinta-2">
                   {formatearEntero(t.volumen)} {t.id === FUGA_MODELO_PERDIDA ? "sin atender" : "perdidos"}
                 </span>

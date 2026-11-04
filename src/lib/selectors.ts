@@ -128,7 +128,7 @@ export function probabilidadCierreDesde(volumen: Volumen, etapa: EtapaId): numbe
   return probabilidad;
 }
 
-export type Poza = { fugaId: string; volumen: number; valorMxn: number };
+export type Poza = { fugaId: string; volumen: number; valorUsd: number };
 
 /**
  * Por cada fuga: volumen perdido = caída de la transición × proporción atribuida a la fuga.
@@ -148,7 +148,7 @@ export function valorEnRiesgoPorPoza(flujo: readonly SemanaEtapa[], fugas: reado
     // La poza de fantasmas se valúa con el modelo de pérdida (valores iniciales), igual que /fugas.
     if (fuga.id === FUGA_MODELO_PERDIDA) {
       const p = parametrosPerdidaIniciales();
-      return { fugaId: fuga.id, volumen: p.fantasmas, valorMxn: modeloPerdida(p).montoMxn };
+      return { fugaId: fuga.id, volumen: p.fantasmas, valorUsd: modeloPerdida(p).montoUsd };
     }
     const probabilidad = probabilidadCierreDesde(total, fuga.hacia);
     let volumen = 0;
@@ -158,12 +158,12 @@ export function valorEnRiesgoPorPoza(flujo: readonly SemanaEtapa[], fugas: reado
       volumen += perdidos;
       valor += perdidos * probabilidad * comisionPorSector(sector);
     }
-    return { fugaId: fuga.id, volumen: Math.round(volumen), valorMxn: Math.round(valor) };
+    return { fugaId: fuga.id, volumen: Math.round(volumen), valorUsd: Math.round(valor) };
   });
 }
 
 export function valorEnRiesgoTotal(pozas: readonly Poza[]): number {
-  return pozas.reduce((s, p) => s + p.valorMxn, 0);
+  return pozas.reduce((s, p) => s + p.valorUsd, 0);
 }
 
 // ---------------------------------------------------------------------------
@@ -195,14 +195,14 @@ export type ParametrosPerdida = {
   fantasmas: number;
   leadACita: number; // 0–1
   citaAContrato: number; // 0–1
-  comisionMxn: number;
+  comisionUsd: number;
 };
 
 export type ResultadoPerdida = {
   citas: number;
   contratos: number;
   /** fantasmas × lead→cita × cita→contrato × comisión, redondeado al peso. */
-  montoMxn: number;
+  montoUsd: number;
 };
 
 export function parametrosPerdidaIniciales(): ParametrosPerdida {
@@ -211,14 +211,14 @@ export function parametrosPerdidaIniciales(): ParametrosPerdida {
     fantasmas: P.fantasmas.valor,
     leadACita: P.leadACita.valor,
     citaAContrato: P.citaAContrato.valor,
-    comisionMxn: P.comisionMxn.valor,
+    comisionUsd: P.comisionUsd.valor,
   };
 }
 
 export function modeloPerdida(p: ParametrosPerdida): ResultadoPerdida {
   const citas = p.fantasmas * p.leadACita;
   const contratos = citas * p.citaAContrato;
-  return { citas, contratos, montoMxn: Math.round(contratos * p.comisionMxn) };
+  return { citas, contratos, montoUsd: Math.round(contratos * p.comisionUsd) };
 }
 
 // ---------------------------------------------------------------------------
@@ -251,16 +251,16 @@ export type SimulacionMejora = {
   /** Probabilidad de cerrar una vez en `hacia`, con las tasas observadas. */
   probabilidad: number;
   cierres: number;
-  mxn: number;
+  usd: number;
 };
 
 /**
  * Si la transición mejora `puntos` puntos porcentuales: volumen[desde] × (puntos / 100) ×
- * probabilidadCierreDesde(volumen, hacia) cierres extra en el período, por la comisión en MXN.
+ * probabilidadCierreDesde(volumen, hacia) cierres extra en el período, por la comisión en USD.
  */
-export function simularMejora(volumen: Volumen, t: Transicion, puntos: number, comisionMxn: number): SimulacionMejora {
+export function simularMejora(volumen: Volumen, t: Transicion, puntos: number, comisionUsd: number): SimulacionMejora {
   const extra = volumen[t.desde] * (puntos / 100);
   const probabilidad = probabilidadCierreDesde(volumen, t.hacia);
   const cierres = extra * probabilidad;
-  return { extra, probabilidad, cierres, mxn: Math.round(cierres * comisionMxn) };
+  return { extra, probabilidad, cierres, usd: Math.round(cierres * comisionUsd) };
 }

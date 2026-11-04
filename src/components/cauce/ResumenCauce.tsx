@@ -8,7 +8,7 @@ import { useDatos } from "@/components/Proveedores";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
 import { useFantasmasPendientes } from "@/hooks/useFantasmasPendientes";
 import { useTween } from "@/hooks/useTween";
-import { formatearEntero, formatearMxnCorto } from "@/lib/formato";
+import { formatearEntero, formatearUsdCorto } from "@/lib/formato";
 import { type Journey, experimentosActivos } from "@/lib/journey";
 import { useRescatadosHoy } from "@/lib/stores";
 
@@ -25,7 +25,7 @@ export function ResumenCauce({ journey }: { journey: Journey }) {
 
   return (
     <section aria-label="Resumen" className="grid gap-3 sm:grid-cols-3">
-      <Cifra href="/fugas" Icono={Droplets} tono="coral" etiqueta="Valor en riesgo" valor={formatearMxnCorto(Math.round(valor))}>
+      <Cifra href="/fugas" Icono={Droplets} tono="coral" etiqueta="Valor en riesgo" valor={formatearUsdCorto(Math.round(valor))}>
         En {fugas} {fugas === 1 ? "fuga" : "fugas"}
       </Cifra>
       <Cifra href={`/fugas?poza=${FUGA_MODELO_PERDIDA}`} Icono={UserCheck} tono="azul" etiqueta="Leads por rescatar" valor={formatearEntero(Math.round(porRescatar))}>

@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
 import { useMedia } from "@/hooks/useMedia";
 import { leerFiltros } from "@/lib/filtros-url";
-import { formatearEntero, formatearMxnCorto, formatearPuntos } from "@/lib/formato";
+import { formatearEntero, formatearUsdCorto, formatearPuntos } from "@/lib/formato";
 import { calcularJourney, experimentoDestacado } from "@/lib/journey";
 import { modeloPerdida, parametrosPerdidaIniciales } from "@/lib/selectors";
 import { useSesion, useSesionHidratada } from "@/lib/stores";
@@ -53,7 +53,7 @@ function useDatosOnboarding() {
     const contratos = Math.round(modeloPerdida(parametros).contratos);
     const pozas: PozaEtiqueta[] = journey.pozas
       .filter((p) => p.valor > 0)
-      .map((p) => ({ id: p.id, nombre: p.nombre, monto: formatearMxnCorto(p.valor), valor: p.valor }));
+      .map((p) => ({ id: p.id, nombre: p.nombre, monto: formatearUsdCorto(p.valor), valor: p.valor }));
     const modelo = journey.pozas.find((p) => p.id === FUGA_MODELO_PERDIDA);
     const proporcion = journey.valorEnRiesgo > 0 && modelo ? modelo.valor / journey.valorEnRiesgo : 0;
     const idExp = experimentoDestacado(experimentos);
@@ -67,7 +67,7 @@ function useDatosOnboarding() {
     const particulas: DatosParticulas = {
       llegaron: cifras.llegaron,
       firmaron: cifras.firmaron,
-      riesgo: formatearMxnCorto(journey.valorEnRiesgo),
+      riesgo: formatearUsdCorto(journey.valorEnRiesgo),
       contratos: `+${cifras.contratos}`,
       pozas: pozas.map((p) => p.valor),
       fraccionRetorno: Math.min(0.45, Math.max(0.2, proporcion)),

@@ -249,7 +249,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
           <TabsContent value={filtros.poza} className="flex flex-col gap-4 pt-2">
             <BannerFuga
               fuga={poza}
-              valorMxn={valorPoza.valorMxn}
+              valorUsd={valorPoza.valorUsd}
               volumen={valorPoza.volumen}
               esModelo={poza.id === FUGA_MODELO_PERDIDA}
               experimento={experimento ?? null}

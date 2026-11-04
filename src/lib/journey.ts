@@ -55,7 +55,7 @@ export function calcularJourney(flujo: readonly SemanaEtapa[], fugas: readonly F
     id: f.id,
     desde: ORDEN_ETAPAS.indexOf(f.desde),
     volumen: valores[i].volumen,
-    valor: valores[i].valorMxn,
+    valor: valores[i].valorUsd,
     nombre: NOMBRE_CORTO_POZA[f.id] ?? f.causa,
     causa: causaVisible(f),
   }));
@@ -135,7 +135,7 @@ export function csvJourney(journey: Journey, nombres: Record<EtapaId, string>): 
     ]);
   }
   filas.push([]);
-  filas.push(["Poza", "Etapa de origen", "Perdidos", "Valor estimado (MXN)"]);
+  filas.push(["Poza", "Etapa de origen", "Perdidos", "Valor estimado (USD)"]);
   for (const p of journey.pozas) filas.push([p.causa, nombres[ORDEN_ETAPAS[p.desde]], p.volumen, p.valor]);
   return filas.map((f) => f.map(celda).join(",")).join("\n");
 }
