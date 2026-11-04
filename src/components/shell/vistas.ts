@@ -1,9 +1,10 @@
-import { Droplets, FlaskConical, Waves, type LucideIcon } from "lucide-react";
+import { Droplets, FlaskConical, Route, type LucideIcon } from "lucide-react";
 
-export const VISTAS: readonly { href: string; nombre: string; descripcion: string; Icono: LucideIcon }[] = [
-  { href: "/", nombre: "Cauce", descripcion: "El journey completo, de la visita al contrato", Icono: Waves },
-  { href: "/fugas", nombre: "Fugas", descripcion: "Pozas, modelo de pérdida y rescate de leads", Icono: Droplets },
-  { href: "/experimentos", nombre: "Experimentos", descripcion: "Registro de hipótesis y su lectura", Icono: FlaskConical },
+/** Las tres vistas en el orden de la demo. `numero` se muestra antes del nombre en la nav. */
+export const VISTAS: readonly { href: string; numero: number; nombre: string; descripcion: string; Icono: LucideIcon }[] = [
+  { href: "/", numero: 1, nombre: "Recorrido", descripcion: "Dónde avanza y dónde se pierde la demanda", Icono: Route },
+  { href: "/fugas", numero: 2, nombre: "Rescate", descripcion: "Fugas, su valor y leads por rescatar", Icono: Droplets },
+  { href: "/experimentos", numero: 3, nombre: "Experimentos", descripcion: "Qué se está probando y si funciona", Icono: FlaskConical },
 ];
 
 export function vistaActiva(pathname: string, href: string): boolean {

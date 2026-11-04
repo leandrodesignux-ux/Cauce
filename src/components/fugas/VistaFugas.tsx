@@ -6,6 +6,7 @@ import { AnimatePresence } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { useDatos } from "@/components/Proveedores";
+import { SiguientePaso } from "@/components/shell/SiguientePaso";
 import { Badge } from "@/components/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -365,6 +366,8 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
           </TabsContent>
         </Tabs>
       </section>
+
+      <SiguientePaso desde="/fugas" />
     </div>
   );
 }

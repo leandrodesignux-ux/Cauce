@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, type ReactNode } from "react";
 import { StagePanel } from "@/components/panel/StagePanel";
 import { useDatos } from "@/components/Proveedores";
+import { SiguientePaso } from "@/components/shell/SiguientePaso";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
 import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -119,6 +120,8 @@ export function VistaExperimentos() {
             <TimelineExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
           )}
         </section>
+
+        <SiguientePaso desde="/experimentos" />
       </div>
 
       <StagePanel
