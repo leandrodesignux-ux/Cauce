@@ -120,7 +120,15 @@
   --sombra-tarjeta: 0 1px 2px rgb(17 19 24 / 0.04), 0 8px 24px rgb(40 52 90 / 0.06);
   --sombra-flotante: 0 2px 6px rgb(17 19 24 / 0.06), 0 16px 40px rgb(40 52 90 / 0.14);
 
-  /* ---- Semántica de shadcn/ui → tokens de Cauce ---- */
+  color-scheme: light;
+}
+
+/*
+ * Semántica de shadcn/ui → tokens de Cauce. Se declara también en .dark para que un contenedor con .dark
+ * (el onboarding, Fase 11b) la resuelva con los tokens oscuros aunque <html> esté en claro.
+ */
+:root,
+.dark {
   --background: var(--fondo-b);
   --foreground: var(--tinta);
   --card: var(--tarjeta);
@@ -153,8 +161,6 @@
   --sidebar-accent-foreground: var(--tinta);
   --sidebar-border: var(--linea);
   --sidebar-ring: var(--azul-texto);
-
-  color-scheme: light;
 }
 
 /* Modo oscuro por clase (.dark en <html>, lo pone next-themes con el switch) */
