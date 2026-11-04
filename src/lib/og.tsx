@@ -7,6 +7,7 @@ import { COLOR } from "@/config/colores";
 import { ORDEN_ETAPAS } from "@/config/etapas";
 import { datosCompactos, fugas, obtenerLeads } from "./datos";
 import { expandirFlujo } from "./datos-cliente";
+import { formatearUsd, formatearUsdCorto } from "./formato";
 import {
   modeloPerdida,
   parametrosPerdidaIniciales,
@@ -66,14 +67,14 @@ export function imagenCauce() {
     volumen: ORDEN_ETAPAS.map((e) => volumen[e]),
     anterior: null,
     referencia: volumen.descubrimiento,
-    pozas: fugas.map((f, i) => ({ id: f.id, desde: ORDEN_ETAPAS.indexOf(f.desde), volumen: pozas[i].volumen, valor: pozas[i].valorMxn })),
+    pozas: fugas.map((f, i) => ({ id: f.id, desde: ORDEN_ETAPAS.indexOf(f.desde), volumen: pozas[i].volumen, valor: pozas[i].valorUsd })),
   });
   // Recorte del río a las pozas, aplastado en vertical para que entre debajo del título.
   const y0 = geo.centro - geo.grosorMax / 2 - 4;
   const y1 = Math.max(...geo.pozas.map((p) => p.y + p.ry + 4));
   return new ImageResponse(
     (
-      <Marco titulo="Recorrido de adquisición" subtitulo={`De la primera visita al contrato, con las fugas a la vista: ${formatoM(valorEnRiesgoTotal(pozas))} en riesgo en 30 días.`}>
+      <Marco titulo="Recorrido de adquisición" subtitulo={`De la primera visita al contrato, con las fugas a la vista: ${formatearUsdCorto(valorEnRiesgoTotal(pozas))} en riesgo en 30 días.`}>
         <svg width={1072} height={230} viewBox={`0 ${y0} 1072 ${y1 - y0}`} preserveAspectRatio="none">
           {geo.pozas.map((p) => (
             <path key={p.id} d={p.hilo} fill="none" stroke={COLOR.coral} strokeWidth={p.grosorHilo} strokeLinecap="round" />
@@ -92,14 +93,14 @@ export function imagenCauce() {
 /** Rescate de leads: el monto de los leads sin atender (modelo de pérdida) y los leads en fugas. */
 export function imagenFugas() {
   const leads = obtenerLeads().filter((l) => l.fugaId);
-  const monto = modeloPerdida(parametrosPerdidaIniciales()).montoMxn;
+  const monto = modeloPerdida(parametrosPerdidaIniciales()).montoUsd;
   return new ImageResponse(
     (
       <Marco titulo="Rescate de leads" subtitulo="Cuánto vale cada fuga y qué leads con intención conviene rescatar primero.">
         <div style={{ display: "flex", alignItems: "flex-end", gap: 56, width: "100%" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <span style={{ fontSize: 24, color: COLOR.tinta2 }}>Valor en riesgo en leads sin atender</span>
-            <span style={{ fontSize: 96, fontWeight: 700, color: COLOR.tinta, letterSpacing: -2 }}>{`$${monto.toLocaleString("en-US")} MXN`}</span>
+            <span style={{ fontSize: 96, fontWeight: 700, color: COLOR.tinta, letterSpacing: -2 }}>{formatearUsd(monto)}</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", marginLeft: "auto", alignItems: "flex-end" }}>
             <span style={{ fontSize: 24, color: COLOR.tinta2 }}>Leads en fugas</span>
@@ -141,6 +142,3 @@ export function imagenExperimentos(experimentos: { nombre: string; estado: strin
   );
 }
 
-function formatoM(n: number): string {
-  return `$${(n / 1_000_000).toFixed(2)} M MXN`;
-}

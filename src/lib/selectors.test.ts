@@ -18,11 +18,11 @@ describe("modeloPerdida", () => {
     fantasmas: P.fantasmas.valor,
     leadACita: P.leadACita.valor,
     citaAContrato: P.citaAContrato.valor,
-    comisionMxn: P.comisionMxn.valor,
+    comisionUsd: P.comisionUsd.valor,
   };
 
-  it("con los valores iniciales da 643 × 0.30 × 0.10 × 18,000 = $347,220 MXN", () => {
-    assert.equal(modeloPerdida(iniciales).montoMxn, 347_220);
+  it("con los valores iniciales da 643 × 0.30 × 0.10 × 1,000 = $19,290 USD", () => {
+    assert.equal(modeloPerdida(iniciales).montoUsd, 19_290);
   });
 
   it("expone los pasos intermedios de la fórmula", () => {
@@ -32,12 +32,12 @@ describe("modeloPerdida", () => {
   });
 
   it("es proporcional a cada parámetro", () => {
-    assert.equal(modeloPerdida({ ...iniciales, fantasmas: 1286 }).montoMxn, 694_440);
-    assert.equal(modeloPerdida({ ...iniciales, comisionMxn: 9_000 }).montoMxn, 173_610);
+    assert.equal(modeloPerdida({ ...iniciales, fantasmas: 1286 }).montoUsd, 38_580);
+    assert.equal(modeloPerdida({ ...iniciales, comisionUsd: 500 }).montoUsd, 9_645);
   });
 
   it("da cero sin fantasmas", () => {
-    assert.equal(modeloPerdida({ ...iniciales, fantasmas: 0 }).montoMxn, 0);
+    assert.equal(modeloPerdida({ ...iniciales, fantasmas: 0 }).montoUsd, 0);
   });
 });
 
@@ -57,7 +57,7 @@ describe("valorEnRiesgoPorPoza", () => {
   it("la poza de fantasmas muestra el mismo monto que el modelo de pérdida inicial", () => {
     const fuga = { id: "fantasmas", desde: "calificacion", hacia: "asignacion", causa: "", proporcionCaida: 0.75 } as const;
     const [poza] = valorEnRiesgoPorPoza([], [fuga], { periodo: periodoDesdePreset("30d", "2026-10-26") });
-    assert.equal(poza.valorMxn, 347_220);
+    assert.equal(poza.valorUsd, 19_290);
     assert.equal(poza.volumen, 643);
   });
 });
@@ -83,14 +83,14 @@ describe("recorrido: fases, avance y simulador", () => {
   });
 
   it("simularMejora: volumen[desde] × puntos / 100 × probabilidad de cierre desde hacia × comisión", () => {
-    const r = simularMejora(v, { desde: "evaluacion", hacia: "contacto" }, 2, 18_000);
+    const r = simularMejora(v, { desde: "evaluacion", hacia: "contacto" }, 2, 1_000);
     // 300 × 0.02 = 6 extra; desde Contacto: 100/120 × 80/100 × 40/80 × 10/40 = 1/12.
     assert.equal(r.extra, 6);
     assert.ok(Math.abs(r.probabilidad - 1 / 12) < 1e-12);
     assert.ok(Math.abs(r.cierres - 0.5) < 1e-12);
-    assert.equal(r.mxn, 9_000);
+    assert.equal(r.usd, 500);
     // Visita → Cierre: llegar a Cierre ya es cerrar.
-    assert.equal(simularMejora(v, { desde: "visita", hacia: "cierre" }, 10, 18_000).cierres, 4);
-    assert.equal(simularMejora(v, { desde: "visita", hacia: "cierre" }, 0, 18_000).mxn, 0);
+    assert.equal(simularMejora(v, { desde: "visita", hacia: "cierre" }, 10, 1_000).cierres, 4);
+    assert.equal(simularMejora(v, { desde: "visita", hacia: "cierre" }, 0, 1_000).usd, 0);
   });
 });

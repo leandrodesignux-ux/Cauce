@@ -1,5 +1,6 @@
 "use client";
 
+import { IconoCirculo } from "@/components/ui/icono-circulo";
 import {
   Building2,
   CalendarDays,
@@ -100,8 +101,8 @@ export function JourneyBoard({
                 <p className="text-sm text-tinta-2">{fase.descripcion}</p>
               </div>
               <p aria-hidden className="shrink-0 text-right">
-                <span className="cifra block text-lg font-semibold">{porcentaje(tasa)}</span>
-                <span className="block text-xs text-tinta-2">{metrica}</span>
+                <span className="cifra block text-base font-semibold">{porcentaje(tasa)}</span>
+                <span className="block text-sm text-tinta-2">{metrica}</span>
               </p>
             </div>
             <ol className="flex flex-col">
@@ -187,11 +188,9 @@ function TarjetaEtapa({
       data-fuga={fuga}
       data-marcada={marcada}
       {...propsResaltar(onResaltar, { etapas: siguiente ? [etapa.id, siguiente] : [etapa.id], origen: "etapa" })}
-      className="tarjeta-clicable relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-3 rounded-tile border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta data-[activa=true]:border-azul data-[activa=true]:shadow-flotante data-[fuga=true]:border-dashed data-[fuga=true]:border-coral data-[marcada=true]:border-azul data-[marcada=true]:bg-azul-suave data-[siguiente=true]:border-azul/50 motion-safe:data-[activa=true]:-translate-y-0.5"
+      className="tarjeta-clicable relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-4 gap-y-4 rounded-tile border border-tarjeta-borde bg-tarjeta p-5 shadow-tarjeta data-[activa=true]:border-azul data-[activa=true]:shadow-flotante data-[fuga=true]:border-dashed data-[fuga=true]:border-coral data-[marcada=true]:border-azul data-[marcada=true]:bg-azul-suave data-[siguiente=true]:border-azul/50 motion-safe:data-[activa=true]:-translate-y-0.5"
     >
-      <span aria-hidden className="grid size-10 place-items-center rounded-full bg-azul-suave text-azul-texto">
-        <Icono className="size-[18px]" strokeWidth={1.7} />
-      </span>
+      <IconoCirculo Icono={Icono} />
       <div className="min-w-0">
         {/* El botón cubre toda la tarjeta (after:inset-0); el de simular queda por encima. */}
         <button
@@ -199,11 +198,11 @@ function TarjetaEtapa({
           data-etapa={etapa.id}
           onClick={onAbrir}
           aria-label={`${NOMBRE_ETAPA[etapa.id]}: ${formatearEntero(etapa.volumen)}. ${tasa}.${avance ? ` Avanzan ${formatearEntero(avance.avanzan)}, se quedan ${formatearEntero(avance.seQuedan)}.` : ""} Ver el detalle de la etapa.`}
-          className="block max-w-full truncate text-left text-sm font-medium text-tinta outline-none after:absolute after:inset-0 after:rounded-tile"
+          className="block max-w-full truncate text-left text-sm font-medium text-tinta-cuerpo outline-none after:absolute after:inset-0 after:rounded-tile"
         >
           {NOMBRE_ETAPA[etapa.id]}
         </button>
-        <p aria-hidden className="cifra text-2xl font-semibold">
+        <p aria-hidden className="cifra text-xl font-semibold">
           {formatearEntero(Math.round(volumenAnimado))}
         </p>
         {comparar && (

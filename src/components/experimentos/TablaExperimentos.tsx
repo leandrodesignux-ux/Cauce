@@ -19,7 +19,7 @@ export function TablaExperimentos({
 }) {
   return (
     <>
-      {/* Móvil: la tabla no entra; se ven las mismas fichas que en la vista Tarjetas. */}
+      {/* Móvil: la tabla no entra; se ven las mismas tarjetas que en la vista Tarjetas. */}
       <TarjetasExperimentos experimentos={experimentos} seleccionado={seleccionado} onAbrir={onAbrir} className="flex flex-col gap-3 md:hidden" />
       <div className="hidden md:block">
         <Table marco className="min-w-[980px]">
@@ -79,7 +79,7 @@ export function TablaExperimentos({
 }
 
 /**
- * Una ficha por experimento con las mismas columnas que la tabla. Es la vista Tarjetas (por defecto, en grilla)
+ * Una tarjeta por experimento con las mismas columnas que la tabla. Es la vista Tarjetas (por defecto, en grilla)
  * y lo que la vista Tabla muestra en móvil.
  */
 export function TarjetasExperimentos({

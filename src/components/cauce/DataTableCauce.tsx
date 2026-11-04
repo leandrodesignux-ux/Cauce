@@ -1,5 +1,5 @@
 import { ETAPAS } from "@/config/etapas";
-import { formatearEntero, formatearMxn, formatearPct, formatearPp } from "@/lib/formato";
+import { formatearEntero, formatearUsd, formatearPct, formatearPp } from "@/lib/formato";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, TableRowHead } from "@/components/ui/table";
 import type { PozaJourney } from "@/lib/journey";
 
@@ -64,7 +64,7 @@ export function DataTableCauce({
                 {ETAPAS[p.desde].nombre} → {ETAPAS[p.desde + 1].nombre}
               </TableCell>
               <TableCell className="cifra text-right">{formatearEntero(p.volumen)}</TableCell>
-              <TableCell className="cifra text-right text-tinta">{formatearMxn(p.valor)}</TableCell>
+              <TableCell className="cifra text-right text-tinta-cuerpo">{formatearUsd(p.valor)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -73,7 +73,7 @@ export function DataTableCauce({
             <TableRowHead colSpan={3} className="font-medium">
               Valor en riesgo
             </TableRowHead>
-            <TableCell className="cifra text-right font-semibold text-tinta">{formatearMxn(pozas.reduce((s, p) => s + p.valor, 0))}</TableCell>
+            <TableCell className="cifra text-right font-semibold text-tinta">{formatearUsd(pozas.reduce((s, p) => s + p.valor, 0))}</TableCell>
           </TableRow>
         </TableFooter>
       </Table>

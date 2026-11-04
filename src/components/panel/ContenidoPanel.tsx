@@ -11,7 +11,7 @@ import { ETAPAS, NIVELES_LEAD, ORDEN_ETAPAS, PRIORIDADES, TRANSICIONES, nombreEt
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
 import { causaVisible } from "@/config/pozas";
 import type { Seleccion } from "@/hooks/useSeleccion";
-import { formatearEntero, formatearMxn, formatearPct, formatearPp, formatearSemanaCorta } from "@/lib/formato";
+import { formatearEntero, formatearUsd, formatearPct, formatearPp, formatearSemanaCorta } from "@/lib/formato";
 import {
   type Filtros,
   periodoAnterior,
@@ -200,7 +200,7 @@ export function ContenidoPanel({ seleccion, filtros, tabla }: { seleccion: NonNu
                       {f.id === FUGA_MODELO_PERDIDA ? " · modelo de pérdida" : ""}
                     </span>
                   </span>
-                  <span className="cifra text-sm font-semibold text-tinta">{formatearMxn(f.poza.valorMxn)}</span>
+                  <span className="cifra text-sm font-semibold text-tinta">{formatearUsd(f.poza.valorUsd)}</span>
                   <ArrowUpRight className="size-4 shrink-0 text-tinta-2 group-hover:text-tinta" aria-hidden />
                   <span className="sr-only">Abrir en Fugas</span>
                 </Link>

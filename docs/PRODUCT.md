@@ -17,30 +17,30 @@ Principio rector: **medir conversión entre etapas, no un número global difíci
 ## El journey (secuencia fija, de izquierda a derecha)
 
 1. **Descubrimiento** — sesiones por canal: SEO, Paid (Search/DSA), Directo, Referidos, Social.
-2. **Exploración** — búsqueda y Browse Pages.
-3. **Evaluación** — ficha de espacio (Spot Detail) o ficha de complejo.
+2. **Exploración** — búsqueda y listado.
+3. **Evaluación** — página de producto del espacio o del complejo.
 4. **Contacto** — formulario, WhatsApp/chatbot, llamada.
 5. **Calificación** — score de intención y nivel de lead (L0 → L2; prioridad P1 / P2+).
-6. **Asignación** — el lead llega a un broker.
+6. **Asignación** — el lead llega a un asesor.
 7. **Visita** — agendada y luego realizada.
 8. **Cierre** — LOI o contrato firmado.
 
 ## Fugas (las pozas del río)
 
-Cada fuga cuelga de una transición y tiene causa, volumen, valor estimado en MXN y, si existe, un experimento asociado.
+Cada fuga cuelga de una transición y tiene causa, volumen, valor estimado en dólares (USD) y, si existe, un experimento asociado. En la interfaz se usan nombres genéricos, sin jerga de marketplace (`NOMBRE_CORTO_POZA`, `CAUSA_VISIBLE` y `NOMBRE_VISIBLE_EXPERIMENTO`).
 
 | Transición | Fuga | Experimento asociado (demo) |
 |---|---|---|
-| Exploración → Evaluación | Rebote en Browse Page sin interacción | Búsqueda guiada (quiz en Browse Pages de pago) |
-| Evaluación → Contacto | Espacio no disponible: el usuario llega a una ficha muerta | Flujo de spots no disponibles |
-| Evaluación → Contacto | Fricción en el panel de contacto (desktop) | Rediseño del panel de contacto |
-| Contacto → Calificación | Conversación sin datos mínimos | — |
-| Calificación → Asignación | **Fantasmas:** conversaciones con intención que nunca llegaron a un broker | Rescate de fantasmas |
-| Visita → Cierre | Visita cancelada por disponibilidad no validada | Validación de disponibilidad en el bot |
+| Exploración → Evaluación | **Abandono en el listado:** salen de la página de resultados sin interactuar | Búsqueda guiada en el listado |
+| Evaluación → Contacto | **Oferta no disponible:** lo que buscaban ya no estaba disponible | Alternativas cuando no hay disponibilidad |
+| Evaluación → Contacto | **Dificultad para contactar:** el formulario de contacto frena el paso | Contacto más simple en desktop |
+| Contacto → Calificación | **Conversación incompleta:** terminó sin los datos para calificar | — |
+| Calificación → Asignación | **Leads sin atender:** conversaciones con intención que nadie atendió | Seguimiento a leads sin atender |
+| Visita → Cierre | **Visita cancelada:** se canceló porque no se confirmó la disponibilidad | Confirmar disponibilidad antes de la visita |
 
 ## Vistas
 
-Las tres vistas se leen en orden (1 Recorrido, 2 Rescate, 3 Experimentos) y cada una termina con una tarjeta **Siguiente paso** que lleva a la que sigue (la última vuelve al Recorrido). En la interfaz se habla de **fugas** (no "pozas") y de **leads sin atender** (no "fantasmas": conversaciones con intención que nunca llegaron a un broker); los ids, la URL y los datos conservan sus nombres internos.
+Las tres vistas se leen en orden (1 Recorrido, 2 Rescate, 3 Experimentos) y cada una termina con una tarjeta **Siguiente paso** que lleva a la que sigue (la última vuelve al Recorrido). En la interfaz se habla de **fugas** (no "pozas") y de **leads sin atender** (conversaciones con intención que nadie atendió); los ids, la URL y los datos conservan sus nombres internos.
 
 ### `/` — 1 · Recorrido
 
@@ -50,8 +50,8 @@ En orden de lectura:
 - **Resumen**: tres tarjetas clicables con cifras de los selectores: Valor en riesgo (suma de fugas) → `/fugas`; Leads por rescatar (leads sin atender pendientes, con "N rescatados hoy") → `/fugas?poza=fantasmas`; Experimentos activos (en curso + leyendo) → `/experimentos`.
 - **Recorrido**: tres fases (Atraer, Convertir, Cerrar) en columnas desde lg, cada una con sus etapas apiladas. El encabezado de la fase dice qué porcentaje pasa a la siguiente (primera etapa de la fase siguiente / primera de esta; en Cerrar, cierre / visita). Cada tarjeta de etapa: ícono, nombre, volumen, barra de avance, "X % avanza" (Cierre: "X % del total") y el delta contra el período anterior en puntos; con comparar, "Antes: N". Clic abre el panel de la etapa.
 - **Interacciones del recorrido** (todas calculadas con los selectores, ninguna en la URL): hover o foco en una etapa muestra "Avanzan N · Se quedan M" con la barra partida azul/coral, marca la etapa siguiente y, en "Dónde se pierde", resalta las fugas de esa transición y atenúa las demás. Hover o foco en una fuga marca sus dos etapas; en el encabezado de una fase, sus etapas; en un experimento, su etapa. Las cifras interpolan al cargar y al cambiar filtros (sin animación con reduced motion).
-- **¿Qué pasa si mejora un paso?** (simulador): se elige una de las 7 transiciones (por defecto, la de más valor en riesgo) y cuántos puntos mejora (0 a 10, de 0.5 en 0.5). Muestra "+N cierres en el período" y "+$X MXN en comisión" con la fórmula a la vista: volumen de la etapa de origen × puntos / 100 × probabilidad de cierre desde la etapa de destino, por la comisión del modelo de pérdida. Cada tarjeta de etapa (salvo Cierre) tiene "Simular mejora", que preselecciona su transición y lleva al simulador.
-- **Dónde se pierde**: una tarjeta por fuga con valor, de la más cara a la más barata: nombre, "Entre {etapa} y {etapa}", perdidos, valor en MXN, el estado de su experimento (si tiene) y **Ver leads** → `/fugas?poza=…`. Leads sin atender se valúa con el modelo de pérdida.
+- **¿Qué pasa si mejora un paso?** (simulador): se elige una de las 7 transiciones (por defecto, la de más valor en riesgo) y cuántos puntos mejora (0 a 10, de 0.5 en 0.5). Antes del resultado, "Hoy pasa {tasa} → con la mejora {tasa + puntos}" y "+N personas más llegan a {etapa}" (el slider no deja pasar de 100 %). Muestra "+N cierres en el período" y "+$X USD en comisión" con la fórmula a la vista: volumen de la etapa de origen × puntos / 100 × probabilidad de cierre desde la etapa de destino, por la comisión del modelo de pérdida. Cada tarjeta de etapa (salvo Cierre) tiene "Simular mejora", que preselecciona su transición y lleva al simulador.
+- **Dónde se pierde**: una tarjeta por fuga con valor, de la más cara a la más barata: nombre, "Entre {etapa} y {etapa}", perdidos, valor en USD, el estado de su experimento (si tiene) y **Ver leads** → `/fugas?poza=…`. Leads sin atender se valúa con el modelo de pérdida.
 - **Experimentos**: hasta 3 (el más reciente en lectura primero), con estado y "Busca +X puntos de {etapa} a {etapa}". Hover o foco resaltan la etapa que atacan; clic abre el detalle. Link a todos.
 - **Leads sin atender**: los 4 pendientes de mayor score con **Rescatar** real (store + aviso con Deshacer).
 - **Siguiente paso** → Rescate ("Ver los leads por rescatar").
@@ -77,9 +77,9 @@ En orden de lectura:
 
 Cada iniciativa declara, antes de desplegarse, qué espera mover y cuándo se va a poder leer.
 
-- Tres vistas: **Tarjetas** (por defecto, grilla de 1/2/3 columnas), **Tabla** (`?vista=tabla`: palanca, transición, hipótesis, despliegue, ventana de lectura, predicho vs. observado, estado) y **Timeline** (`?vista=timeline`: barras hasta el fin de la lectura y línea de "hoy").
-- Filtro por estado (Diseño, En curso, Leyendo, Validado, Refutado).
-- Clic en un experimento: detalle centrado (Dialog de hasta 880 px; Drawer en móvil) con nombre y estado fijos arriba, y en dos columnas hipótesis y métrica | resultado y transición, con link a la transición en el recorrido. `?exp=`, Esc y la vuelta del foco se mantienen.
+- **Tarjetas agrupadas por estado** (En curso, Leyendo, Validado, Refutado y Diseño; sin grupos vacíos), cada grupo con su conteo. "Ver como tabla" (`?vista=tabla`: palanca, transición, hipótesis, despliegue, ventana de lectura, predicho vs. observado, estado) y "Ver como tarjetas" para volver. Las URLs viejas siguen andando: `?vista=timeline` se ve como tarjetas y `?estado=` se ignora.
+- Nombres visibles genéricos (Búsqueda guiada en el listado, Alternativas cuando no hay disponibilidad, Contacto más simple en desktop, Páginas de producto por categoría, Páginas de producto optimizadas para SEO, Seguimiento a leads sin atender, Confirmar disponibilidad antes de la visita).
+- Clic en un experimento: detalle centrado (Dialog de hasta 760 px; Drawer en móvil) en una columna: el veredicto ("Funcionó: +0.6 puntos contra +0.5 esperados", "No cumplió…" o "Se podrá medir a partir del {fecha}") con la ventana de lectura, Esperado y Observado con sus barras, la conversión semanal de la transición con leyenda, "Cómo se planteó" plegado (hipótesis, palanca, métrica, despliegue y lectura) y el link a la transición en el recorrido. `?exp=`, Esc y la vuelta del foco se mantienen.
 - **Siguiente paso** → Recorrido ("Volver al recorrido").
 
 ### `/leads/[id]` — Recorrido de un lead

@@ -1,5 +1,6 @@
 "use client";
 
+import { IconoCirculo } from "@/components/ui/icono-circulo";
 import { Droplet } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
@@ -8,7 +9,7 @@ import { useDatos } from "@/components/Proveedores";
 import { Button } from "@/components/ui/button";
 import { nombreEtapa } from "@/config/etapas";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
-import { formatearEntero, formatearMxnCorto } from "@/lib/formato";
+import { formatearEntero, formatearUsdCorto } from "@/lib/formato";
 import type { Journey } from "@/lib/journey";
 import { type OnResaltar, type Resaltado, propsResaltar } from "./resaltado";
 
@@ -54,12 +55,7 @@ export function DondeSePierde({ journey, resaltado, onResaltar }: { journey: Jou
             className="tarjeta-clicable tarjeta-coral flex flex-col gap-3 rounded-tile border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta data-[atenua=true]:opacity-50 data-[marcada=true]:border-coral data-[marcada=true]:shadow-flotante"
           >
             <div className="flex items-start gap-3">
-              <span
-                aria-hidden
-                className="grid size-9 shrink-0 place-items-center rounded-full border-[1.5px] border-dashed border-coral text-coral-texto"
-              >
-                <Droplet className="size-4" strokeWidth={2} />
-              </span>
+              <IconoCirculo Icono={Droplet} tono="coral" />
               <div className="min-w-0 flex-1">
                 <p className="font-medium">{t.nombre}</p>
                 <p className="text-xs text-tinta-2">
@@ -70,7 +66,7 @@ export function DondeSePierde({ journey, resaltado, onResaltar }: { journey: Jou
             </div>
             <div className="flex items-end justify-between gap-3">
               <p>
-                <span className="cifra block text-xl font-semibold">{formatearMxnCorto(t.valor)}</span>
+                <span className="cifra block text-xl font-semibold">{formatearUsdCorto(t.valor)}</span>
                 <span className="cifra block text-xs text-tinta-2">
                   {formatearEntero(t.volumen)} {t.id === FUGA_MODELO_PERDIDA ? "sin atender" : "perdidos"}
                 </span>

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNod
 import { ETAPAS } from "@/config/etapas";
 import { useAncho } from "@/hooks/useAncho";
 import { useTween } from "@/hooks/useTween";
-import { formatearEntero, formatearMxn, formatearMxnCorto, formatearPct, formatearPp } from "@/lib/formato";
+import { formatearEntero, formatearUsd, formatearUsdCorto, formatearPct, formatearPp } from "@/lib/formato";
 import { calcularGeometria, partirTexto, type Geometria, type Orientacion } from "./geometria";
 import { TooltipCauce, type ContenidoTooltip } from "./TooltipCauce";
 
@@ -349,7 +349,7 @@ function Rio({
           const y0 = p.y + p.ry + 16;
           return interactivo(
             a,
-            `${poza.causa}: ${formatearEntero(pozas[i].volumen)} perdidos, ${formatearMxn(pozas[i].valor)}. Abrir en Fugas`,
+            `${poza.causa}: ${formatearEntero(pozas[i].volumen)} perdidos, ${formatearUsd(pozas[i].valor)}. Abrir en Fugas`,
             () => onAbrirPoza(p.id),
             <motion.g
               initial={entrada ? { opacity: 0 } : false}
@@ -382,7 +382,7 @@ function Rio({
                 </text>
               ))}
               <text x={textoX} y={y0 + lineas.length * 15 + 4} textAnchor={anclaje} className="cifra fill-tinta text-sm font-semibold">
-                {formatearMxnCorto(pozas[i].valor)}
+                {formatearUsdCorto(pozas[i].valor)}
               </text>
               <text x={textoX} y={y0 + lineas.length * 15 + 20} textAnchor={anclaje} className="cifra fill-tinta-2 text-xs">
                 {formatearEntero(pozas[i].volumen)} perdidos

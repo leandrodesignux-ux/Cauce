@@ -4,11 +4,11 @@ export const DEFINICION_PENDIENTE = "Definición pendiente de confirmar";
 
 export const ETAPAS: readonly { id: EtapaId; nombre: string; definicion: string }[] = [
   { id: "descubrimiento", nombre: "Descubrimiento", definicion: "Sesiones por canal: SEO, Paid (Search/DSA), Directo, Referidos, Social." },
-  { id: "exploracion", nombre: "Exploración", definicion: "Búsqueda y Browse Pages." },
-  { id: "evaluacion", nombre: "Evaluación", definicion: "Ficha de espacio (Spot Detail) o ficha de complejo." },
+  { id: "exploracion", nombre: "Exploración", definicion: "Búsqueda y listado." },
+  { id: "evaluacion", nombre: "Evaluación", definicion: "Página de producto del espacio o del complejo." },
   { id: "contacto", nombre: "Contacto", definicion: "Formulario, WhatsApp/chatbot o llamada." },
   { id: "calificacion", nombre: "Calificación", definicion: "Score de intención y nivel de lead (L0 → L2; prioridad P1 / P2+)." },
-  { id: "asignacion", nombre: "Asignación", definicion: "El lead llega a un broker." },
+  { id: "asignacion", nombre: "Asignación", definicion: "El lead llega a un asesor." },
   { id: "visita", nombre: "Visita", definicion: "Agendada y luego realizada." },
   { id: "cierre", nombre: "Cierre", definicion: "LOI o contrato firmado." },
 ];
@@ -22,8 +22,8 @@ export const TRANSICIONES: readonly Transicion[] = ORDEN_ETAPAS.slice(0, -1).map
 
 /** Fases del journey board: cada una es una tarjeta con sus etapas en orden. */
 export const FASES: readonly { id: "atraer" | "convertir" | "cerrar"; nombre: string; descripcion: string; etapas: readonly EtapaId[] }[] = [
-  { id: "atraer", nombre: "Atraer", descripcion: "Del canal a la ficha", etapas: ["descubrimiento", "exploracion", "evaluacion"] },
-  { id: "convertir", nombre: "Convertir", descripcion: "Del contacto al broker", etapas: ["contacto", "calificacion", "asignacion"] },
+  { id: "atraer", nombre: "Atraer", descripcion: "Del canal a la página de producto", etapas: ["descubrimiento", "exploracion", "evaluacion"] },
+  { id: "convertir", nombre: "Convertir", descripcion: "Del contacto al asesor", etapas: ["contacto", "calificacion", "asignacion"] },
   { id: "cerrar", nombre: "Cerrar", descripcion: "De la visita al contrato", etapas: ["visita", "cierre"] },
 ];
 

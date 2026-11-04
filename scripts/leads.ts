@@ -2,7 +2,7 @@
 
 import { CANALES, SECTORES } from "../src/config/dimensiones";
 import { ORDEN_ETAPAS } from "../src/config/etapas";
-import { FECHA_CORTE } from "../src/config/modelo";
+import { FECHA_CORTE, aUsd } from "../src/config/modelo";
 import { bernoulli, elegir, elegirPonderado, entero, uniforme, type Rng } from "../src/lib/prng";
 import type { Estado, EtapaId, Fuga, Lead, Sector, SenalesLead, Touchpoint } from "../src/lib/tipos";
 import { PESO_CANAL, PESO_ESTADO, PESO_SECTOR } from "./parametros";
@@ -39,7 +39,7 @@ const ZONAS: Record<Estado, readonly string[]> = {
   Yucatán: ["Mérida Norte", "Periférico Poniente", "Umán"],
 };
 
-/** Rango de superficie (m²) y precio mensual por m² (MXN) por sector. */
+/** Rango de superficie (m²) y precio mensual por m² (en pesos, como lo escribe el lead) por sector. */
 const ESPACIO: Record<Sector, { m2: [number, number]; precioM2: number }> = {
   oficina: { m2: [80, 600], precioM2: 350 },
   industrial: { m2: [1500, 12000], precioM2: 110 },
@@ -184,7 +184,8 @@ const HORA_MS = 3_600_000;
 const DIA_MS = 24 * HORA_MS;
 const CORTE_MS = Date.parse(`${FECHA_CORTE}T00:00:00Z`);
 
-function formatearMxn(monto: number): string {
+/** Monto del mensaje libre (texto del lead, en la moneda en que lo escribió). */
+function formatearMonto(monto: number): string {
   return `$${String(monto).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
 }
 
@@ -199,24 +200,25 @@ function calcularScore(rng: Rng, s: SenalesLead, urgencia: boolean, mensajes: nu
     (urgencia ? 20 : 0) +
     (s.superficieM2 !== null ? 10 : 0) +
     (s.zona !== null ? 10 : 0) +
-    (s.presupuestoMxn !== null ? 15 : 0) +
+    (s.presupuestoUsd !== null ? 15 : 0) +
     Math.min(15, mensajes * 1.5) +
     Math.min(10, espacios * 2) +
     uniforme(rng, -6, 6);
   return Math.max(0, Math.min(100, Math.round(puntos)));
 }
 
-function elegirMensaje(rng: Rng, sector: Sector, s: SenalesLead): string {
+/** `presupuestoTexto`: el monto como lo escribió el lead (en pesos); la señal guarda su equivalente en USD. */
+function elegirMensaje(rng: Rng, sector: Sector, s: SenalesLead, presupuestoTexto: number | null): string {
   const posibles = MENSAJES[sector].filter(
     (m) =>
       (!m.includes("{m2}") || s.superficieM2 !== null) &&
       (!m.includes("{zona}") || s.zona !== null) &&
-      (!m.includes("{presupuesto}") || s.presupuestoMxn !== null),
+      (!m.includes("{presupuesto}") || s.presupuestoUsd !== null),
   );
   const nucleo = elegir(rng, posibles)
     .replace("{m2}", String(s.superficieM2))
     .replace("{zona}", String(s.zona))
-    .replace("{presupuesto}", formatearMxn(s.presupuestoMxn ?? 0));
+    .replace("{presupuesto}", formatearMonto(presupuestoTexto ?? 0));
   const apertura = elegir(rng, APERTURAS);
   // Tras una apertura con coma, la frase sigue en minúscula (respetando ¿ inicial).
   const cuerpo = apertura.endsWith(", ") ? nucleo.replace(/^(¿?)(\p{Lu})/u, (_, signo, letra) => signo + letra.toLowerCase()) : nucleo;
@@ -252,7 +254,7 @@ export function generarLeads(rng: Rng, fugas: readonly Fuga[]): Lead[] {
       const presupuesto = bernoulli(rng, grupo.prob.presupuesto)
         ? Math.round(((superficie ?? (m2[0] + m2[1]) / 2) * precioM2) / 1000) * 1000
         : null;
-      const senales: SenalesLead = { superficieM2: superficie, zona, presupuestoMxn: presupuesto };
+      const senales: SenalesLead = { superficieM2: superficie, zona, presupuestoUsd: presupuesto === null ? null : Math.round(aUsd(presupuesto) / 10) * 10 };
       const urgencia = bernoulli(rng, grupo.prob.urgencia);
       const mensajes = entero(rng, grupo.mensajes[0], grupo.mensajes[1]);
       const espaciosVistos = entero(rng, 1, 8);
@@ -314,7 +316,7 @@ export function generarLeads(rng: Rng, fugas: readonly Fuga[]): Lead[] {
         ...(fuga ? { fugaId: fuga.id } : {}),
         score,
         urgencia,
-        ultimoMensaje: elegirMensaje(rng, sector, senales),
+        ultimoMensaje: elegirMensaje(rng, sector, senales, presupuesto),
         mensajes,
         espaciosVistos,
         creadoEl: new Date(creado).toISOString(),

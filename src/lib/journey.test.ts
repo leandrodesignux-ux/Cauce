@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { ORDEN_ETAPAS } from "../config/etapas";
-import { formatearMxnCompacto, formatearPuntos } from "./formato";
+import { formatearPuntos, formatearUsd, formatearUsdCorto } from "./formato";
 import { csvJourney, experimentoDestacado, experimentosActivos, experimentosDelBoard, iniciales, pendientesDePoza, transicionConMasValor, valorPorFase, type Journey, type PozaJourney } from "./journey";
 import type { EtapaId, Experimento } from "./tipos";
 
@@ -78,10 +78,12 @@ describe("formatos del board", () => {
   it("puntos en texto corrido", () => {
     assert.equal(formatearPuntos(1.5), "+1.5 puntos");
   });
-  it("montos compactos", () => {
-    assert.equal(formatearMxnCompacto(2_310_000), "$2.31 M");
-    assert.equal(formatearMxnCompacto(351_616), "$352 K");
-    assert.equal(formatearMxnCompacto(950), "$950");
+  it("montos en dólares, redondos", () => {
+    assert.equal(formatearUsd(19_290), "$19,290 USD");
+    assert.equal(formatearUsd(19_289.6), "$19,290 USD");
+    assert.equal(formatearUsdCorto(2_310_000), "$2.31M USD");
+    assert.equal(formatearUsdCorto(128_430), "$128.4K USD");
+    assert.equal(formatearUsdCorto(9_950), "$9,950 USD");
   });
   it("el CSV escapa comas y lleva etapas y pozas", () => {
     const journey: Journey = {

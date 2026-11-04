@@ -21,7 +21,7 @@ export function SeccionHome({
           <h2 id={id} className="font-cifra text-lg font-semibold">
             {titulo}
           </h2>
-          {descripcion && <p className="text-sm text-pretty text-tinta-2">{descripcion}</p>}
+          {descripcion && <p className="text-sm text-pretty text-tinta-cuerpo">{descripcion}</p>}
         </div>
         {accion}
       </div>

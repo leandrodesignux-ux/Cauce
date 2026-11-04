@@ -61,11 +61,11 @@ const FUGAS: Fuga[] = [
 type ExperimentoSemilla = Omit<Experimento, "hipotesis" | "metrica" | "observadoPp">;
 
 const EXPERIMENTOS: ExperimentoSemilla[] = [
-  { id: "busqueda-guiada", nombre: "Búsqueda guiada en Browse Pages de pago", palanca: "Producto · Browse Pages", transicion: { desde: "exploracion", hacia: "evaluacion" }, prediccionPp: 2, despliegue: "2026-08-24", ventanaSemanas: [6, 8], estado: "leyendo" },
-  { id: "spots-no-disponibles", nombre: "Flujo de spots no disponibles", palanca: "Producto · Ficha de espacio", transicion: { desde: "evaluacion", hacia: "contacto" }, prediccionPp: 0.3, despliegue: "2026-10-05", ventanaSemanas: [6, 8], estado: "en_curso" },
+  { id: "busqueda-guiada", nombre: "Búsqueda guiada en Browse Pages de pago", palanca: "Producto · Listado", transicion: { desde: "exploracion", hacia: "evaluacion" }, prediccionPp: 2, despliegue: "2026-08-24", ventanaSemanas: [6, 8], estado: "leyendo" },
+  { id: "spots-no-disponibles", nombre: "Flujo de spots no disponibles", palanca: "Producto · Página de producto", transicion: { desde: "evaluacion", hacia: "contacto" }, prediccionPp: 0.3, despliegue: "2026-10-05", ventanaSemanas: [6, 8], estado: "en_curso" },
   { id: "panel-contacto", nombre: "Rediseño del panel de contacto (desktop)", palanca: "Producto · Panel de contacto", transicion: { desde: "evaluacion", hacia: "contacto" }, prediccionPp: 0.5, despliegue: "2026-07-06", ventanaSemanas: [6, 8], estado: "validado" },
-  { id: "templates-ficha", nombre: "Templates de ficha por sector", palanca: "Contenido · Fichas", transicion: { desde: "evaluacion", hacia: "contacto" }, prediccionPp: 0.4, despliegue: "2026-11-30", ventanaSemanas: [6, 8], estado: "diseno" },
-  { id: "ficha-complejo-seo", nombre: "Ficha de complejo con jerarquía SEO", palanca: "SEO · Fichas de complejo", transicion: { desde: "descubrimiento", hacia: "exploracion" }, prediccionPp: 1.5, despliegue: "2026-09-21", ventanaSemanas: [8, 12], estado: "en_curso" },
+  { id: "templates-ficha", nombre: "Templates de ficha por sector", palanca: "Contenido · Páginas de producto", transicion: { desde: "evaluacion", hacia: "contacto" }, prediccionPp: 0.4, despliegue: "2026-11-30", ventanaSemanas: [6, 8], estado: "diseno" },
+  { id: "ficha-complejo-seo", nombre: "Ficha de complejo con jerarquía SEO", palanca: "SEO · Páginas de producto", transicion: { desde: "descubrimiento", hacia: "exploracion" }, prediccionPp: 1.5, despliegue: "2026-09-21", ventanaSemanas: [8, 12], estado: "en_curso" },
   { id: "rescate-fantasmas", nombre: "Rescate de fantasmas", palanca: "Operación · Asignación", transicion: { desde: "calificacion", hacia: "asignacion" }, prediccionPp: 6, despliegue: "2026-10-12", ventanaSemanas: [4, 6], estado: "en_curso" },
   { id: "validacion-disponibilidad", nombre: "Validación de disponibilidad en el bot", palanca: "Operación · Bot", transicion: { desde: "visita", hacia: "cierre" }, prediccionPp: 2, despliegue: "2026-12-07", ventanaSemanas: [8, 10], estado: "diseno" },
 ];

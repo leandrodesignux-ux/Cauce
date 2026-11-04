@@ -49,7 +49,7 @@ export function LeadsSinAtender() {
     <SeccionHome
       id="t-sin-atender"
       titulo="Leads sin atender"
-      descripcion="Conversaciones con intención que nunca llegaron a un broker. Los de mayor score, primero."
+      descripcion="Conversaciones con intención que nadie atendió. Los de mayor score, primero."
       accion={
         <Button asChild variant="outline" size="lg">
           <Link href={`/fugas?poza=${FUGA_MODELO_PERDIDA}`} data-ver-fantasmas>

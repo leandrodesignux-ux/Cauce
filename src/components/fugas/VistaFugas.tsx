@@ -1,5 +1,6 @@
 "use client";
 
+import { EncabezadoVista } from "@/components/shell/EncabezadoVista";
 import { Calculator, Inbox, SearchX } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -223,11 +224,8 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
   const filtrosActivos = filtros.banda !== null || filtros.antiguedad !== null;
 
   return (
-    <div className="flex flex-col gap-6">
-      <header>
-        <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Rescate de leads</h1>
-        <p className="mt-1.5 max-w-2xl text-pretty text-tinta-2">Cuánto vale cada fuga y qué leads con intención conviene rescatar primero.</p>
-      </header>
+    <div className="flex flex-col gap-8">
+      <EncabezadoVista titulo="Rescate de leads" subtitulo="Cuánto vale cada fuga y qué leads con intención conviene rescatar primero." />
 
       <section aria-label="Fugas" className="vidrio flex flex-col gap-4 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
         <Tabs value={filtros.poza} onValueChange={cambiarPoza}>
@@ -249,7 +247,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
           <TabsContent value={filtros.poza} className="flex flex-col gap-4 pt-2">
             <BannerFuga
               fuga={poza}
-              valorMxn={valorPoza.valorMxn}
+              valorUsd={valorPoza.valorUsd}
               volumen={valorPoza.volumen}
               esModelo={poza.id === FUGA_MODELO_PERDIDA}
               experimento={experimento ?? null}
@@ -288,7 +286,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                     ))}
                   </ToggleGroup>
                   {visibles.length > 0 && (
-                    <p aria-live="polite" className="cifra text-sm text-tinta-2">
+                    <p aria-live="polite" className="cifra text-sm text-tinta-cuerpo">
                       Mostrando {formatearEntero(pag.desde + 1)}–{formatearEntero(pag.hasta)} de {formatearEntero(visibles.length)}
                     </p>
                   )}
@@ -310,7 +308,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                     ) : null}
                   </Vacio>
                 ) : (
-                  <div className="relative flex flex-col gap-4">
+                  <div className="relative mt-2 flex flex-col gap-4">
                     <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? causaVisible(poza)}`} className="overflow-hidden rounded-tarjeta border border-tarjeta-borde bg-tarjeta shadow-tarjeta">
                       <AnimatePresence initial={false} custom={ultimaAccion}>
                         {enPagina.map((l) => (

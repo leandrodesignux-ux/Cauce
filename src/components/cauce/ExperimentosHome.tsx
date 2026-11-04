@@ -1,5 +1,7 @@
 "use client";
 
+import { IconoCirculo } from "@/components/ui/icono-circulo";
+import { FlaskConical } from "lucide-react";
 import Link from "next/link";
 import { ChipEstado } from "@/components/experimentos/comunes";
 import { nombreEtapa } from "@/config/etapas";
@@ -28,9 +30,10 @@ export function ExperimentosHome({
             className="tarjeta-clicable flex w-full flex-col gap-3 rounded-tile border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta"
           >
             <span className="flex items-start justify-between gap-3">
-              <span className="font-medium text-balance">{e.nombre}</span>
+              <IconoCirculo Icono={FlaskConical} />
               <ChipEstado estado={e.estado} />
             </span>
+            <span className="font-medium text-balance">{e.nombre}</span>
             <span className="mt-auto text-sm text-tinta-2">
               Busca <b className="cifra font-semibold text-tinta">{formatearPuntos(e.prediccionPp)}</b> de {nombreEtapa(e.transicion.desde)} a{" "}
               {nombreEtapa(e.transicion.hacia)}

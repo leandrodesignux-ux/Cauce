@@ -31,16 +31,8 @@ export const ETIQUETA_CIFRA = {
   contratos: "contratos si se rescatan",
 } as const;
 
-/** Nombre corto del experimento para el chip del acto 3; si no hay, se usa el nombre completo. */
-export const NOMBRE_CORTO_EXPERIMENTO: Record<string, string> = {
-  "busqueda-guiada": "Búsqueda guiada",
-  "spots-no-disponibles": "Spots no disponibles",
-  "panel-contacto": "Panel de contacto",
-  "templates-ficha": "Templates de ficha",
-  "ficha-complejo-seo": "Ficha de complejo",
-  "rescate-fantasmas": "Rescate de leads",
-  "validacion-disponibilidad": "Validación en el bot",
-};
+/** Nombre corto del experimento para el chip del acto 3 (config/experimentos.ts). */
+export { NOMBRE_CORTO_EXPERIMENTO } from "@/config/experimentos";
 
 /** Curvas y tiempos (craft.md de motionsites-web-builder, adaptados). */
 export const CURVA_ENTRADA = [0.22, 1, 0.36, 1] as const;

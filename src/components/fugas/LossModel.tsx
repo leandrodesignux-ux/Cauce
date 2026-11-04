@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { PARAMETROS_PERDIDA_INICIALES as P } from "@/config/modelo";
 import { useTween } from "@/hooks/useTween";
-import { formatearEntero, formatearMxn } from "@/lib/formato";
+import { formatearEntero, formatearUsd } from "@/lib/formato";
 import { type ParametrosPerdida, modeloPerdida, parametrosPerdidaIniciales } from "@/lib/selectors";
 
 type Clave = keyof ParametrosPerdida;
@@ -16,7 +16,7 @@ const CONTROLES: { clave: Clave; nombre: string; origen: string; min: number; ma
   { clave: "fantasmas", nombre: "Leads sin atender", origen: P.fantasmas.origen, min: 0, max: 2000, paso: 1, formato: (v) => formatearEntero(v) },
   { clave: "leadACita", nombre: "Lead → cita", origen: P.leadACita.origen, min: 0, max: 1, paso: 0.01, formato: (v) => `${Math.round(v * 100)} %` },
   { clave: "citaAContrato", nombre: "Cita → contrato", origen: P.citaAContrato.origen, min: 0, max: 0.5, paso: 0.005, formato: (v) => `${(v * 100).toFixed(1).replace(".0", "")} %` },
-  { clave: "comisionMxn", nombre: "Comisión promedio", origen: P.comisionMxn.origen, min: 5000, max: 60000, paso: 500, formato: (v) => `$${formatearEntero(v)}` },
+  { clave: "comisionUsd", nombre: "Comisión promedio", origen: P.comisionUsd.origen, min: 300, max: 3300, paso: 50, formato: (v) => `$${formatearEntero(v)}` },
 ];
 
 const decimales = (v: number, d: number) => v.toLocaleString("es-MX", { maximumFractionDigits: d });
@@ -31,7 +31,7 @@ export function LossModel() {
   const reducir = useReducedMotion() ?? false;
   const id = useId();
   const r = modeloPerdida(p);
-  const objetivo = useMemo(() => [r.montoMxn], [r.montoMxn]);
+  const objetivo = useMemo(() => [r.montoUsd], [r.montoUsd]);
   const [montoAnimado] = useTween(objetivo, 300, reducir);
   const cambiado = CONTROLES.some((c) => p[c.clave] !== iniciales[c.clave]);
 
@@ -76,12 +76,12 @@ export function LossModel() {
           <Paso operador="" valor={formatearEntero(p.fantasmas)} detalle="leads sin atender" />
           <Paso operador="×" valor={CONTROLES[1].formato(p.leadACita)} detalle="lead → cita" resultado={`${decimales(r.citas, 1)} citas`} />
           <Paso operador="×" valor={CONTROLES[2].formato(p.citaAContrato)} detalle="cita → contrato" resultado={`${decimales(r.contratos, 2)} contratos`} />
-          <Paso operador="×" valor={`$${formatearEntero(p.comisionMxn)}`} detalle="comisión promedio" />
+          <Paso operador="×" valor={`$${formatearEntero(p.comisionUsd)}`} detalle="comisión promedio" />
         </ol>
         <div className="border-t border-linea pt-4">
           <p className="text-sm text-tinta-2">Valor en riesgo en leads sin atender</p>
           <p className="cifra mt-1 text-2xl font-semibold text-tinta" aria-live="polite">
-            {formatearMxn(Math.round(montoAnimado))}
+            {formatearUsd(Math.round(montoAnimado))}
           </p>
           <p className="mt-2 text-xs text-tinta-2">Con los valores iniciales es el mismo monto que muestra esta fuga en el recorrido.</p>
         </div>

@@ -1,5 +1,7 @@
 // Carga de datos en el servidor. El flujo viaja compactado al cliente una sola vez (desde el layout raíz).
 
+import { nombreExperimento } from "@/config/experimentos";
+import { causaVisible } from "@/config/pozas";
 import experimentosJson from "@/data/experimentos.json";
 import flujoJson from "@/data/flujo.json";
 import fugasJson from "@/data/fugas.json";
@@ -12,8 +14,8 @@ import type { Experimento, Fuga, Lead, SemanaEtapa } from "./tipos";
 const flujo = flujoJson as unknown as SemanaEtapa[];
 const leads = leadsJson as unknown as Lead[];
 
-export const fugas = fugasJson as unknown as Fuga[];
-export const experimentos = experimentosJson as unknown as Experimento[];
+export const fugas = (fugasJson as unknown as Fuga[]).map((f) => ({ ...f, causa: causaVisible(f) }));
+export const experimentos = (experimentosJson as unknown as Experimento[]).map((e) => ({ ...e, nombre: nombreExperimento(e) }));
 
 export function obtenerLeads(): Lead[] {
   return leads;

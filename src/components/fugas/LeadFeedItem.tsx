@@ -72,7 +72,7 @@ export function LeadFeedItem({
       onClick={(e: MouseEvent) => {
         if (e.shiftKey) onSeleccionar(true);
       }}
-      className={`group grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-linea px-4 py-4 outline-none last:border-0 focus-visible:bg-neutro-suave focus-visible:shadow-[inset_3px_0_0_var(--activo)] md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:px-5 ${
+      className={`group grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-linea px-4 py-5 outline-none last:border-0 focus-visible:bg-neutro-suave focus-visible:shadow-[inset_3px_0_0_var(--activo)] md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:px-5 ${
         seleccionado ? "bg-azul-suave" : destacado ? "bg-coral-suave" : ""
       }`}
     >
@@ -88,7 +88,7 @@ export function LeadFeedItem({
         className="mt-1 size-4 cursor-pointer self-start accent-azul-relleno md:mt-0 md:self-center"
       />
 
-      <div className="min-w-0">
+      <div className="flex min-w-0 flex-col gap-1.5">
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
           <span className="font-medium">{lead.nombre}</span>
           <ScoreBadge score={lead.score} />
@@ -97,7 +97,7 @@ export function LeadFeedItem({
             {sector} · {lead.estado}
           </span>
         </p>
-        <p className="mt-1.5 flex min-w-0 items-center gap-1.5 text-sm text-tinta-2">
+        <p className="flex min-w-0 items-center gap-1.5 text-sm text-tinta-2">
           {lead.urgencia && (
             <AlarmClock className="size-3.5 shrink-0 text-coral-texto" aria-label="Urgencia declarada" role="img" />
           )}

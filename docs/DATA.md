@@ -11,9 +11,9 @@ Provienen del prototipo Ghost y solo se usan como valores iniciales del modelo d
 | Fantasmas detectados | 643 | Análisis cruzado 2 feb – 4 may 2026 |
 | Lead → cita | 30 % | Supuesto del modelo Ghost |
 | Cita → contrato | 10 % | Supuesto del modelo Ghost |
-| Comisión promedio | $18,000 MXN | Supuesto del modelo Ghost |
+| Comisión promedio | $18,000 MXN → **$1,000 USD** | Supuesto del modelo Ghost (convertido con `MXN_POR_USD = 18`, supuesto del demo) |
 
-**El monto se calcula siempre desde los parámetros:** `fantasmas × lead→cita × cita→contrato × comisión`. Con los valores iniciales da 643 × 0.30 × 0.10 × 18,000 ≈ **$347,220 MXN**. No copiar el "$1,287,400" del prototipo Ghost: no se desprende de esa fórmula. Si existe un factor adicional (otra comisión, ticket por contrato, horizonte), se agrega como parámetro explícito y visible.
+**El monto se calcula siempre desde los parámetros:** `fantasmas × lead→cita × cita→contrato × comisión`. Con los valores iniciales da 643 × 0.30 × 0.10 × 1,000 = **$19,290 USD**. Toda la app muestra dólares; la única conversión es `MXN_POR_USD` en `config/modelo.ts`, y `presupuestoUsd` de los leads se convirtió una vez (`scripts/convertir-usd.ts`, redondeo a decenas). No copiar el "$1,287,400" del prototipo Ghost: no se desprende de esa fórmula. Si existe un factor adicional (otra comisión, ticket por contrato, horizonte), se agrega como parámetro explícito y visible.
 
 ## Dimensiones
 

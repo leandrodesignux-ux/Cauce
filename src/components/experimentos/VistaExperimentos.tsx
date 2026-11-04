@@ -1,14 +1,14 @@
 "use client";
 
-import { FlaskConical, GanttChart, LayoutGrid, Table2 } from "lucide-react";
+import { EncabezadoVista } from "@/components/shell/EncabezadoVista";
+import { FlaskConical, LayoutGrid, Table2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, type ReactNode } from "react";
+import { useCallback, useMemo } from "react";
 import { PanelCentrado } from "@/components/panel/PanelCentrado";
 import { useDatos } from "@/components/Proveedores";
 import { SiguientePaso } from "@/components/shell/SiguientePaso";
+import { Button } from "@/components/ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
-import { Toggle } from "@/components/ui/toggle";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { nombreEtapa } from "@/config/etapas";
 import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
 import type { EstadoExperimento } from "@/lib/tipos";
@@ -16,18 +16,17 @@ import { reemplazarUrl } from "@/lib/url";
 import { ChipEstado } from "./comunes";
 import { DetalleExperimento } from "./DetalleExperimento";
 import { TablaExperimentos, TarjetasExperimentos } from "./TablaExperimentos";
-import { TimelineExperimentos } from "./TimelineExperimentos";
 
-const ESTADOS = Object.keys(ETIQUETA_ESTADO_EXPERIMENTO) as EstadoExperimento[];
+/** Orden de los grupos: lo que está corriendo primero, lo que está en diseño al final. */
+const ORDEN_GRUPOS: readonly EstadoExperimento[] = ["en_curso", "leyendo", "validado", "refutado", "diseno"];
 
 export function VistaExperimentos() {
   const { experimentos } = useDatos();
   const params = useSearchParams();
   const pathname = usePathname();
 
-  // Sin ?vista = tarjetas; ?vista=tabla y ?vista=timeline siguen funcionando.
-  const vista = params.get("vista") === "timeline" ? "timeline" : params.get("vista") === "tabla" ? "tabla" : "tarjetas";
-  const estado = ESTADOS.find((e) => e === params.get("estado")) ?? null;
+  // Sin ?vista = tarjetas agrupadas por estado; ?vista=tabla, la tabla. URLs viejas: ?vista=timeline se ve como tarjetas y ?estado se ignora.
+  const vista = params.get("vista") === "tabla" ? "tabla" : "tarjetas";
   const exp = experimentos.find((e) => e.id === params.get("exp")) ?? null;
 
   const poner = useCallback(
@@ -42,15 +41,21 @@ export function VistaExperimentos() {
     [pathname],
   );
 
-
-  const ordenados = useMemo(() => [...experimentos].sort((a, b) => a.despliegue.localeCompare(b.despliegue)), [experimentos]);
-  const visibles = estado ? ordenados.filter((e) => e.estado === estado) : ordenados;
+  // Por grupo de estado y, dentro de cada uno, por despliegue.
+  const ordenados = useMemo(
+    () => [...experimentos].sort((a, b) => ORDEN_GRUPOS.indexOf(a.estado) - ORDEN_GRUPOS.indexOf(b.estado) || a.despliegue.localeCompare(b.despliegue)),
+    [experimentos],
+  );
+  const grupos = useMemo(
+    () => ORDEN_GRUPOS.map((estado) => ({ estado, lista: ordenados.filter((e) => e.estado === estado) })).filter((g) => g.lista.length > 0),
+    [ordenados],
+  );
 
   const abrir = (id: string) => poner({ exp: exp?.id === id ? null : id });
   const cerrar = () => {
     const id = exp?.id;
     poner({ exp: null });
-    // Tabla y fichas móviles comparten data-exp: se enfoca la que está visible.
+    // Tabla y tarjetas móviles comparten data-exp: se enfoca la que está visible.
     if (id)
       requestAnimationFrame(() =>
         [...document.querySelectorAll<HTMLElement>(`[data-exp="${id}"]`)].find((el) => el.offsetParent !== null)?.focus(),
@@ -60,69 +65,37 @@ export function VistaExperimentos() {
   return (
     <div className="flex flex-1">
       <div className="flex min-w-0 flex-1 flex-col gap-6">
-        <header>
-          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Experimentos</h1>
-          <p className="mt-1.5 max-w-3xl text-pretty text-tinta-2">Qué paso espera mejorar cada experimento, cuándo se podrá medir y si funcionó.</p>
-        </header>
+        <EncabezadoVista titulo="Experimentos" subtitulo="Qué paso espera mejorar cada experimento, cuándo se podrá medir y si funcionó." />
 
         <section aria-label="Experimentos" className="vidrio flex flex-col gap-5 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div role="group" aria-label="Filtrar por estado" className="flex flex-wrap gap-2">
-              <Chip activo={estado === null} onClick={() => poner({ estado: null })}>
-                Todos <span className="cifra text-xs opacity-70">{experimentos.length}</span>
-              </Chip>
-              {ESTADOS.map((e) => {
-                const n = experimentos.filter((x) => x.estado === e).length;
-                return (
-                  <Chip key={e} activo={estado === e} onClick={() => poner({ estado: estado === e ? null : e })}>
-                    {ETIQUETA_ESTADO_EXPERIMENTO[e]} <span className="cifra text-xs opacity-70">{n}</span>
-                  </Chip>
-                );
-              })}
-            </div>
-            <ToggleGroup
-              type="single"
-              variant="segmentado"
-              spacing={1}
-              aria-label="Vista"
-              value={vista}
-              onValueChange={(v) => v && poner({ vista: v === "tarjetas" ? null : v })}
-            >
-              <ToggleGroupItem value="tarjetas">
-                <LayoutGrid data-icon="inline-start" />
-                Tarjetas
-              </ToggleGroupItem>
-              <ToggleGroupItem value="tabla">
-                <Table2 data-icon="inline-start" />
-                Tabla
-              </ToggleGroupItem>
-              <ToggleGroupItem value="timeline">
-                <GanttChart data-icon="inline-start" />
-                Timeline
-              </ToggleGroupItem>
-            </ToggleGroup>
+          <div className="flex justify-end">
+            <Button variant="outline" size="sm" onClick={() => poner({ vista: vista === "tabla" ? null : "tabla", estado: null })}>
+              {vista === "tabla" ? <LayoutGrid data-icon="inline-start" /> : <Table2 data-icon="inline-start" />}
+              {vista === "tabla" ? "Ver como tarjetas" : "Ver como tabla"}
+            </Button>
           </div>
-  
-          {visibles.length === 0 ? (
+
+          {ordenados.length === 0 ? (
             <Empty className="flex-none py-10">
               <EmptyHeader>
                 <EmptyMedia variant="icon">
                   <FlaskConical />
                 </EmptyMedia>
-                <EmptyDescription>
-                  No hay experimentos {estado ? `en estado «${ETIQUETA_ESTADO_EXPERIMENTO[estado]}»` : ""} todavía.{" "}
-                  <button type="button" onClick={() => poner({ estado: null })} className="font-medium text-azul-texto underline underline-offset-2">
-                    Ver todos
-                  </button>
-                </EmptyDescription>
+                <EmptyDescription>Todavía no hay experimentos.</EmptyDescription>
               </EmptyHeader>
             </Empty>
-          ) : vista === "tarjetas" ? (
-            <TarjetasExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
           ) : vista === "tabla" ? (
-            <TablaExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
+            <TablaExperimentos experimentos={ordenados} seleccionado={exp?.id ?? null} onAbrir={abrir} />
           ) : (
-            <TimelineExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
+            grupos.map((g) => (
+              <section key={g.estado} aria-labelledby={`grupo-${g.estado}`} className="flex flex-col gap-3">
+                <h2 id={`grupo-${g.estado}`} className="flex items-baseline gap-2 text-base font-semibold">
+                  {ETIQUETA_ESTADO_EXPERIMENTO[g.estado]}
+                  <span className="cifra text-sm font-normal text-tinta-cuerpo">{g.lista.length}</span>
+                </h2>
+                <TarjetasExperimentos experimentos={g.lista} seleccionado={exp?.id ?? null} onAbrir={abrir} />
+              </section>
+            ))
           )}
         </section>
 
@@ -143,10 +116,3 @@ export function VistaExperimentos() {
   );
 }
 
-function Chip({ activo, onClick, children }: { activo: boolean; onClick: () => void; children: ReactNode }) {
-  return (
-    <Toggle variant="outline" pressed={activo} onPressedChange={onClick}>
-      {children}
-    </Toggle>
-  );
-}

@@ -84,8 +84,10 @@ function fondo(spec: string, vars: Record<string, string>): Rgba {
   return capas.reduceRight((abajo, arriba) => sobre(arriba, abajo));
 }
 
-// Texto neutro: va sobre cualquier superficie, incluido el degradé y los paneles vidriados.
-const TEXTOS_NEUTROS = ["tinta", "tinta-2"];
+// Texto neutro: tinta y tinta-cuerpo van sobre cualquier superficie, incluido el degradé y los paneles vidriados.
+// tinta-2 (secundario) solo sobre tarjeta o fondo-a y las capas que van encima (Fase 12).
+const TEXTOS_NEUTROS = ["tinta", "tinta-cuerpo"];
+const FONDOS_SECUNDARIO = ["tarjeta", "fondo-a", "muted", "neutro-suave/tarjeta", "azul-suave/tarjeta", "coral-suave/tarjeta"];
 const FONDOS_NEUTROS = [
   "fondo-a",
   "fondo-b",
@@ -107,6 +109,7 @@ const FONDOS_COLOR = ["tarjeta", "muted", "azul-suave/tarjeta", "coral-suave/tar
 const pares: [texto: string, fondo: string][] = [
   ...TEXTOS_NEUTROS.flatMap((t) => FONDOS_NEUTROS.map((f) => [t, f] as [string, string])),
   ...TEXTOS_COLOR.flatMap((t) => FONDOS_COLOR.map((f) => [t, f] as [string, string])),
+  ...FONDOS_SECUNDARIO.map((f) => ["tinta-2", f] as [string, string]),
   // Pills: -relleno con texto blanco, activo invertido. Las suaves ya están arriba (-texto sobre -suave/tarjeta).
   ["sobre-relleno", "azul-relleno"],
   ["sobre-relleno", "coral-relleno"],
@@ -120,7 +123,8 @@ const pares: [texto: string, fondo: string][] = [
   ["primary-foreground", "primary"],
   ["secondary-foreground", "secondary"],
   ["muted-foreground", "muted"],
-  ["muted-foreground", "background"],
+  // muted-foreground es secundario (tinta-2): solo sobre superficies, nunca sobre el degradé (Fase 12).
+  ["muted-foreground", "tarjeta"],
   ["accent-foreground", "accent/background"],
   ["sidebar-foreground", "sidebar"],
   ["sidebar-primary-foreground", "sidebar-primary"],

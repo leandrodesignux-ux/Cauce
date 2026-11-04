@@ -15,8 +15,9 @@ El home es el **Recorrido**: un resumen de tres cifras, las 8 etapas agrupadas e
 | `--panel-borde` | `rgb(255 255 255 / .75)` | `rgb(255 255 255 / .07)` | Borde de 1 px de lo vidriado |
 | `--tarjeta` | `#F8F9FB` | `#20242E` | Tarjetas de fase, tiles, tablas, popovers, sheet |
 | `--tarjeta-borde` | `#FFFFFF` | `#2A2F3B` | Borde de tarjetas y tiles |
-| `--tinta` | `#111318` | `#EEF0F4` | Texto principal, cifras |
-| `--tinta-2` | `#4B5160` | `#C3C8D2` | Texto secundario, etiquetas, encabezados de tabla |
+| `--tinta` | `#111318` | `#EEF0F4` | Títulos h1–h3 y cifras principales |
+| `--tinta-cuerpo` | `#363C49` | `#D6DAE2` | Texto de cuerpo (`foreground`), valores de tablas, nombres en tarjetas; secundario sobre vidrio o degradé |
+| `--tinta-2` | `#5A6171` | `#A9AFBB` | Secundario, metadata, labels y encabezados de tabla en tarjeta. Solo sobre `tarjeta` o `fondo-a` |
 | `--tenue` | `#5F6576` | `#A3AAB8` | Bordes en hover, trazos neutros (nunca texto chico) |
 | `--linea` · `--linea-fuerte` | `#DDE2EA` · `#C3CAD7` | `#2C3240` · `#3A4152` | Separadores; bordes de inputs y botones "ir" |
 | `--azul` | `#7E95DA` | `#8EA3E6` | Chevrons y bordes de resaltado, contornos |
@@ -37,13 +38,14 @@ El home es el **Recorrido**: un resumen de tres cifras, las 8 etapas agrupadas e
 - `--azul` y `--coral` base: **solo líneas y trazos** (bordes de resaltado, contorno de íconos de fuga, indicadores).
 - `-texto`: para letras en ese tono, y siempre sobre `--tarjeta`, `--muted` o su propio `-suave`.
 - `-relleno`: para pills y botones sólidos, siempre con texto blanco (`--sobre-relleno`).
-- **Nunca texto de color directo sobre el degradé** ni sobre un panel vidriado: ahí solo va `--tinta` o `--tinta-2`.
-- Montos en MXN en `--tinta` con peso semibold: el dinero no tiene color propio.
+- **Nunca texto de color directo sobre el degradé** ni sobre un panel vidriado: ahí solo va `--tinta` o `--tinta-cuerpo`. `--tinta-2` queda para tarjetas y `fondo-a`.
+- Tinta en tres pasos: `tinta` (h1–h3 y `.cifra-principal`, en la capa base), `tinta-cuerpo` (el resto del texto: `body` usa `foreground`) y `tinta-2` (secundario).
+- Montos en dólares en `--tinta` con peso semibold: el dinero no tiene color propio.
 - Deltas: azul si sube, coral si baja, siempre con flecha y signo; nunca el color solo.
 
 `npm run contraste` verifica cada par en claro y oscuro (texto neutro sobre las tres paradas del degradé, sobre los paneles, tarjetas y `-suave`; `-texto` sobre tarjeta y `-suave`; blanco sobre `-relleno`; `sobre-activo` sobre `activo`; semántica de shadcn; `sobre-activo` al 70 % sobre `activo` para el número de la nav y "Limpiar" en la barra de selección; blanco sobre `coral-relleno` para el contador de pendientes en la pestaña activa) y falla por debajo de 4.5:1.
 
-**Semántica de shadcn/ui:** sus tokens apuntan a los de Cauce, nunca al revés: `background` = fondo-b (el `body` pinta el degradé encima), `foreground` = tinta, `card` y `popover` = tarjeta, `primary` = activo, `primary-foreground` = sobre-activo, `muted` y `secondary` = tinta-2 al 8 % sobre tarjeta, `muted-foreground` = tinta-2, `accent` = azul-suave, `destructive` = coral-relleno, `border` = linea, `input` = linea-fuerte, `ring` = azul-texto, `chart-1…5` = azul, coral, azul-relleno, coral-relleno, tenue.
+**Semántica de shadcn/ui:** sus tokens apuntan a los de Cauce, nunca al revés: `background` = fondo-b (el `body` pinta el degradé encima), `foreground` y `card-foreground` = tinta-cuerpo, `card` y `popover` = tarjeta, `primary` = activo, `primary-foreground` = sobre-activo, `muted` y `secondary` = tinta-2 al 8 % sobre tarjeta, `muted-foreground` = tinta-2, `accent` = azul-suave, `destructive` = coral-relleno, `border` = linea, `input` = linea-fuerte, `ring` = azul-texto, `chart-1…5` = azul, coral, azul-relleno, coral-relleno, tenue.
 
 **Modo oscuro por switch:** la app arranca en claro (`defaultTheme="light"`, `enableSystem={false}`). El par luna/sol del rail (y el botón de tema de la barra móvil) pone `.dark` en `<html>`; la elección persiste y el `theme-color` acompaña.
 
@@ -55,7 +57,7 @@ El home es el **Recorrido**: un resumen de tres cifras, las 8 etapas agrupadas e
 - Escala (rem): 0.75 · 0.875 · 1 · 1.25 · 1.75 · 2.5 · 3.5 = `text-xs` … `text-3xl`. Interlineado de cuerpo 1.45; `.cifra` lo baja a 1.1.
 - Tracking por tamaño, nunca uno solo: `text-xs` +0.01em, cuerpo 0, `text-xl` −0.01em, `text-2xl` −0.02em, `text-3xl` −0.025em (va en la escala, no en cada título). Títulos con `text-balance`, párrafos con `text-pretty`.
 - Sentence case, sin mayúsculas sostenidas.
-- Montos: `$2.31 M MXN` en resúmenes, `$352 K` en filas del board, `$1,287,400 MXN` en detalle. Tasas con un decimal (`61.5 %`), deltas en puntos (`↑ 0.2 puntos`; `pp` solo en celdas de tabla).
+- Montos en **dólares**, siempre redondos: `$2.31M USD` (≥1,000,000) y `$128.4K USD` (≥10,000) en resúmenes (`formatearUsdCorto`), `$19,290 USD` en detalle (`formatearUsd`). La única conversión es `MXN_POR_USD = 18` (supuesto del demo, `config/modelo.ts`). Tasas con un decimal (`61.5 %`), deltas en puntos (`↑ 0.2 puntos`; `pp` solo en celdas de tabla).
 
 ## Radios, superficies y sombras
 
@@ -80,7 +82,7 @@ Quedan redondos (`rounded-full`) solo los botones de ícono circulares, los avat
 ## Materiales
 
 - `vidrio` (paneles, rail, chips de filtro sobre el degradé): `--panel`, desenfoque de 18 px con saturación al 180 % y el borde superior más claro (`--panel-brillo`), como luz que toca el material.
-- `vidrio-denso` (cromo flotante: nav fija y barra móvil): `--panel-denso`, más opaco y con 28 px de desenfoque, porque el contenido pasa por debajo y tiene que leerse.
+- `vidrio-denso` (cromo flotante: barra móvil): `--panel-denso`, más opaco y con 28 px de desenfoque, porque el contenido pasa por debajo y tiene que leerse.
 - **Nunca vidrio sobre vidrio.** Dentro de un panel, los botones redondos van sólidos (`BotonRedondo superficie="tarjeta"`) y los chips (`Toggle`) son pills de tarjeta. Dentro de la barra móvil, los botones no tienen superficie propia (`superficie="cromo"`).
 - Con `prefers-reduced-transparency: reduce`, ambos materiales pasan a `--tarjeta` sin desenfoque. Con `prefers-contrast: more`, el borde pasa a `--linea-fuerte`.
 - El cambio de tema funde en 220 ms con View Transitions en vez de saltar de brillo (con reduced motion, o sin soporte, cambia directo).
@@ -109,23 +111,24 @@ Quedan redondos (`rounded-full`) solo los botones de ícono circulares, los avat
 └────┴─────────────────────────────────────────────────────────────────────┘
 ```
 
-**Escritorio (≥768 px):** rail izquierdo de 88 px, fijo, con la marca y botones circulares: buscar (⌘K), filtros, comparar con período anterior, ver como tabla y exportar (los cuatro solo en el home); abajo, cómo funciona (reabre el onboarding), el par luna/sol (el modo vigente en `--activo`) y el sello de datos demo. Arriba del contenido: la nav de vistas vidriada, numerada (1 Recorrido, 2 Rescate, 3 Experimentos, el número en `tinta-2`; la activa en `--activo`) y, en el home, los filtros como chips a la derecha (`Período 30 días`, `Canal Todos`…).
+**Escritorio (≥768 px):** rail izquierdo de 88 px, fijo, con la marca y botones circulares: buscar (⌘K), filtros, comparar con período anterior, ver como tabla y exportar (los cuatro solo en el home); abajo, cómo funciona (reabre el onboarding), el par luna/sol (el modo vigente en `--activo`) y el sello de datos demo. En el home, arriba del contenido, los filtros como chips a la derecha (`Período 30 días`, `Canal Todos`…). **La nav de vistas va debajo del título de cada vista** (`EncabezadoVista`: h1, subtítulo en `tinta-cuerpo` y la nav vidriada a 20 px), numerada (1 Recorrido, 2 Rescate, 3 Experimentos; la activa en `--activo`).
 
 **Recorrido:** desde `lg`, tres columnas (Atraer | Convertir | Cerrar) con las etapas apiladas dentro de cada fase; abajo de `lg`, una sola columna. Las demás secciones del home son grillas de tarjetas de 1, 2 o 3 columnas.
 
-**Móvil (<768 px):** sin rail. La nav de vistas queda **fija arriba** en `vidrio-denso` (dónde estoy y a dónde ir, siempre a la vista) y el contenido se funde antes de llegar a ella; abajo, los chips del home con scroll horizontal (snap, sin barra de scroll). La barra flotante es **compacta y centrada** (buscar, filtros, comparar, cómo funciona y tema en el home; buscar, cómo funciona y tema en el resto), también en `vidrio-denso`, con un fundido inferior para que el contenido no choque con ella. Respeta las safe areas (`viewport-fit=cover` + `env(safe-area-inset-*)`). Táctil: sin destello gris al tocar, `touch-action: manipulation` (sin espera de doble toque) y el input de ⌘K a 16 px para que iOS no haga zoom.
+**Móvil (<768 px):** sin rail. La nav de vistas va igual debajo del subtítulo, sin sticky, con scroll horizontal si no entra; los chips del home, arriba del título, también con scroll horizontal (snap, sin barra de scroll). La barra flotante es **compacta y centrada** (buscar, filtros, comparar, cómo funciona y tema en el home; buscar, cómo funciona y tema en el resto), en `vidrio-denso`, con un fundido inferior para que el contenido no choque con ella. Respeta las safe areas (`viewport-fit=cover` + `env(safe-area-inset-*)`). Táctil: sin destello gris al tocar, `touch-action: manipulation` (sin espera de doble toque) y el input de ⌘K a 16 px para que iOS no haga zoom.
 
 ## Recorrido (home)
 
 Una sección por idea, en orden de lectura; cada una es un panel `vidrio` (`SeccionHome`: título, una línea y una acción opcional) con tarjetas sólidas adentro.
 
-- **Resumen**: tres tarjetas clicables (`ResumenCauce`) con ícono en círculo suave, etiqueta en `tinta-2`, cifra de 28 px y una línea de contexto. Valor en riesgo (coral), Leads por rescatar (azul, con rescatados hoy) y Experimentos activos (azul).
-- **Recorrido** (`JourneyBoard`): una tarjeta por fase (`bg-tarjeta/60`, borde `tarjeta-borde`, `rounded-tarjeta`, p-5). Encabezado: número "01/02/03" en `cifra` `tinta-2`, nombre en 20 px semibold, descripción en `tinta-2` y, a la derecha, la métrica de la fase ("X % pasa a Convertir"; en Cerrar, "X % llega a Cierre"; selector `tasaDeFase`). Adentro, las etapas apiladas con `gap-3` y un chevron hacia abajo entre ellas.
-- **Tarjeta de etapa**: p-4, grilla `[ícono] [nombre + volumen] [simular]`: nombre en 14 px medium, volumen en cifra de 40 px semibold ("Antes: N" debajo con comparar). A todo el ancho, una barra de avance de 4 px (relleno `azul-relleno` = tasa, sobre `azul-suave`) y, debajo, "X % avanza" y el delta. Toda la tarjeta abre el panel de la etapa (el botón del nombre la cubre); el ícono "Simular mejora" queda encima.
+- **Ícono en círculo** (`ui/icono-circulo.tsx`, `IconoCirculo`): 40 px, `bg-tarjeta` con borde de 1 px `azul-relleno` al 35 % y el ícono en `azul-texto` (trazo 1.7); `tono="coral"`: borde `coral` al 35 % e ícono `coral-texto`. Es el único círculo de ícono de las tarjetas: etapas, resumen, "Dónde se pierde", experimentos del home y siguiente paso.
+- **Resumen**: tres tarjetas clicables (`ResumenCauce`) con ícono en círculo, etiqueta en `tinta-2`, cifra de 28 px y una línea de contexto. Valor en riesgo (coral), Leads por rescatar (azul, con rescatados hoy) y Experimentos activos (azul).
+- **Recorrido** (`JourneyBoard`): una tarjeta por fase (`bg-tarjeta/60`, borde `tarjeta-borde`, `rounded-tarjeta`, p-5). Encabezado: número "01/02/03" en `cifra` `tinta-2`, nombre en 20 px semibold, descripción en `tinta-2` y, a la derecha, la métrica de la fase ("X % pasa a Convertir"; en Cerrar, "X % llega a Cierre"; selector `tasaDeFase`). La tasa de la fase va en 16 px semibold y la métrica, en 14 px. Adentro, las etapas apiladas con `gap-3` y un chevron hacia abajo entre ellas.
+- **Tarjeta de etapa**: p-5, gap 16 px, grilla `[ícono] [nombre + volumen] [simular]`: nombre en 14 px medium (`tinta-cuerpo`), volumen en cifra de 20 px semibold ("Antes: N" debajo con comparar). A todo el ancho, una barra de avance de 4 px (relleno `azul-relleno` = tasa, sobre `azul-suave`) y, debajo, "X % avanza" y el delta. Toda la tarjeta abre el panel de la etapa (el botón del nombre la cubre); el ícono "Simular mejora" queda encima.
 - **Resaltado compartido** (estado local de `VistaCauce`, no va en la URL): hover o foco en una etapa la eleva (−2 px, borde azul) y la barra se parte en azul/coral con "Avanzan N · Se quedan M" (selector `avanceDeEtapa`); la etapa siguiente lleva borde azul suave; en "Dónde se pierde" se marcan las fugas de esa transición y las demás bajan a 50 %. Hover o foco en una fuga marca sus etapas `desde` y `hacia` con borde coral punteado; en el encabezado de una fase, sus etapas; en un experimento, su etapa. Las cifras de etapas y resumen interpolan 300 ms al cargar y al cambiar filtros (`useTween`; inmediato con reduced motion).
-- **Simulador** (`SimuladorMejora`, "¿Qué pasa si mejora un paso?"): `Select` con las 7 transiciones (por defecto, la de más valor en riesgo), `Slider` de 0 a 10 puntos en pasos de 0.5, dos cifras grandes en `azul-texto` ("+N cierres en el período", "+$X MXN en comisión") y la fórmula con los valores debajo (`simularMejora`).
-- **Dónde se pierde** (`DondeSePierde`): tarjetas por fuga (hover coral) con ícono de gota de contorno coral punteado, "Entre {etapa} y {etapa}", el valor en cifra de 28 px, los perdidos y **Ver leads** (outline; coral en leads sin atender). El estado del experimento asociado va como `Badge`.
-- **Experimentos** (`ExperimentosHome`): hasta 3 tarjetas con nombre, `Badge` de estado y "Busca +X puntos de {etapa} a {etapa}".
+- **Simulador** (`SimuladorMejora`, "¿Qué pasa si mejora un paso?"): `Select` con las 7 transiciones (por defecto, la de más valor en riesgo) que abre debajo del trigger (`position="popper"`, mismo ancho, máx. 288 px de alto), cada ítem con su tasa actual a la derecha en `cifra` `tinta-2`. `Slider` de 0 a 10 puntos en pasos de 0.5, con tope en (100 − tasa) para que la tasa no pase de 100 %. Antes del resultado, una fila en `bg-muted`: "Hoy pasa {tasa} → con la mejora {tasa + puntos}" y "+N personas más llegan a {etapa}". Después, dos cifras grandes en `azul-texto` ("+N cierres en el período", "+$X USD en comisión") y la fórmula con los valores (`simularMejora`).
+- **Dónde se pierde** (`DondeSePierde`): tarjetas por fuga (hover coral) con la gota en `IconoCirculo tono="coral"`, "Entre {etapa} y {etapa}", el valor en cifra de 28 px, los perdidos y **Ver leads** (outline; coral en leads sin atender). El estado del experimento asociado va como `Badge`.
+- **Experimentos** (`ExperimentosHome`): hasta 3 tarjetas con ícono en círculo, `Badge` de estado, nombre y "Busca +X puntos de {etapa} a {etapa}".
 - **Leads sin atender** (`LeadsSinAtender`): la tabla de 4 sobre tarjeta (`Table marco`), encabezados en `tinta-2`, filas con py-3 y Rescatar en coral.
 - **Siguiente paso** (`SiguientePaso`, también al final de Rescate y Experimentos): tarjeta clicable con el ícono de la vista siguiente, "Siguiente paso · N Nombre", la acción en cifra de 20 px, la descripción y una flecha en círculo `activo`.
 
@@ -134,13 +137,16 @@ Una sección por idea, en orden de lectura; cada una es un panel `vidrio` (`Secc
 ## Rescate (/fugas)
 
 - **Banner de fuga** (`BannerFuga`), arriba del contenido de cada pestaña, sobre tarjeta: a la izquierda "Valor estimado", el monto en cifra de 56 px (40 px en móvil), "{N} sin atender en 30 días · {etapa} → {etapa}" y "Cómo se calcula" (solo en la fuga del modelo de pérdida). A la derecha, si la fuga tiene leads, dos barras apiladas de los pendientes: **Por intención** (Alto `azul-relleno`, Medio `azul`, Bajo `linea-fuerte`) y **Por antigüedad** (≤3 días en `coral`, 4–14 días `azul`, más de 14 `linea-fuerte`). Cada segmento es un botón de 36 px de alto (`aria-pressed`) que pone o quita `banda` o `antiguedad` en la URL; el resto baja a 35 %. Leyenda con conteos debajo y "Quitar filtros" si hay alguno. Fugas sin leads: monto, volumen y el experimento que las ataca, sin barras.
+- La vista separa sus bloques con 32 px; el banner va con p-6 y la lista queda 8 px más abajo de la bandeja.
 - **Bandeja**: `ToggleGroup variant="segmentado"` "Pendientes N | Rescatados N | Descartados N"; a la derecha, "Mostrando 1–10 de N".
-- **Fila de lead** (`LeadFeedItem`): px-5 py-4, grilla `[checkbox] [contenido] [acciones]`. Línea 1: nombre, score, días y "Sector · Estado"; línea 2: el último mensaje en una línea (ícono de urgencia si aplica). Acciones: "Rescatar lead" (coral, sm), "Descartar" (ghost, sm) y un chevron "Ver detalle" (`aria-expanded`) que despliega teléfono, mensajes y espacios vistos (altura animada con motion, 220 ms; inmediato con reduced motion).
+- **Fila de lead** (`LeadFeedItem`): px-5 py-5 (6 px entre las dos líneas), grilla `[checkbox] [contenido] [acciones]`. Línea 1: nombre, score, días y "Sector · Estado"; línea 2: el último mensaje en una línea (ícono de urgencia si aplica). Acciones: "Rescatar lead" (coral, sm), "Descartar" (ghost, sm) y un chevron "Ver detalle" (`aria-expanded`) que despliega teléfono, mensajes y espacios vistos (altura animada con motion, 220 ms; inmediato con reduced motion).
 - **Paginación**: `Pagination` de shadcn debajo de la lista, 10 por página: anterior, números (con saltos) y siguiente; la página actual en `--activo`. La página va en `?pagina=` (fallback a 1), vuelve a 1 al cambiar fuga, bandeja o filtro, y si una acción vacía la última página se pasa a la anterior. J/K se mueven dentro de la página. Los atajos siguen (J/K/R/D/Shift/Esc), ya sin la línea que los listaba.
 
 ## Experimentos (/experimentos)
 
-El detalle se abre **centrado**: ≥768 px, `Dialog` de hasta 880 px y 85 dvh (`PanelCentrado`) con el encabezado fijo (nombre, `Badge` de estado y cerrar) y el contenido con scroll propio en dos columnas (hipótesis y métrica | predicho vs. observado y transición); <768 px, `Drawer`. Se mantienen `?exp=`, Esc y la vuelta del foco a la tarjeta o fila que lo abrió.
+Una sola vista de **tarjetas agrupadas por estado**, en este orden: En curso, Leyendo, Validado, Refutado y Diseño (los grupos vacíos no se muestran). Cada grupo lleva un h2 de 16 px con su conteo en `cifra` y la grilla debajo. Arriba a la derecha, `Button variant="outline" size="sm"` "Ver como tabla" / "Ver como tarjetas" (`?vista=tabla`); `?vista=timeline` se ve como tarjetas y `?estado=` se ignora. Sin chips de estado, sin toggle de vistas ni timeline.
+
+**Detalle de experimento**: ≥768 px, `Dialog` centrado de hasta 760 px y 85 dvh (`PanelCentrado`); <768 px, `Drawer`. Encabezado fijo (nombre visible en 20 px semibold, `Badge` de estado, "{etapa} → {etapa}" en `tinta-2` y cerrar), el único con divisor. Debajo, una sola columna con 24 px entre bloques: (1) **veredicto** en una tarjeta `bg-muted` p-5, frase de 18 px semibold en el tono de `tonoObservado` ("Funcionó: +0.6 puntos contra +0.5 esperados", "No cumplió: …", "Se podrá medir a partir del {fecha}") y la ventana de lectura en `tinta-2`; (2) **Esperado** y **Observado** lado a lado (label 14 px `tinta-2`, cifra de 24 px; "—" sin lectura) y las barras debajo, sin repetir cifras; (3) el gráfico de la transición a todo el ancho con su leyenda ("Línea punteada: despliegue · Zona sombreada: ventana de lectura"); (4) **Cómo se planteó** en un `<details>` cerrado, con chevron que rota (hipótesis en `tinta-cuerpo` y palanca, métrica, despliegue y lectura); (5) el link "Ver la transición en el recorrido". Se mantienen `?exp=`, Esc y la vuelta del foco a la tarjeta o fila que lo abrió.
 
 En texto corrido se escribe "puntos" (`formatearPuntos`); "pp" queda para cifras y celdas de tabla.
 
@@ -187,17 +193,17 @@ Las primitivas salen de shadcn/ui (`src/components/ui`); colores y variantes se 
 |---|---|---|
 | Acción circular (rail, barra móvil, encabezado de panel) | `Button variant="vidrio" size="redondo"` | `aria-pressed` o `data-activo` la pone en `--activo`. |
 | Chip de filtro | `Button variant="filtro" size="lg"` + `DropdownMenu` / `Popover` | Etiqueta en tinta-2, valor en `<b>`. |
-| Nav de vistas, tarjetas/tabla/timeline, bandeja de /fugas, fugas | `ToggleGroup variant="segmentado"` / links con el mismo estilo / `Tabs variant="pill"` | Activo en `--activo`, radio de botón. |
+| Nav de vistas, bandeja de /fugas, fugas | `ToggleGroup variant="segmentado"` / links con el mismo estilo / `Tabs variant="pill"` | Activo en `--activo`, radio de botón. |
 | Alternadores sueltos y chips de /experimentos | `Toggle` / `ToggleGroup variant="outline"` | Sólidos en reposo; activo en `--activo`. |
 | Hoja de filtros (móvil) | `Drawer` | El rail abre la misma hoja en un `Popover`. |
 | Panel de etapa (Recorrido) | ≥768 px: `Sheet` a la derecha (440 px en ≥1280, 60 % en tablet); <768: `Drawer` | Devuelve el foco a la tarjeta que lo abrió. |
-| Detalle de experimento | ≥768 px: `Dialog` centrado de hasta 880 px (`PanelCentrado`); <768: `Drawer` | Encabezado fijo; devuelve el foco. |
+| Detalle de experimento | ≥768 px: `Dialog` centrado de hasta 760 px (`PanelCentrado`); <768: `Drawer` | Encabezado fijo; una columna; devuelve el foco. |
 | Paso a simular | `Select` | 7 transiciones. |
 | Páginas del feed de Rescate | `Pagination` | Botones (la URL cambia sin navegar), copy en español. |
 | Paleta ⌘K | `CommandDialog` | Incluye "Ver cómo funciona". |
 | Onboarding (partículas, 3 actos) | `Dialog` a pantalla completa (`fixed inset-0`, sin borde, radio ni sombra) con `.dark` local; fondo `fondo-onboarding` (`--tinta-profunda` + radial de `--azul` al 10 % arriba) | Capas: `<canvas>` (motor en `onboarding/particulas.ts`), progreso de 3 segmentos de 2 px + Saltar, título y texto abajo a la izquierda, controles de ícono + Siguiente / Ver mi recorrido abajo a la derecha, etiquetas HTML de cifras, fugas y chip sobre el lienzo. La zona de formación ocupa el 60 % superior (55 % en móvil). Copy y duraciones en `actos.ts`; autoplay y pausa en `useActos`. |
 | Modelo de pérdida en Rescate | `Dialog` ("Cómo se calcula") | Sliders y fórmula sin cambios. |
-| Vista de experimentos | `ToggleGroup variant="segmentado"`: Tarjetas · Tabla · Timeline | Tarjetas por defecto. |
+| Vista de experimentos | Grupos por estado + `Button variant="outline" size="sm"` "Ver como tabla" | Tarjetas por defecto; `?vista=tabla`. |
 | Parámetros numéricos | `Slider` | |
 | Datos tabulares | `Table` (`marco` = tarjeta de 16 px) | Cifras con `.cifra`, a la derecha. |
 | Avisos con deshacer | `sonner` | Abajo al centro, en `--activo`, 5 s, uno por vez. |
@@ -224,5 +230,5 @@ Las primitivas salen de shadcn/ui (`src/components/ui`); colores y variantes se 
 ## Copy
 
 - Español de México, impersonal o "usted". Verbos concretos: "Rescatar", "Descartar", "Comparar con período anterior", "Ver como tabla", "Exportar".
-- Vacíos con dirección: "No hay fantasmas pendientes. Pruebe otra poza."
+- Vacíos con dirección: "No hay leads pendientes en esta fuga."
 - Sin eyebrows decorativos ni flechas pegadas a botones.

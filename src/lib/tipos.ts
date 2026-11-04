@@ -37,7 +37,7 @@ export type Fuga = {
 export type SenalesLead = {
   superficieM2: number | null;
   zona: string | null;
-  presupuestoMxn: number | null;
+  presupuestoUsd: number | null;
 };
 
 export type Touchpoint = { fecha: string; tipo: string; detalle: string };

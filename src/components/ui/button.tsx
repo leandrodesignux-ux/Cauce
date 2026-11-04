@@ -23,16 +23,16 @@ const buttonVariants = cva(
         // Superficie vidriada sobre el degradé: botones redondos del rail y chips de filtro.
         // Activo (aria-pressed o data-activo) = color activo.
         vidrio:
-          "vidrio text-tinta hover:bg-tarjeta aria-expanded:bg-tarjeta aria-pressed:border-activo aria-pressed:bg-activo aria-pressed:text-sobre-activo data-[activo=true]:border-activo data-[activo=true]:bg-activo data-[activo=true]:text-sobre-activo",
+          "vidrio text-tinta-cuerpo hover:bg-tarjeta aria-expanded:bg-tarjeta aria-pressed:border-activo aria-pressed:bg-activo aria-pressed:text-sobre-activo data-[activo=true]:border-activo data-[activo=true]:bg-activo data-[activo=true]:text-sobre-activo",
         // Botón redondo dentro de un panel vidriado: superficie sólida (nunca vidrio sobre vidrio).
         tarjeta:
-          "border-tarjeta-borde bg-tarjeta text-tinta shadow-tarjeta hover:bg-muted aria-expanded:bg-muted aria-pressed:border-activo aria-pressed:bg-activo aria-pressed:text-sobre-activo",
+          "border-tarjeta-borde bg-tarjeta text-tinta-cuerpo shadow-tarjeta hover:bg-muted aria-expanded:bg-muted aria-pressed:border-activo aria-pressed:bg-activo aria-pressed:text-sobre-activo",
         // Botón redondo dentro del cromo flotante (barra móvil): sin superficie propia, el material ya lo da la barra.
         cromo:
-          "text-tinta hover:bg-neutro-suave aria-expanded:bg-neutro-suave aria-pressed:bg-activo aria-pressed:text-sobre-activo",
+          "text-tinta-cuerpo hover:bg-neutro-suave aria-expanded:bg-neutro-suave aria-pressed:bg-activo aria-pressed:text-sobre-activo",
         // Disparadores de filtro: chip vidriado con la etiqueta en tinta-2 y el valor en tinta (<b>).
         filtro:
-          "vidrio text-tinta-2 hover:bg-tarjeta aria-expanded:bg-tarjeta [&_b]:font-semibold [&_b]:text-tinta data-[activo=true]:border-azul data-[activo=true]:bg-tarjeta",
+          "vidrio text-tinta-cuerpo hover:bg-tarjeta aria-expanded:bg-tarjeta [&_b]:font-semibold [&_b]:text-tinta data-[activo=true]:border-azul data-[activo=true]:bg-tarjeta",
         // Acción de rescate: pill coral con texto blanco.
         coral: "bg-coral-relleno font-semibold text-sobre-relleno hover:bg-coral-relleno/90",
         destructive:

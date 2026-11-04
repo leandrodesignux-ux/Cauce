@@ -105,8 +105,12 @@ function SelectLabel({
 function SelectItem({
   className,
   children,
+  detalle,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+}: React.ComponentProps<typeof SelectPrimitive.Item> & {
+  /** Dato secundario a la derecha (p. ej. una tasa); no aparece en el trigger. */
+  detalle?: React.ReactNode
+}) {
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
@@ -122,6 +126,7 @@ function SelectItem({
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+      {detalle !== undefined && <span className="cifra ml-auto pl-3 text-tinta-2">{detalle}</span>}
     </SelectPrimitive.Item>
   )
 }
