@@ -1,5 +1,6 @@
 "use client";
 
+import { EncabezadoVista } from "@/components/shell/EncabezadoVista";
 import { FlaskConical, GanttChart, LayoutGrid, Table2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, type ReactNode } from "react";
@@ -60,10 +61,7 @@ export function VistaExperimentos() {
   return (
     <div className="flex flex-1">
       <div className="flex min-w-0 flex-1 flex-col gap-6">
-        <header>
-          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Experimentos</h1>
-          <p className="mt-1.5 max-w-3xl text-pretty text-tinta-cuerpo">Qué paso espera mejorar cada experimento, cuándo se podrá medir y si funcionó.</p>
-        </header>
+        <EncabezadoVista titulo="Experimentos" subtitulo="Qué paso espera mejorar cada experimento, cuándo se podrá medir y si funcionó." />
 
         <section aria-label="Experimentos" className="vidrio flex flex-col gap-5 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
           <div className="flex flex-wrap items-center justify-between gap-3">

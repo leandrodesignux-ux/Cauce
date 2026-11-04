@@ -5,18 +5,21 @@ import { usePathname } from "next/navigation";
 import { VISTAS, vistaActiva } from "./vistas";
 
 /**
- * Las tres vistas como una pill vidriada, numeradas en el orden de la demo; la activa en color activo. En móvil ocupa todo el ancho y queda
- * fija arriba (`denso`: material más opaco, el contenido pasa por debajo) para no perder la ubicación al bajar.
+ * Las tres vistas como una pill vidriada, numeradas en el orden de la demo; la activa en color activo.
+ * Va debajo del título de cada vista (EncabezadoVista). En móvil, si no entra, se desplaza en horizontal.
  */
-export function NavVistas({ className, denso = false }: { className?: string; denso?: boolean }) {
+export function NavVistas({ className }: { className?: string }) {
   const pathname = usePathname();
   return (
-    <nav aria-label="Vistas" className={className}>
-      <ul className={`flex gap-1 rounded-boton p-1 ${denso ? "vidrio-denso shadow-tarjeta" : "vidrio"}`}>
+    <nav
+      aria-label="Vistas"
+      className={`-mx-4 overflow-x-auto overscroll-x-contain px-4 [scrollbar-width:none] md:mx-0 md:overflow-visible md:px-0 ${className ?? ""}`}
+    >
+      <ul className="vidrio flex w-max min-w-full gap-1 rounded-boton p-1 md:inline-flex md:min-w-0">
         {VISTAS.map(({ href, numero, nombre }) => {
           const activa = vistaActiva(pathname, href);
           return (
-            <li key={href} className="flex flex-1 md:flex-none">
+            <li key={href} className="flex shrink-0 grow md:grow-0">
               <Link
                 href={href}
                 aria-current={activa ? "page" : undefined}

@@ -1,5 +1,6 @@
 "use client";
 
+import { EncabezadoVista } from "@/components/shell/EncabezadoVista";
 import Link from "next/link";
 import { useReducedMotion } from "motion/react";
 import { useCallback, useMemo, useState } from "react";
@@ -68,11 +69,11 @@ export function VistaCauce() {
 
   return (
     <div className="flex flex-col">
-      <h1 className="mt-2 mb-1.5 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Recorrido de adquisición</h1>
-      <p className="mb-6 max-w-5xl text-pretty text-tinta-cuerpo">
-        {formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}. De la primera visita al contrato: cuánto avanza en cada paso y dónde se
-        pierde.
-      </p>
+      <EncabezadoVista
+        className="mb-6"
+        titulo="Recorrido de adquisición"
+        subtitulo={`${formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}. De la primera visita al contrato: cuánto avanza en cada paso y dónde se pierde.`}
+      />
 
       <ResumenCauce journey={journey} />
 
