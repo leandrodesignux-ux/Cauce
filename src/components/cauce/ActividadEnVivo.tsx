@@ -65,8 +65,10 @@ function SesionesPorHora() {
   const ancho = useAncho(contenedor);
   const ultimo = serie.at(-1) ?? 0;
 
-  const paso = ancho > 0 ? ancho / (RANURAS - 1) : 0;
-  const x = (i: number) => (RANURAS - serie.length + i) * paso;
+  // Mientras la serie crece, ocupa todo el ancho (mínimo 12 ranuras); con 60 horas, se desplaza.
+  const ranuras = Math.min(RANURAS, Math.max(12, serie.length));
+  const paso = ancho > 0 ? ancho / (ranuras - 1) : 0;
+  const x = (i: number) => (ranuras - serie.length + i) * paso;
   const y = scaleLinear()
     .domain([0, Math.max(1, ...serie) * 1.15])
     .range([ALTO, 4]);
@@ -139,8 +141,9 @@ function FeedEventos() {
       <p className="sr-only" aria-live="polite">
         {anuncio}
       </p>
-      <ul className="flex flex-col gap-2">
-        <AnimatePresence initial={false}>
+      <ul className="relative flex flex-col gap-2">
+        {/* popLayout: los eventos que salen dejan de ocupar lugar (la tarjeta no crece). */}
+        <AnimatePresence initial={false} mode="popLayout">
           {eventos.slice(0, 5).map((e) => {
             const { Icono, tono } = ICONO[e.tipo];
             return (

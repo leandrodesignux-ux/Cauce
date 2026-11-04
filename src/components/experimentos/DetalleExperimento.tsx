@@ -104,7 +104,7 @@ export function DetalleExperimento({ e }: { e: Experimento }) {
         </dl>
         <div aria-hidden className="flex flex-col gap-2.5">
           <Barra etiqueta="Esperado" valor={e.prediccionPp} escala={escala} clase="bg-linea-fuerte" />
-          <Barra etiqueta="Observado" valor={e.observadoPp ?? 0} escala={escala} clase={observado === undefined ? "bg-transparent" : RELLENO_OBSERVADO[tono]} />
+          <Barra etiqueta="Observado" valor={observado ?? 0} escala={escala} clase={observado === undefined ? "bg-transparent" : RELLENO_OBSERVADO[tono]} />
         </div>
         <p className="text-xs text-tinta-2">
           Observado = conversión en la ventana de lectura menos la de las 6 semanas previas al despliegue, sobre todo el tráfico.

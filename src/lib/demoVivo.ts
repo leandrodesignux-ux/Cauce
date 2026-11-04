@@ -18,7 +18,8 @@ export const MS_POR_SEMANA_EXPERIMENTO = 2000;
 export const MAX_SEMANAS_EXPERIMENTO = 8;
 const MAX_EVENTOS = 20;
 const MAX_SERIE = 60;
-const GRUPOS_POR_TICK = 6;
+/** Combinaciones de canal, sector y estado por tick (una: el embudo entero viaja junto y llega a las etapas profundas). */
+const GRUPOS_POR_TICK = 1;
 
 /** Lo que el motor necesita de los datos reales. */
 export type DatosDemo = {
@@ -113,7 +114,7 @@ function fechaDelTick(tick: number): string {
 /**
  * Un tick (~1 hora): llegan sesiones (volumen semanal / 168 × ruido 0.8–1.2), repartidas en combinaciones de
  * canal, sector y estado ponderadas por la última semana, y se propagan etapa por etapa con las tasas del
- * período × ruido 0.85–1.15. Si alguien se queda entre Calificación y Asignación, se crean 0–2 leads sin atender.
+ * período × ruido 0.85–1.15 (redondeo estocástico, para que las etapas profundas también se muevan). Si alguien se queda entre Calificación y Asignación, se crean 0–2 leads sin atender.
  */
 export function avanzar(estado: EstadoDemo, datos: DatosDemo, ahora: number): EstadoDemo {
   const d = derivados(datos);
@@ -138,7 +139,7 @@ export function avanzar(estado: EstadoDemo, datos: DatosDemo, ahora: number): Es
     volumen.descubrimiento = parte;
     TRANSICIONES.forEach((t, i) => {
       const tasa = Math.min(1, d.tasas[i] * uniforme(rng, 0.85, 1.15));
-      volumen[t.hacia] = Math.max(0, Math.min(volumen[t.desde], Math.round(volumen[t.desde] * tasa)));
+      volumen[t.hacia] = Math.max(0, Math.min(volumen[t.desde], redondearAlAzar(rng, volumen[t.desde] * tasa)));
     });
     contactos += volumen.contacto;
     cierres += volumen.cierre;
@@ -191,6 +192,12 @@ export function avanzar(estado: EstadoDemo, datos: DatosDemo, ahora: number): Es
     serieSesiones: [...estado.serieSesiones, llegan].slice(-MAX_SERIE),
     puntosExperimento,
   };
+}
+
+/** Redondeo estocástico: la parte decimal decide si se sube (conserva el valor esperado en volúmenes chicos). */
+function redondearAlAzar(rng: Rng, x: number): number {
+  const piso = Math.floor(x);
+  return piso + (rng() < x - piso ? 1 : 0);
 }
 
 function nombreSimulado(rng: Rng, d: Derivados): string {

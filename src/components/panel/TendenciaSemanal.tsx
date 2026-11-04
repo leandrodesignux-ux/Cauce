@@ -97,7 +97,12 @@ export function TendenciaSemanal({
               return (
                 <g>
                   <rect x={x0} y={M.arriba - 4} width={x1 - x0} height={ALTO - M.abajo - M.arriba + 4} fill="var(--coral)" fillOpacity={0.1} />
-                  <text x={(x0 + x1) / 2} y={ALTO - M.abajo - 6} textAnchor="middle" className="fill-tinta text-xs">
+                  <text
+                    x={Math.min(Math.max((x0 + x1) / 2, franja.etiqueta.length * 3.4), ancho - M.derecha - franja.etiqueta.length * 3.4)}
+                    y={ALTO - M.abajo - 6}
+                    textAnchor="middle"
+                    className="fill-tinta text-xs"
+                  >
                     {franja.etiqueta}
                   </text>
                 </g>
