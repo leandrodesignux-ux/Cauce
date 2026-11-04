@@ -14,14 +14,15 @@ import {
   UserCheck,
   type LucideIcon,
 } from "lucide-react";
-import { useReducedMotion } from "motion/react";
-import { useMemo } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ETAPAS, FASES, ORDEN_ETAPAS } from "@/config/etapas";
 import { useTween } from "@/hooks/useTween";
 import { formatearEntero, formatearPuntos } from "@/lib/formato";
 import { type EtapaJourney, type Journey, volumenDeJourney } from "@/lib/journey";
 import { avanceDeEtapa, tasaDeFase } from "@/lib/selectors";
+import { useDemoVivo } from "@/lib/stores";
 import type { EtapaId } from "@/lib/tipos";
 import { type OnResaltar, type Resaltado, propsResaltar } from "./resaltado";
 
@@ -169,6 +170,7 @@ function TarjetaEtapa({
   onSimular: () => void;
 }) {
   const Icono = ICONO[etapa.id];
+  const chip = useChipIncremento(etapa.volumen);
   const esCierre = etapa.id === ULTIMA;
   const siguiente = siguienteDe(etapa.id);
   const tasa = `${porcentaje(etapa.tasa)} ${esCierre ? "del total" : "avanza"}`;
@@ -191,6 +193,21 @@ function TarjetaEtapa({
       className="tarjeta-clicable relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-4 gap-y-4 rounded-tile border border-tarjeta-borde bg-tarjeta p-5 shadow-tarjeta data-[activa=true]:border-azul data-[activa=true]:shadow-flotante data-[fuga=true]:border-dashed data-[fuga=true]:border-coral data-[marcada=true]:border-azul data-[marcada=true]:bg-azul-suave data-[siguiente=true]:border-azul/50 motion-safe:data-[activa=true]:-translate-y-0.5"
     >
       <IconoCirculo Icono={Icono} />
+      {/* Demo en vivo: "+N" cuando el volumen sube en un tick (sube 12 px y se desvanece; uno a la vez). */}
+      <AnimatePresence>
+        {chip && (
+          <motion.span
+            key={chip.clave}
+            aria-hidden
+            className="cifra pointer-events-none absolute top-4 right-14 z-10 text-xs font-semibold text-azul-texto"
+            initial={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            +{formatearEntero(chip.n)}
+          </motion.span>
+        )}
+      </AnimatePresence>
       <div className="min-w-0">
         {/* El botón cubre toda la tarjeta (after:inset-0); el de simular queda por encima. */}
         <button
@@ -251,4 +268,17 @@ function TarjetaEtapa({
       </div>
     </div>
   );
+}
+
+/** Chip "+N" del modo demo: aparece cuando el volumen sube (solo con la demo activa y sin reduced motion). */
+function useChipIncremento(volumen: number): { n: number; clave: number } | null {
+  const demoActiva = useDemoVivo((s) => s.activo);
+  const reducir = useReducedMotion() ?? false;
+  const [previo, setPrevio] = useState(volumen);
+  const [chip, setChip] = useState<{ n: number; clave: number } | null>(null);
+  if (volumen !== previo) {
+    setPrevio(volumen);
+    setChip(volumen > previo && demoActiva && !reducir ? { n: volumen - previo, clave: volumen } : null);
+  }
+  return chip;
 }

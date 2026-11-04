@@ -15,6 +15,7 @@ import { useSeleccion } from "@/hooks/useSeleccion";
 import { formatearRangoSemanas } from "@/lib/formato";
 import { experimentosDelBoard, transicionConMasValor } from "@/lib/journey";
 import type { EtapaId } from "@/lib/tipos";
+import { ActividadEnVivo } from "./ActividadEnVivo";
 import { DataTableCauce } from "./DataTableCauce";
 import { DondeSePierde } from "./DondeSePierde";
 import { ExperimentosHome } from "./ExperimentosHome";
@@ -76,6 +77,7 @@ export function VistaCauce() {
       />
 
       <ResumenCauce journey={journey} />
+      <ActividadEnVivo />
 
       <SeccionHome
         id="t-recorrido"
