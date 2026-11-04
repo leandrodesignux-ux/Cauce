@@ -140,7 +140,8 @@ export function CommandPalette() {
 
           <Grupo titulo="Ayuda">
             <Item
-              valor="ver cómo funciona ayuda onboarding"
+              valor="ver cómo funciona"
+              palabras={["como funciona", "ayuda", "tutorial", "onboarding"]}
               onSelect={() => {
                 fijar(false);
                 useOnboarding.getState().abrir();
