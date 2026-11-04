@@ -7,10 +7,15 @@ import { join } from "node:path";
 type Rgba = [number, number, number, number]; // 0–255 y alfa 0–1
 
 const MINIMO = 4.5;
-const css = readFileSync(join(process.cwd(), "src", "styles", "tokens.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+const css = readFileSync(join(process.cwd(), "src", "styles", "tokens.css"), "utf8")
+  .replace(/\r\n/g, "\n")
+  .replace(/\/\*[\s\S]*?\*\//g, "");
 
 function bloque(selector: string): Record<string, string> {
-  const inicio = css.indexOf(`${selector} {`);
+  // Solo un bloque que empieza tras otro bloque (o al inicio): ".dark {" no debe coincidir con ":root,\n.dark {".
+  const escapado = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const hallado = new RegExp(`(?:^|\\})\\s*(${escapado}) \\{`).exec(css);
+  const inicio = hallado ? hallado.index + hallado[0].indexOf(hallado[1]) : -1;
   if (inicio === -1) throw new Error(`No encontré ${selector} en tokens.css`);
   const cuerpo = css.slice(css.indexOf("{", inicio) + 1, css.indexOf("\n}", inicio));
   const vars: Record<string, string> = {};
@@ -18,8 +23,9 @@ function bloque(selector: string): Record<string, string> {
   return vars;
 }
 
-const claro = bloque(":root");
-const oscuro = { ...claro, ...bloque(".dark") };
+const semantica = bloque(":root,\n.dark");
+const claro = { ...bloque(":root"), ...semantica };
+const oscuro = { ...claro, ...bloque(".dark"), ...semantica };
 
 function hex(valor: string): Rgba {
   const h = valor.replace("#", "");
@@ -69,18 +75,30 @@ function contraste(a: Rgba, b: Rgba): number {
 
 /** Fondo: un token o una pila de capas translúcidas sobre un token opaco ("panel/fondo-c"). */
 function fondo(spec: string, vars: Record<string, string>): Rgba {
-  const capas = spec.split("/").map((t) => resolver(`var(--${t})`, vars));
+  const capas = spec.split("/").map((t) => {
+    const [token, pct] = t.split("@");
+    const c = resolver(`var(--${token})`, vars);
+    if (pct) c[3] = (c[3] * Number(pct)) / 100;
+    return c;
+  });
   return capas.reduceRight((abajo, arriba) => sobre(arriba, abajo));
 }
 
 // Texto neutro: va sobre cualquier superficie, incluido el degradé y los paneles vidriados.
 const TEXTOS_NEUTROS = ["tinta", "tinta-2"];
 const FONDOS_NEUTROS = [
-  "fondo-a", "fondo-b", "fondo-c", // degradé
-  "panel/fondo-a", "panel/fondo-c", // paneles vidriados sobre los extremos del degradé
-  "panel-denso/fondo-a", "panel-denso/fondo-c", // cromo flotante (nav fija, barra móvil)
-  "tarjeta", "muted",
-  "neutro-suave/tarjeta", "azul-suave/tarjeta", "coral-suave/tarjeta", // filas en hover y pills suaves
+  "fondo-a",
+  "fondo-b",
+  "fondo-c", // degradé
+  "panel/fondo-a",
+  "panel/fondo-c", // paneles vidriados sobre los extremos del degradé
+  "panel-denso/fondo-a",
+  "panel-denso/fondo-c", // cromo flotante (nav fija, barra móvil)
+  "tarjeta",
+  "muted",
+  "neutro-suave/tarjeta",
+  "azul-suave/tarjeta",
+  "coral-suave/tarjeta", // filas en hover y pills suaves
 ];
 // Texto de color (-texto): solo sobre tarjeta o sobre un -suave, nunca sobre el degradé.
 const TEXTOS_COLOR = ["azul-texto", "coral-texto"];
@@ -124,6 +142,15 @@ function texto(spec: string, abajo: Rgba, vars: Record<string, string>): Rgba {
   return sobre(color, abajo);
 }
 
+// Onboarding (Fase 11b): contenedor con .dark sobre --tinta-profunda, con el radial de --azul al 10 % arriba.
+// Solo en oscuro (el onboarding siempre lo es). Títulos, texto, etiquetas, montos de fugas, chip y controles.
+const FONDOS_ONBOARDING = ["tinta-profunda", "azul@10/tinta-profunda"];
+const paresOnboarding: [texto: string, fondo: string][] = [
+  ...["tinta", "tinta-2", "coral-texto", "azul-texto"].flatMap((t) => FONDOS_ONBOARDING.map((f) => [t, f] as [string, string])),
+  ["tinta-2", "tarjeta"], // chip del experimento
+  ["primary-foreground", "primary"], // Siguiente / Ver mi recorrido
+];
+
 let fallas = 0;
 for (const [modo, vars] of [
   ["claro", claro],
@@ -137,6 +164,15 @@ for (const [modo, vars] of [
     if (!ok) fallas++;
     console.log(`  ${ok ? "ok   " : "FALLA"} ${r.toFixed(2).padStart(5)}:1  ${t.padEnd(26)} sobre ${f}`);
   }
+}
+
+console.log("\nOnboarding (oscuro, sobre tinta profunda)");
+for (const [t, f] of paresOnboarding) {
+  const abajo = fondo(f, oscuro);
+  const r = contraste(texto(t, abajo, oscuro), abajo);
+  const ok = r >= MINIMO;
+  if (!ok) fallas++;
+  console.log(`  ${ok ? "ok   " : "FALLA"} ${r.toFixed(2).padStart(5)}:1  ${t.padEnd(26)} sobre ${f}`);
 }
 
 console.log(fallas === 0 ? `\nTodos los pares cumplen ${MINIMO}:1.` : `\n${fallas} par(es) por debajo de ${MINIMO}:1.`);
