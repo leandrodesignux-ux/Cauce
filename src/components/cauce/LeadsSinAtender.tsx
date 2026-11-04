@@ -1,6 +1,9 @@
 "use client";
 
+import { Check } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useDatos } from "@/components/Proveedores";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +19,7 @@ import { useSesion } from "@/lib/stores";
 import { SeccionHome } from "./SeccionHome";
 
 const FILAS = 4;
+const FilaAnimada = motion.create(TableRow);
 const ETIQUETA_BANDA = { alto: "Alto", medio: "Medio", bajo: "Bajo" } as const;
 const NOMBRE_SECTOR = Object.fromEntries(SECTORES.map((s) => [s.id, s.nombre]));
 
@@ -29,10 +33,24 @@ export function LeadsSinAtender() {
   const { rescatar, restaurar } = useSesion.getState();
   const destino = nombreEtapa(fugas.find((f) => f.id === FUGA_MODELO_PERDIDA)!.hacia);
   const filas = pendientes.slice(0, FILAS);
+  const reducir = useReducedMotion() ?? false;
+  // Rescate en dos tiempos (como en Rescate): la fila se pinta azul con "Rescatado" y a los 450 ms sale.
+  const [saliendo, setSaliendo] = useState<Set<string>>(() => new Set());
 
   const alRescatar = (id: string, nombre: string) => {
     const siguiente = filas[filas.findIndex((l) => l.id === id) + 1]?.id ?? pendientes[FILAS]?.id;
-    rescatar([id]);
+    if (reducir) rescatar([id]);
+    else {
+      setSaliendo((s) => new Set(s).add(id));
+      window.setTimeout(() => {
+        rescatar([id]);
+        setSaliendo((s) => {
+          const m = new Set(s);
+          m.delete(id);
+          return m;
+        });
+      }, 450);
+    }
     // Un aviso por vez: el nuevo reemplaza al anterior y reinicia los 5 s.
     toast.dismiss();
     toast(`${nombre} rescatado: vuelve al recorrido en ${destino}.`, {
@@ -74,11 +92,17 @@ export function LeadsSinAtender() {
             </TableRow>
           </TableHeader>
           <TableBody>
+            <AnimatePresence initial={false}>
             {filas.map((l) => {
               const dias = diasSinActividad(l);
               const b = banda(l.score);
               return (
-                <TableRow key={l.id} className="max-md:grid max-md:grid-cols-[1fr_auto] max-md:items-center max-md:gap-x-3 max-md:gap-y-2 max-md:px-4 max-md:py-3">
+                <FilaAnimada
+                  key={l.id}
+                  layout={!reducir}
+                  exit={{ opacity: 0, transition: { duration: reducir ? 0 : 0.3, ease: [0.4, 0, 0.2, 1] } }}
+                  className={`max-md:grid max-md:grid-cols-[1fr_auto] max-md:items-center max-md:gap-x-3 max-md:gap-y-2 max-md:px-4 max-md:py-3 ${saliendo.has(l.id) ? "bg-azul-suave hover:bg-azul-suave" : ""}`}
+                >
                   <TableRowHead className="font-medium whitespace-nowrap max-md:p-0 md:py-3 md:pl-5">{l.nombre}</TableRowHead>
                   <TableCell className="max-md:p-0 max-md:text-right md:py-3">
                     <Badge variant={b}>
@@ -94,13 +118,21 @@ export function LeadsSinAtender() {
                     {NOMBRE_SECTOR[l.sector]} · {l.estado}
                   </TableCell>
                   <TableCell className="max-md:p-0 max-md:text-right md:py-3 md:pr-5 md:text-right">
-                    <Button variant="coral" size="sm" data-rescatar={l.id} aria-label={`Rescatar a ${l.nombre}`} onClick={() => alRescatar(l.id, l.nombre)}>
-                      Rescatar
-                    </Button>
+                    {saliendo.has(l.id) ? (
+                      <span className="inline-flex h-7.5 items-center gap-1.5 text-sm font-medium text-azul-texto">
+                        <Check className="size-4" aria-hidden />
+                        Rescatado
+                      </span>
+                    ) : (
+                      <Button variant="coral" size="sm" data-rescatar={l.id} aria-label={`Rescatar a ${l.nombre}`} onClick={() => alRescatar(l.id, l.nombre)}>
+                        Rescatar
+                      </Button>
+                    )}
                   </TableCell>
-                </TableRow>
+                </FilaAnimada>
               );
             })}
+            </AnimatePresence>
           </TableBody>
         </Table>
       )}

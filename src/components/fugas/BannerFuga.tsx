@@ -1,5 +1,6 @@
 "use client";
 
+import { CifraAnimada } from "@/components/CifraAnimada";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { nombreEtapa } from "@/config/etapas";
@@ -55,7 +56,9 @@ export function BannerFuga({
     <div className="grid gap-6 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-6 shadow-tarjeta md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:gap-10">
       <div className="flex flex-col items-start gap-1">
         <p className="text-sm text-tinta-2">Valor estimado</p>
-        <p className="cifra text-2xl font-semibold md:text-3xl">{formatearUsd(valorUsd)}</p>
+        <p className="cifra text-2xl font-semibold md:text-3xl">
+          <CifraAnimada valor={valorUsd} formato={formatearUsd} />
+        </p>
         <p className="text-sm text-tinta-2">
           <span className="cifra">{formatearEntero(volumen)}</span> {esModelo ? "sin atender" : "perdidos"} en 30 días · {nombreEtapa(fuga.desde)} →{" "}
           {nombreEtapa(fuga.hacia)}
@@ -131,7 +134,7 @@ function BarraFiltro<T extends string>({
               aria-label={`${s.nombre}: ${formatearEntero(conteo[s.id])} pendientes. ${activo === s.id ? "Quitar filtro" : "Filtrar"}.`}
               onClick={() => onAlternar(s.id)}
               style={{ flexGrow: conteo[s.id] / Math.max(1, total) }}
-              className="group/seg flex h-full min-w-3 basis-0 items-center rounded-control outline-none focus-visible:ring-2 focus-visible:ring-activo"
+              className="group/seg flex h-full min-w-3 basis-0 items-center rounded-control outline-none focus-visible:ring-2 focus-visible:ring-activo motion-safe:transition-[flex-grow] motion-safe:duration-(--duracion-media) motion-safe:ease-salida"
             >
               <span
                 className={`h-3 w-full rounded-[3px] ${s.color} motion-safe:transition-[opacity,scale] motion-safe:duration-(--duracion-rapida) group-hover/seg:scale-y-[1.33] group-aria-pressed/seg:scale-y-[1.33] ${

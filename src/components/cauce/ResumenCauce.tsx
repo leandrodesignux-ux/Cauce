@@ -1,5 +1,6 @@
 "use client";
 
+import { Bump } from "@/components/Bump";
 import { IconoCirculo } from "@/components/ui/icono-circulo";
 import { ArrowRight, Droplets, FlaskConical, UserCheck, type LucideIcon } from "lucide-react";
 import Link from "next/link";
@@ -30,7 +31,10 @@ export function ResumenCauce({ journey }: { journey: Journey }) {
         En {fugas} {fugas === 1 ? "fuga" : "fugas"}
       </Cifra>
       <Cifra href={`/fugas?poza=${FUGA_MODELO_PERDIDA}`} Icono={UserCheck} tono="azul" etiqueta="Leads por rescatar" valor={formatearEntero(Math.round(porRescatar))}>
-        <span className="cifra">{formatearEntero(rescatadosHoy)}</span> rescatados hoy
+        <Bump clave={rescatadosHoy}>
+          <span className="cifra">{formatearEntero(rescatadosHoy)}</span>
+        </Bump>{" "}
+        rescatados hoy
       </Cifra>
       <Cifra href="/experimentos" Icono={FlaskConical} tono="azul" etiqueta="Experimentos activos" valor={formatearEntero(activos)}>
         En curso o en lectura, de {experimentos.length}

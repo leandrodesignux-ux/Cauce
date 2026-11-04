@@ -2,7 +2,7 @@
 
 import { EncabezadoVista } from "@/components/shell/EncabezadoVista";
 import { Calculator, Inbox, SearchX } from "lucide-react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { useDatos } from "@/components/Proveedores";
@@ -29,10 +29,13 @@ import { formatearEntero } from "@/lib/formato";
 import { type LeadFeed, banda, diasSinActividad, distribucionLeads, rangoAntiguedad } from "@/lib/leads";
 import { POR_PAGINA, numerosDePagina, paginar } from "@/lib/paginacion";
 import { periodoDesdePreset, valorEnRiesgoPorPoza } from "@/lib/selectors";
-import { useSesion } from "@/lib/stores";
+import { Bump } from "@/components/Bump";
+import { esSimulado } from "@/lib/demoVivo";
+import { useDemoVivo, useSesion } from "@/lib/stores";
 import { BannerFuga } from "./BannerFuga";
 import { LeadFeedItem, type Accion, type EstadoLead } from "./LeadFeedItem";
 import { LossModel } from "./LossModel";
+import { type Token, TokensRescate, centroDe } from "./TokensRescate";
 import { type Bandeja, useFiltrosFugas } from "./useFiltrosFugas";
 
 const BANDEJAS: { id: Bandeja; nombre: string }[] = [
@@ -42,8 +45,13 @@ const BANDEJAS: { id: Bandeja; nombre: string }[] = [
 ];
 const ESTADO_DE_BANDEJA: Record<Bandeja, EstadoLead> = { pendientes: "pendiente", rescatados: "rescatado", descartados: "descartado" };
 const BANDEJA_DE_ESTADO: Record<EstadoLead, Bandeja> = { pendiente: "pendientes", rescatado: "rescatados", descartado: "descartados" };
+const SIN_LEADS: LeadFeed[] = [];
+/** Rescatar: la fila muestra "Rescatado" 450 ms antes de colapsar; descartar, 250 ms. Selección múltiple: 40 ms entre filas. */
+const DEMORA = { rescatar: 450, descartar: 250 } as const;
+const ESCALONADO = 40;
+const DURACION_NUEVO = 10_000;
 
-export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
+export function VistaFugas({ leads: reales }: { leads: LeadFeed[] }) {
   const { flujo, fugas, experimentos, ultimaSemana } = useDatos();
   const { filtros, actualizar } = useFiltrosFugas(
     useMemo(() => fugas.map((f) => f.id), [fugas]),
@@ -52,11 +60,47 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
   const rescatados = useSesion((s) => s.rescatados);
   const descartados = useSesion((s) => s.descartados);
   const { rescatar, descartar, restaurar } = useSesion.getState();
+  const reducir = useReducedMotion() ?? false;
+  // Demo en vivo: los leads simulados se suman a los reales.
+  const extra = useDemoVivo((s) => (s.activo ? s.estado.leadsExtra : SIN_LEADS));
+  const leads = useMemo(() => (extra.length ? [...reales, ...extra] : reales), [reales, extra]);
+  const [saliendo, setSaliendo] = useState<Map<string, "rescatar" | "descartar">>(() => new Map());
+  const pendientesDeSalir = useRef(new Map<string, number>());
+  const [tokens, setTokens] = useState<Token[]>([]);
+  const [bumps, setBumps] = useState({ rescatados: 0, descartados: 0 });
 
   const [seleccion, setSeleccion] = useState<Set<string>>(new Set());
   const [enfocado, setEnfocado] = useState<string | null>(null);
-  const [ultimaAccion, setUltimaAccion] = useState<Accion>("rescatar");
   const ancla = useRef<string | null>(null);
+
+  const [previos, setPrevios] = useState(leads);
+  const [nuevos, setNuevos] = useState<Set<string>>(() => new Set());
+  const [noVistos, setNoVistos] = useState<Set<string>>(() => new Set());
+  if (previos !== leads) {
+    const antes = new Set(previos.map((l) => l.id));
+    const agregados = leads.filter((l) => !antes.has(l.id) && esSimulado(l.id)).map((l) => l.id);
+    setPrevios(leads);
+    if (agregados.length) {
+      setNuevos((n) => new Set([...n, ...agregados]));
+      if (filtros.pagina !== 1) setNoVistos((n) => new Set([...n, ...agregados]));
+    }
+  }
+  if (filtros.pagina === 1 && noVistos.size > 0) setNoVistos(new Set());
+  const programados = useRef(new Set<string>());
+  useEffect(() => {
+    for (const id of nuevos) {
+      if (programados.current.has(id)) continue;
+      programados.current.add(id);
+      window.setTimeout(() => {
+        programados.current.delete(id);
+        setNuevos((n) => {
+          const m = new Set(n);
+          m.delete(id);
+          return m;
+        });
+      }, DURACION_NUEVO);
+    }
+  }, [nuevos]);
 
   const estadoDe = useCallback(
     (id: string): EstadoLead => (rescatados[id] ? "rescatado" : descartados[id] ? "descartado" : "pendiente"),
@@ -81,8 +125,17 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
       enBandeja
         .filter((l) => !filtros.banda || banda(l.score) === filtros.banda)
         .filter((l) => !filtros.antiguedad || rangoAntiguedad(diasSinActividad(l)) === filtros.antiguedad)
-        .sort((a, b) => b.score - a.score || diasSinActividad(a) - diasSinActividad(b)),
-    [enBandeja, filtros.banda, filtros.antiguedad],
+        // Fuera de la página 1, los leads nuevos de la demo esperan: la lista no se mueve.
+        .filter((l) => !noVistos.has(l.id))
+        // Los simulados (los más nuevos primero) van arriba; el resto, por score.
+        .sort(
+          (a, b) =>
+            Number(esSimulado(b.id)) - Number(esSimulado(a.id)) ||
+            (esSimulado(a.id) ? b.creadoEl.localeCompare(a.creadoEl) : 0) ||
+            b.score - a.score ||
+            diasSinActividad(a) - diasSinActividad(b),
+        ),
+    [enBandeja, filtros.banda, filtros.antiguedad, noVistos],
   );
 
   // Página actual (10 por página), acotada: si una acción vacía la última página, se ve la anterior.
@@ -129,10 +182,43 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
       if (ids.length === 0) return;
       const ultimoIndice = Math.max(...ids.map((id) => visibles.findIndex((l) => l.id === id)));
       const siguiente = visibles.slice(ultimoIndice + 1).find((l) => !ids.includes(l.id)) ?? [...visibles].reverse().find((l) => !ids.includes(l.id));
-      setUltimaAccion(accion);
-      if (accion === "rescatar") rescatar(ids);
-      if (accion === "descartar") descartar(ids);
+      const deshacer = () => {
+        for (const id of ids) {
+          window.clearTimeout(pendientesDeSalir.current.get(id));
+          pendientesDeSalir.current.delete(id);
+        }
+        setSaliendo((m) => new Map([...m].filter(([id]) => !ids.includes(id))));
+        restaurar(ids);
+      };
       if (accion === "restaurar") restaurar(ids);
+      else if (reducir) {
+        if (accion === "rescatar") rescatar(ids);
+        else descartar(ids);
+      } else {
+        // 1) la fila muestra el resultado; 2) colapsa; 3) en rescates, un "+1" vuela al conteo de Rescatados.
+        setSaliendo((m) => new Map([...m, ...ids.map((id) => [id, accion] as const)]));
+        ids.forEach((id, i) => {
+          const t = window.setTimeout(() => {
+            pendientesDeSalir.current.delete(id);
+            if (accion === "rescatar") {
+              const desde = centroDe(document.querySelector(`[data-lead="${id}"]`));
+              const hasta = centroDe(document.querySelector('[data-conteo="rescatados"]'));
+              if (desde && hasta) setTokens((ts) => [...ts, { id: `${id}-${Date.now()}`, desde, hasta }]);
+              else setBumps((b) => ({ ...b, rescatados: b.rescatados + 1 }));
+              rescatar([id]);
+            } else {
+              descartar([id]);
+              setBumps((b) => ({ ...b, descartados: b.descartados + 1 }));
+            }
+            setSaliendo((m) => {
+              const copia = new Map(m);
+              copia.delete(id);
+              return copia;
+            });
+          }, DEMORA[accion] + i * ESCALONADO);
+          pendientesDeSalir.current.set(id, t);
+        });
+      }
       setSeleccion(new Set());
       const n = ids.length;
       const plural = n === 1 ? "" : "s";
@@ -146,11 +232,11 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
       toast.dismiss();
       toast(mensaje, {
         duration: 5000,
-        action: accion === "restaurar" ? undefined : { label: "Deshacer", onClick: () => restaurar(ids) },
+        action: accion === "restaurar" ? undefined : { label: "Deshacer", onClick: deshacer },
       });
       enfocar(siguiente?.id);
     },
-    [visibles, rescatar, descartar, restaurar, poza.hacia, enfocar],
+    [visibles, rescatar, descartar, restaurar, poza.hacia, enfocar, reducir],
   );
 
   const alternarSeleccion = useCallback(
@@ -281,7 +367,11 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                     {BANDEJAS.map((b) => (
                       <ToggleGroupItem key={b.id} value={b.id} className="flex-1 gap-1.5 px-2 sm:flex-none sm:px-4">
                         {b.nombre}
-                        <span className="cifra text-xs opacity-80">{conteoBandeja[b.id]}</span>
+                        <Bump clave={b.id === "rescatados" ? bumps.rescatados : b.id === "descartados" ? bumps.descartados : 0}>
+                          <span data-conteo={b.id} className="cifra text-xs opacity-80">
+                            {conteoBandeja[b.id]}
+                          </span>
+                        </Bump>
                       </ToggleGroupItem>
                     ))}
                   </ToggleGroup>
@@ -309,8 +399,20 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                   </Vacio>
                 ) : (
                   <div className="relative mt-2 flex flex-col gap-4">
+                    {noVistos.size > 0 && filtros.pagina !== 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNoVistos(new Set());
+                          irAPagina(1);
+                        }}
+                        className="sticky top-3 z-10 self-center rounded-full bg-activo px-4 py-1.5 text-sm font-medium text-sobre-activo shadow-flotante"
+                      >
+                        <span className="cifra">{noVistos.size}</span> {noVistos.size === 1 ? "lead nuevo" : "leads nuevos"} · Ver
+                      </button>
+                    )}
                     <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? causaVisible(poza)}`} className="overflow-hidden rounded-tarjeta border border-tarjeta-borde bg-tarjeta shadow-tarjeta">
-                      <AnimatePresence initial={false} custom={ultimaAccion}>
+                      <AnimatePresence initial={false} custom={reducir}>
                         {enPagina.map((l) => (
                           <LeadFeedItem
                             key={l.id}
@@ -321,6 +423,8 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                             onSeleccionar={(rango) => alternarSeleccion(l.id, rango)}
                             onAccion={(accion) => aplicar(accion, [l.id])}
                             onEnfocar={() => setEnfocado(l.id)}
+                            transicion={saliendo.get(l.id)}
+                            nuevo={nuevos.has(l.id) && filtros.pagina === 1}
                           />
                         ))}
                       </AnimatePresence>
@@ -387,6 +491,13 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
       </section>
 
       <SiguientePaso desde="/fugas" />
+      <TokensRescate
+        tokens={tokens}
+        onLlegar={(id) => {
+          setTokens((ts) => ts.filter((t) => t.id !== id));
+          setBumps((b) => ({ ...b, rescatados: b.rescatados + 1 }));
+        }}
+      />
     </div>
   );
 }

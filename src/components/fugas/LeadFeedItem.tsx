@@ -1,6 +1,6 @@
 "use client";
 
-import { AlarmClock, ChevronDown, MessageSquare, Phone, RotateCcw, Undo2, Eye } from "lucide-react";
+import { AlarmClock, Check, ChevronDown, MessageSquare, Phone, RotateCcw, Undo2, Eye } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { type KeyboardEvent, type MouseEvent, useId, useState } from "react";
 import { SECTORES } from "@/config/dimensiones";
@@ -14,11 +14,17 @@ export type Accion = "rescatar" | "descartar" | "restaurar";
 
 const CURVA_SALIDA = [0.23, 1, 0.32, 1] as const;
 
+const CURVA_ESTADO = [0.4, 0, 0.2, 1] as const;
+
+/** Al salir de la lista, la fila colapsa (altura y opacidad a 0, 300 ms); con reduced motion, al instante. */
 const SALIDA = {
-  oculto: (accion: Accion) => ({
+  oculto: (reducir: boolean) => ({
+    height: 0,
     opacity: 0,
-    x: accion === "rescatar" ? -56 : accion === "descartar" ? 56 : 0,
-    transition: { duration: 0.2, ease: CURVA_SALIDA },
+    paddingTop: 0,
+    paddingBottom: 0,
+    borderBottomWidth: 0,
+    transition: { duration: reducir ? 0 : 0.3, ease: CURVA_ESTADO },
   }),
 };
 
@@ -34,6 +40,8 @@ export function LeadFeedItem({
   onSeleccionar,
   onAccion,
   onEnfocar,
+  transicion,
+  nuevo = false,
 }: {
   lead: LeadFeed;
   estado: EstadoLead;
@@ -42,6 +50,10 @@ export function LeadFeedItem({
   onSeleccionar: (rango: boolean) => void;
   onAccion: (accion: Accion) => void;
   onEnfocar: () => void;
+  /** Rescate o descarte en curso: la fila muestra el resultado antes de colapsar. */
+  transicion?: "rescatar" | "descartar";
+  /** Lead nuevo de la demo en vivo: entra desde arriba con fondo azul suave y el badge "Nuevo". */
+  nuevo?: boolean;
 }) {
   const dias = diasSinActividad(lead);
   const sector = SECTORES.find((s) => s.id === lead.sector)!.nombre;
@@ -61,7 +73,15 @@ export function LeadFeedItem({
     <motion.li
       layout="position"
       variants={SALIDA}
+      custom={reducir}
       exit="oculto"
+      initial={nuevo && !reducir ? { opacity: 0, y: -12 } : false}
+      animate={
+        transicion === "descartar" && !reducir
+          ? { opacity: 0.4, x: -24, y: 0, filter: "grayscale(1)" }
+          : { opacity: 1, x: 0, y: 0, filter: "grayscale(0)" }
+      }
+      transition={{ duration: 0.25, ease: CURVA_ESTADO }}
       tabIndex={0}
       data-lead={lead.id}
       aria-label={`${lead.nombre}, ${sector}, ${lead.estado}, score ${lead.score}${lead.urgencia ? ", urgente" : ""}, ${textoAntiguedad(dias).toLowerCase()}`}
@@ -72,10 +92,13 @@ export function LeadFeedItem({
       onClick={(e: MouseEvent) => {
         if (e.shiftKey) onSeleccionar(true);
       }}
-      className={`group grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-linea px-4 py-5 outline-none last:border-0 focus-visible:bg-neutro-suave focus-visible:shadow-[inset_3px_0_0_var(--activo)] md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:px-5 ${
-        seleccionado ? "bg-azul-suave" : destacado ? "bg-coral-suave" : ""
+      className={`group relative isolate grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 overflow-hidden border-b border-linea px-4 py-5 outline-none last:border-0 focus-visible:bg-neutro-suave focus-visible:shadow-[inset_3px_0_0_var(--activo)] md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:px-5 ${
+        transicion === "rescatar" || seleccionado ? "bg-azul-suave" : destacado ? "bg-coral-suave" : ""
       }`}
     >
+      {nuevo && !reducir && (
+        <motion.span aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-azul-suave" initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 1.5, ease: "easeOut" }} />
+      )}
       <input
         type="checkbox"
         aria-label={`Seleccionar a ${lead.nombre}`}
@@ -91,6 +114,7 @@ export function LeadFeedItem({
       <div className="flex min-w-0 flex-col gap-1.5">
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
           <span className="font-medium">{lead.nombre}</span>
+          {nuevo && <Badge variant="en_curso">Nuevo</Badge>}
           <ScoreBadge score={lead.score} />
           <Badge variant={dias > DIAS_VENTANA_CRITICA ? "atrasado" : "critica"}>{textoAntiguedad(dias)}</Badge>
           <span className="text-sm text-tinta-2">
@@ -106,12 +130,17 @@ export function LeadFeedItem({
       </div>
 
       <div className="col-start-2 flex flex-wrap items-center gap-2 md:col-start-auto md:justify-end">
-        {estado === "pendiente" ? (
+        {transicion === "rescatar" ? (
+          <span className="inline-flex h-7.5 items-center gap-1.5 text-sm font-medium text-azul-texto">
+            <Check className="size-4" aria-hidden />
+            Rescatado
+          </span>
+        ) : estado === "pendiente" ? (
           <>
-            <Button variant="coral" size="sm" onClick={() => onAccion("rescatar")}>
+            <Button variant="coral" size="sm" onClick={() => onAccion("rescatar")} disabled={transicion !== undefined}>
               Rescatar lead
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => onAccion("descartar")}>
+            <Button variant="ghost" size="sm" onClick={() => onAccion("descartar")} disabled={transicion !== undefined}>
               Descartar
             </Button>
           </>
