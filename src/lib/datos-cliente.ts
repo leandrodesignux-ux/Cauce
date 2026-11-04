@@ -1,5 +1,6 @@
 import { CANALES, ESTADOS, SECTORES } from "@/config/dimensiones";
 import { ORDEN_ETAPAS } from "@/config/etapas";
+import type { BancoDemo } from "./demoVivo";
 import type { Estado, EtapaId, Experimento, Fuga, Sector, SemanaEtapa } from "./tipos";
 
 /** Lo mínimo de cada lead para buscarlo desde ⌘K. */
@@ -24,6 +25,8 @@ export type DatosCompactos = {
   fugas: Fuga[];
   experimentos: Experimento[];
   leads: LeadIndice[];
+  /** Mensajes, zonas y prefijos de teléfono reales para combinar en los leads del modo demo en vivo. */
+  banco: BancoDemo;
 };
 
 const ANCHO_FILA = 4 + ORDEN_ETAPAS.length;

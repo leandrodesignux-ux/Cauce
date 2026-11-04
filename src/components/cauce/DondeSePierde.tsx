@@ -4,6 +4,7 @@ import { IconoCirculo } from "@/components/ui/icono-circulo";
 import { Droplet } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
+import { CifraAnimada } from "@/components/CifraAnimada";
 import { ChipEstado } from "@/components/experimentos/comunes";
 import { useDatos } from "@/components/Proveedores";
 import { Button } from "@/components/ui/button";
@@ -66,9 +67,11 @@ export function DondeSePierde({ journey, resaltado, onResaltar }: { journey: Jou
             </div>
             <div className="flex items-end justify-between gap-3">
               <p>
-                <span className="cifra block text-xl font-semibold">{formatearUsdCorto(t.valor)}</span>
+                <span className="cifra block text-xl font-semibold">
+                  <CifraAnimada valor={t.valor} formato={formatearUsdCorto} />
+                </span>
                 <span className="cifra block text-xs text-tinta-2">
-                  {formatearEntero(t.volumen)} {t.id === FUGA_MODELO_PERDIDA ? "sin atender" : "perdidos"}
+                  <CifraAnimada valor={t.volumen} formato={(v) => formatearEntero(Math.round(v))} /> {t.id === FUGA_MODELO_PERDIDA ? "sin atender" : "perdidos"}
                 </span>
               </p>
               <Button asChild variant={t.id === FUGA_MODELO_PERDIDA ? "coral" : "outline"}>

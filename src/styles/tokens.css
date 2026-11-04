@@ -58,6 +58,8 @@
   --neutro-suave: color-mix(in srgb, var(--tinta-2) 10%, transparent);
 
   /* Activo: índigo profundo en claro, lavanda clara en oscuro (pestaña, segmento y nav activos, foco, aviso) */
+  /* Punto del modo demo en vivo (solo el punto: nunca texto) */
+  --vivo: #22a15a;
   --activo: #34436b;
   --sobre-activo: #ffffff;
   /* Texto sobre -relleno (azul y coral): blanco en ambos modos */
@@ -197,6 +199,7 @@
   --coral-relleno: #c2453c;
   --coral-suave: #3d2a2d;
 
+  --vivo: #3fc77a;
   --activo: #cfd8f3;
   --sobre-activo: #0f1014;
 

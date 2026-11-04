@@ -188,6 +188,25 @@ export function efectoObservadoPp(
   return despues !== null && antes !== null ? (despues - antes) * 100 : null;
 }
 
+/**
+ * Efecto observado (pp) a partir de una serie semanal ya calculada (valores en %): promedio de la ventana de
+ * lectura (semanas ventana[0]..ventana[1] después del despliegue) menos el de las 6 semanas previas al
+ * despliegue. null si falta alguno de los dos tramos. Sirve también para series con semanas simuladas.
+ */
+export function observadoDeSerie(
+  serie: readonly { semana: string; valor: number | null }[],
+  despliegue: string,
+  ventana: readonly [number, number],
+): number | null {
+  const media = (desde: string, hasta: string) => {
+    const valores = serie.filter((p) => p.semana >= desde && p.semana <= hasta && p.valor !== null).map((p) => p.valor!);
+    return valores.length ? valores.reduce((a, b) => a + b, 0) / valores.length : null;
+  };
+  const despues = media(sumarDias(despliegue, 7 * ventana[0]), sumarDias(despliegue, 7 * ventana[1]));
+  const antes = media(sumarDias(despliegue, -42), sumarDias(despliegue, -7));
+  return despues !== null && antes !== null ? despues - antes : null;
+}
+
 // ---------------------------------------------------------------------------
 // Modelo de pérdida (/fugas)
 
@@ -263,4 +282,21 @@ export function simularMejora(volumen: Volumen, t: Transicion, puntos: number, c
   const probabilidad = probabilidadCierreDesde(volumen, t.hacia);
   const cierres = extra * probabilidad;
   return { extra, probabilidad, cierres, usd: Math.round(cierres * comisionUsd) };
+}
+
+export type RendimientoTransicion = {
+  transicion: Transicion;
+  tasaActual: number | null;
+  /** Personas extra que pasan la transición por cada punto (pp) de mejora. */
+  personasPorPunto: number;
+  /** Cierres extra en el período por cada punto de mejora. */
+  cierresPorPunto: number;
+};
+
+/** Cuánto rinde mejorar 1 punto cada una de las 7 transiciones (personas y cierres extra), con simularMejora. */
+export function rendimientoPorPunto(volumen: Volumen): RendimientoTransicion[] {
+  return TRANSICIONES.map((t) => {
+    const r = simularMejora(volumen, t, 1, 0);
+    return { transicion: t, tasaActual: tasaTransicion(volumen, t), personasPorPunto: r.extra, cierresPorPunto: r.cierres };
+  });
 }

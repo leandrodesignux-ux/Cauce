@@ -8,7 +8,9 @@ import fugasJson from "@/data/fugas.json";
 import leadsJson from "@/data/leads.json";
 import { CANALES, ESTADOS, SECTORES } from "@/config/dimensiones";
 import { ORDEN_ETAPAS } from "@/config/etapas";
+import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
 import type { DatosCompactos, LeadIndice } from "./datos-cliente";
+import type { BancoDemo } from "./demoVivo";
 import type { Experimento, Fuga, Lead, SemanaEtapa } from "./tipos";
 
 const flujo = flujoJson as unknown as SemanaEtapa[];
@@ -44,5 +46,13 @@ export function datosCompactos(): DatosCompactos {
     ...(l.fugaId ? { fugaId: l.fugaId } : {}),
   }));
 
-  return { semanas, filas, fugas, experimentos, leads: indiceLeads };
+  // Banco para el modo demo en vivo: valores que ya existen en los leads reales.
+  const enFuga = leads.filter((l) => l.fugaId === FUGA_MODELO_PERDIDA);
+  const banco: BancoDemo = {
+    mensajes: [...new Set(enFuga.map((l) => l.ultimoMensaje))].slice(0, 40),
+    zonas: [...new Set(leads.map((l) => l.senales.zona).filter((z): z is string => !!z))],
+    telefonos: Object.fromEntries(leads.map((l) => [l.estado, l.telefono.split(" ••••")[0]])),
+  };
+
+  return { semanas, filas, fugas, experimentos, leads: indiceLeads, banco };
 }
