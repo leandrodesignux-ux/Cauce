@@ -1,5 +1,8 @@
 "use client";
 
+import { useDatos } from "@/components/Proveedores";
+import { progresoLectura } from "@/lib/experimentos";
+import { useDemoVivo } from "@/lib/stores";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, TableRowHead } from "@/components/ui/table";
 import { nombreEtapa } from "@/config/etapas";
 import { finLectura, inicioLectura } from "@/lib/experimentos";
@@ -122,9 +125,30 @@ export function TarjetasExperimentos({
               </span>
             </span>
             <PredichoObservado e={e} compacto />
+            <LecturaEnVivo e={e} />
           </button>
         </li>
       ))}
     </ul>
+  );
+}
+
+/** Demo en vivo: cuánto de la ventana de lectura cubren las semanas simuladas (solo en curso o en lectura). */
+function LecturaEnVivo({ e }: { e: Experimento }) {
+  const { ultimaSemana } = useDatos();
+  const puntos = useDemoVivo((s) => (s.activo ? (s.estado.puntosExperimento[e.id]?.length ?? 0) : null));
+  if (puntos === null || (e.estado !== "en_curso" && e.estado !== "leyendo")) return null;
+  const progreso = progresoLectura(e, puntos, ultimaSemana);
+  const pct = Math.round(progreso * 100);
+  return (
+    <span className="flex items-center gap-2 text-xs text-tinta-2">
+      <span aria-hidden className="relative h-1 flex-1 overflow-hidden rounded-full bg-azul-suave">
+        <span
+          className="absolute inset-y-0 left-0 w-full origin-left rounded-full bg-azul-relleno motion-safe:transition-transform motion-safe:duration-(--duracion-media) motion-safe:ease-salida"
+          style={{ transform: `scaleX(${progreso})` }}
+        />
+      </span>
+      <span className="cifra whitespace-nowrap">Lectura {pct} % (simulada)</span>
+    </span>
   );
 }

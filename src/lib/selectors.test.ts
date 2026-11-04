@@ -4,6 +4,7 @@ import { PARAMETROS_PERDIDA_INICIALES as P } from "../config/modelo";
 import {
   avanceDeEtapa,
   modeloPerdida,
+  observadoDeSerie,
   periodoAnterior,
   periodoDesdePreset,
   simularMejora,
@@ -92,5 +93,32 @@ describe("recorrido: fases, avance y simulador", () => {
     // Visita → Cierre: llegar a Cierre ya es cerrar.
     assert.equal(simularMejora(v, { desde: "visita", hacia: "cierre" }, 10, 1_000).cierres, 4);
     assert.equal(simularMejora(v, { desde: "visita", hacia: "cierre" }, 0, 1_000).usd, 0);
+  });
+});
+
+describe("observadoDeSerie", () => {
+  // Despliegue el 2026-09-07; ventana de lectura semanas 2 a 3 (21 sep y 28 sep).
+  const serie = [
+    { semana: "2026-07-27", valor: 10 },
+    { semana: "2026-08-03", valor: 10 },
+    { semana: "2026-08-10", valor: 12 },
+    { semana: "2026-08-17", valor: 10 },
+    { semana: "2026-08-24", valor: 8 },
+    { semana: "2026-08-31", valor: 10 },
+    { semana: "2026-09-07", valor: 50 },
+    { semana: "2026-09-14", valor: 50 },
+    { semana: "2026-09-21", valor: 11 },
+    { semana: "2026-09-28", valor: 13 },
+  ];
+  it("ventana de lectura menos las 6 semanas previas al despliegue", () => {
+    // Previas: 27 jul – 31 ago (promedio 10); ventana: 21 y 28 sep (promedio 12).
+    assert.equal(observadoDeSerie(serie, "2026-09-07", [2, 3]), 2);
+  });
+  it("null si la ventana todavía no tiene semanas", () => {
+    assert.equal(observadoDeSerie(serie, "2026-09-07", [6, 8]), null);
+  });
+  it("ignora semanas sin dato", () => {
+    const conHueco = serie.map((p) => (p.semana === "2026-09-28" ? { ...p, valor: null } : p));
+    assert.equal(observadoDeSerie(conHueco, "2026-09-07", [2, 3]), 1);
   });
 });

@@ -188,6 +188,25 @@ export function efectoObservadoPp(
   return despues !== null && antes !== null ? (despues - antes) * 100 : null;
 }
 
+/**
+ * Efecto observado (pp) a partir de una serie semanal ya calculada (valores en %): promedio de la ventana de
+ * lectura (semanas ventana[0]..ventana[1] después del despliegue) menos el de las 6 semanas previas al
+ * despliegue. null si falta alguno de los dos tramos. Sirve también para series con semanas simuladas.
+ */
+export function observadoDeSerie(
+  serie: readonly { semana: string; valor: number | null }[],
+  despliegue: string,
+  ventana: readonly [number, number],
+): number | null {
+  const media = (desde: string, hasta: string) => {
+    const valores = serie.filter((p) => p.semana >= desde && p.semana <= hasta && p.valor !== null).map((p) => p.valor!);
+    return valores.length ? valores.reduce((a, b) => a + b, 0) / valores.length : null;
+  };
+  const despues = media(sumarDias(despliegue, 7 * ventana[0]), sumarDias(despliegue, 7 * ventana[1]));
+  const antes = media(sumarDias(despliegue, -42), sumarDias(despliegue, -7));
+  return despues !== null && antes !== null ? despues - antes : null;
+}
+
 // ---------------------------------------------------------------------------
 // Modelo de pérdida (/fugas)
 
