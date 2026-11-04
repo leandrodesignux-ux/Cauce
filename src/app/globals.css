@@ -125,6 +125,11 @@
   --radius-tarjeta: var(--radio-tarjeta);
   --radius-panel: var(--radio-panel);
 
+  /* Curvas de motion como utilidades: ease-salida, ease-movimiento, ease-cajon. */
+  --ease-salida: var(--curva-salida);
+  --ease-movimiento: var(--curva-movimiento);
+  --ease-cajon: var(--curva-cajon);
+
   /* Breakpoints del board (los de la referencia): tres columnas desde 1181 px, experimentos al costado desde 1500 px. */
   --breakpoint-tablero: 73.8125rem;
   --breakpoint-ancho: 93.75rem;

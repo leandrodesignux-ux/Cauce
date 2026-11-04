@@ -214,7 +214,7 @@ function FilaEtapa({
       data-resalta={resaltada}
       onClick={onAbrir}
       aria-label={`${NOMBRE[etapa.id]}: ${formatearEntero(etapa.volumen)}. ${esCierre ? "Del total" : "Avanza"} ${textoTasa(etapa)}. Ver el detalle de la etapa.`}
-      className="relative grid min-h-14 w-full grid-cols-[40px_minmax(0,1fr)_auto] items-center gap-3 rounded-fila border border-transparent p-2.5 text-left motion-safe:transition-colors hover:bg-azul-suave data-[resalta=true]:border-azul data-[resalta=true]:bg-azul-suave md:grid-cols-[44px_minmax(0,1fr)_auto_32px]"
+      className="relative grid min-h-14 w-full grid-cols-[40px_minmax(0,1fr)_auto] items-center gap-3 rounded-fila border border-transparent p-2.5 text-left motion-safe:transition-[background-color,border-color,transform] motion-safe:duration-(--duracion-presion) motion-safe:ease-salida motion-safe:active:scale-[0.99] hover:bg-azul-suave data-[resalta=true]:border-azul data-[resalta=true]:bg-azul-suave md:grid-cols-[44px_minmax(0,1fr)_auto_32px]"
     >
       <span data-icono-etapa={etapa.id} className="relative z-[1] grid size-10 place-items-center rounded-full bg-azul-suave text-azul-texto md:size-11">
         <Icono className="size-5" strokeWidth={1.7} aria-hidden />
@@ -254,7 +254,7 @@ function FilaFuga({ poza, desde }: { poza: PozaJourney; desde: EtapaId }) {
   );
   const monto = <span className="cifra text-right text-sm font-semibold">{formatearMxnCompacto(poza.valor)}</span>;
   const clases =
-    "relative ml-3 grid w-[calc(100%-0.75rem)] grid-cols-[32px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 rounded-fila px-2.5 py-2 text-left motion-safe:transition-colors hover:bg-coral-suave md:ml-[22px] md:w-[calc(100%-22px)] md:grid-cols-[36px_minmax(0,1fr)_auto_auto]";
+    "relative ml-3 grid w-[calc(100%-0.75rem)] grid-cols-[32px_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 rounded-fila px-2.5 py-2 text-left motion-safe:transition-[background-color,transform] motion-safe:duration-(--duracion-presion) motion-safe:ease-salida motion-safe:active:scale-[0.99] hover:bg-coral-suave md:ml-[22px] md:w-[calc(100%-22px)] md:grid-cols-[36px_minmax(0,1fr)_auto_auto]";
 
   if (fantasmas) {
     return (
@@ -296,7 +296,7 @@ function TileExperimento({ e, activo, onResaltar }: { e: Experimento; activo: bo
       onFocus={() => onResaltar(true)}
       onBlur={() => onResaltar(false)}
       aria-label={`${e.nombre}. ${ETIQUETA_ESTADO_EXPERIMENTO[e.estado]}, ${formatearPp(e.prediccionPp)} esperado en ${NOMBRE[e.transicion.desde]}. Ver el detalle.`}
-      className="group/tile flex min-h-24 w-full flex-col justify-between gap-2.5 rounded-tile border border-tarjeta-borde bg-tarjeta px-4 py-3.5 text-left shadow-tarjeta outline-2 outline-offset-0 outline-transparent motion-safe:transition-[outline-color] hover:outline-azul data-[activo=true]:border-activo data-[activo=true]:bg-activo data-[activo=true]:text-sobre-activo"
+      className="group/tile flex min-h-24 w-full flex-col justify-between gap-2.5 rounded-tile border border-tarjeta-borde bg-tarjeta px-4 py-3.5 text-left shadow-tarjeta outline-2 outline-offset-0 outline-transparent motion-safe:transition-[outline-color,transform] motion-safe:duration-(--duracion-presion) motion-safe:ease-salida motion-safe:active:scale-[0.97] hover:outline-azul data-[activo=true]:border-activo data-[activo=true]:bg-activo data-[activo=true]:text-sobre-activo"
     >
       <span className="text-sm leading-snug font-medium">{e.nombre}</span>
       <span className="text-xs text-tinta-2 group-data-[activo=true]/tile:text-sobre-activo/85">

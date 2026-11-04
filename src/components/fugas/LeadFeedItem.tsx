@@ -17,7 +17,7 @@ const SALIDA = {
   oculto: (accion: Accion) => ({
     opacity: 0,
     x: accion === "rescatar" ? -56 : accion === "descartar" ? 56 : 0,
-    transition: { duration: 0.22, ease: "easeIn" as const },
+    transition: { duration: 0.2, ease: [0.23, 1, 0.32, 1] as const },
   }),
 };
 
