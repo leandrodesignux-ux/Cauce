@@ -63,17 +63,7 @@ describe("valorEnRiesgoPorPoza", () => {
 });
 
 describe("recorrido: fases, avance y simulador", () => {
-  const v = {
-    ...volumenVacio(),
-    descubrimiento: 1000,
-    exploracion: 600,
-    evaluacion: 300,
-    contacto: 120,
-    calificacion: 100,
-    asignacion: 80,
-    visita: 40,
-    cierre: 10,
-  };
+  const v = { ...volumenVacio(), descubrimiento: 1000, exploracion: 600, evaluacion: 300, contacto: 120, calificacion: 100, asignacion: 80, visita: 40, cierre: 10 };
   const fases = [
     { etapas: ["descubrimiento", "exploracion", "evaluacion"] as const },
     { etapas: ["contacto", "calificacion", "asignacion"] as const },

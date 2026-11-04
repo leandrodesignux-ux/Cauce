@@ -15,24 +15,8 @@ type Clave = keyof ParametrosPerdida;
 const CONTROLES: { clave: Clave; nombre: string; origen: string; min: number; max: number; paso: number; formato: (v: number) => string }[] = [
   { clave: "fantasmas", nombre: "Leads sin atender", origen: P.fantasmas.origen, min: 0, max: 2000, paso: 1, formato: (v) => formatearEntero(v) },
   { clave: "leadACita", nombre: "Lead → cita", origen: P.leadACita.origen, min: 0, max: 1, paso: 0.01, formato: (v) => `${Math.round(v * 100)} %` },
-  {
-    clave: "citaAContrato",
-    nombre: "Cita → contrato",
-    origen: P.citaAContrato.origen,
-    min: 0,
-    max: 0.5,
-    paso: 0.005,
-    formato: (v) => `${(v * 100).toFixed(1).replace(".0", "")} %`,
-  },
-  {
-    clave: "comisionUsd",
-    nombre: "Comisión promedio",
-    origen: P.comisionUsd.origen,
-    min: 300,
-    max: 3300,
-    paso: 50,
-    formato: (v) => `$${formatearEntero(v)}`,
-  },
+  { clave: "citaAContrato", nombre: "Cita → contrato", origen: P.citaAContrato.origen, min: 0, max: 0.5, paso: 0.005, formato: (v) => `${(v * 100).toFixed(1).replace(".0", "")} %` },
+  { clave: "comisionUsd", nombre: "Comisión promedio", origen: P.comisionUsd.origen, min: 300, max: 3300, paso: 50, formato: (v) => `$${formatearEntero(v)}` },
 ];
 
 const decimales = (v: number, d: number) => v.toLocaleString("es-MX", { maximumFractionDigits: d });
@@ -91,12 +75,7 @@ export function LossModel() {
         <ol className="flex flex-col gap-3 text-sm" aria-label="Fórmula paso a paso">
           <Paso operador="" valor={formatearEntero(p.fantasmas)} detalle="leads sin atender" />
           <Paso operador="×" valor={CONTROLES[1].formato(p.leadACita)} detalle="lead → cita" resultado={`${decimales(r.citas, 1)} citas`} />
-          <Paso
-            operador="×"
-            valor={CONTROLES[2].formato(p.citaAContrato)}
-            detalle="cita → contrato"
-            resultado={`${decimales(r.contratos, 2)} contratos`}
-          />
+          <Paso operador="×" valor={CONTROLES[2].formato(p.citaAContrato)} detalle="cita → contrato" resultado={`${decimales(r.contratos, 2)} contratos`} />
           <Paso operador="×" valor={`$${formatearEntero(p.comisionUsd)}`} detalle="comisión promedio" />
         </ol>
         <div className="border-t border-linea pt-4">

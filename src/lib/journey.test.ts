@@ -2,28 +2,10 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { ORDEN_ETAPAS } from "../config/etapas";
 import { formatearPuntos, formatearUsd, formatearUsdCorto } from "./formato";
-import {
-  csvJourney,
-  experimentoDestacado,
-  experimentosActivos,
-  experimentosDelBoard,
-  iniciales,
-  pendientesDePoza,
-  transicionConMasValor,
-  valorPorFase,
-  type Journey,
-  type PozaJourney,
-} from "./journey";
+import { csvJourney, experimentoDestacado, experimentosActivos, experimentosDelBoard, iniciales, pendientesDePoza, transicionConMasValor, valorPorFase, type Journey, type PozaJourney } from "./journey";
 import type { EtapaId, Experimento } from "./tipos";
 
-const poza = (id: string, desde: EtapaId, valor: number): PozaJourney => ({
-  id,
-  desde: ORDEN_ETAPAS.indexOf(desde),
-  volumen: 1,
-  valor,
-  nombre: id,
-  causa: id,
-});
+const poza = (id: string, desde: EtapaId, valor: number): PozaJourney => ({ id, desde: ORDEN_ETAPAS.indexOf(desde), volumen: 1, valor, nombre: id, causa: id });
 
 describe("valorPorFase", () => {
   it("agrupa el valor por la fase de la etapa de origen y calcula la proporción", () => {

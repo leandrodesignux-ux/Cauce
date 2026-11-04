@@ -11,46 +11,10 @@ import { PESO_CANAL, PESO_ESTADO, PESO_SECTOR } from "./parametros";
 // Bancos demo
 
 const NOMBRES = [
-  "María",
-  "José",
-  "Ana",
-  "Luis",
-  "Laura",
-  "Carlos",
-  "Sofía",
-  "Jorge",
-  "Daniela",
-  "Miguel",
-  "Fernanda",
-  "Ricardo",
-  "Valeria",
-  "Alejandro",
-  "Gabriela",
-  "Eduardo",
-  "Paola",
-  "Roberto",
-  "Andrea",
-  "Fernando",
-  "Mariana",
-  "Javier",
-  "Lucía",
-  "Sergio",
-  "Camila",
-  "Raúl",
-  "Patricia",
-  "Héctor",
-  "Ximena",
-  "Arturo",
-  "Regina",
-  "Manuel",
-  "Natalia",
-  "Óscar",
-  "Renata",
-  "Diego",
-  "Elena",
-  "Rodrigo",
-  "Isabel",
-  "Pablo",
+  "María", "José", "Ana", "Luis", "Laura", "Carlos", "Sofía", "Jorge", "Daniela", "Miguel",
+  "Fernanda", "Ricardo", "Valeria", "Alejandro", "Gabriela", "Eduardo", "Paola", "Roberto", "Andrea", "Fernando",
+  "Mariana", "Javier", "Lucía", "Sergio", "Camila", "Raúl", "Patricia", "Héctor", "Ximena", "Arturo",
+  "Regina", "Manuel", "Natalia", "Óscar", "Renata", "Diego", "Elena", "Rodrigo", "Isabel", "Pablo",
 ];
 
 const INICIALES = "ABCDEFGHIJLMNOPRSTVZ";
@@ -87,17 +51,7 @@ const ESPACIO: Record<Sector, { m2: [number, number]; precioM2: number }> = {
 
 // Banco de mensajes: apertura + núcleo por sector + cierre (14 núcleos por sector, 84 en total), para que el feed
 // no repita frases a simple vista. {m2}, {zona} y {presupuesto} solo se usan si el lead declaró esa señal.
-const APERTURAS = [
-  "",
-  "",
-  "Hola, ",
-  "Buen día, ",
-  "Buenas tardes, ",
-  "Qué tal, ",
-  "Hola, los contacto por el anuncio. ",
-  "Saludos. ",
-  "Hola, buenas noches. ",
-];
+const APERTURAS = ["", "", "Hola, ", "Buen día, ", "Buenas tardes, ", "Qué tal, ", "Hola, los contacto por el anuncio. ", "Saludos. ", "Hola, buenas noches. "];
 const CIERRES = ["", "", "", " Gracias.", " Quedo pendiente.", " ¿Me pueden llamar?", " Saludos.", " Gracias por la información."];
 
 const MENSAJES: Record<Sector, readonly string[]> = {
@@ -274,7 +228,9 @@ function elegirMensaje(rng: Rng, sector: Sector, s: SenalesLead, presupuestoText
 /** n instantes ordenados entre inicio y fin, con el primero en inicio y el último en fin. */
 function instantes(rng: Rng, inicio: number, fin: number, n: number): number[] {
   if (n === 1) return [fin];
-  const medios = Array.from({ length: n - 2 }, () => inicio + Math.round((rng() * (fin - inicio)) / 60_000) * 60_000).sort((a, b) => a - b);
+  const medios = Array.from({ length: n - 2 }, () => inicio + Math.round((rng() * (fin - inicio)) / 60_000) * 60_000).sort(
+    (a, b) => a - b,
+  );
   return [inicio, ...medios, fin];
 }
 
@@ -295,19 +251,18 @@ export function generarLeads(rng: Rng, fugas: readonly Fuga[]): Lead[] {
       const { m2, precioM2 } = ESPACIO[sector];
       const superficie = bernoulli(rng, grupo.prob.superficie) ? Math.round(entero(rng, m2[0], m2[1]) / 10) * 10 || 10 : null;
       const zona = bernoulli(rng, grupo.prob.zona) ? elegir(rng, ZONAS[estado]) : null;
-      const presupuesto = bernoulli(rng, grupo.prob.presupuesto) ? Math.round(((superficie ?? (m2[0] + m2[1]) / 2) * precioM2) / 1000) * 1000 : null;
-      const senales: SenalesLead = {
-        superficieM2: superficie,
-        zona,
-        presupuestoUsd: presupuesto === null ? null : Math.round(aUsd(presupuesto) / 10) * 10,
-      };
+      const presupuesto = bernoulli(rng, grupo.prob.presupuesto)
+        ? Math.round(((superficie ?? (m2[0] + m2[1]) / 2) * precioM2) / 1000) * 1000
+        : null;
+      const senales: SenalesLead = { superficieM2: superficie, zona, presupuestoUsd: presupuesto === null ? null : Math.round(aUsd(presupuesto) / 10) * 10 };
       const urgencia = bernoulli(rng, grupo.prob.urgencia);
       const mensajes = entero(rng, grupo.mensajes[0], grupo.mensajes[1]);
       const espaciosVistos = entero(rng, 1, 8);
       const score = calcularScore(rng, senales, urgencia, mensajes, espaciosVistos);
 
       // Antigüedad: un tercio de los fantasmas cae dentro de la ventana crítica de 3 días.
-      const dias = grupo.fugaId === "fantasmas" && bernoulli(rng, 0.35) ? entero(rng, 0, 2) : entero(rng, 0, grupo.fugaId ? 60 : 30);
+      const dias =
+        grupo.fugaId === "fantasmas" && bernoulli(rng, 0.35) ? entero(rng, 0, 2) : entero(rng, 0, grupo.fugaId ? 60 : 30);
       const ultima = CORTE_MS - dias * DIA_MS + entero(rng, 8, 20) * HORA_MS + entero(rng, 0, 59) * 60_000;
       const creado = ultima - entero(rng, 1, 21) * DIA_MS - entero(rng, 0, 12) * HORA_MS;
 
