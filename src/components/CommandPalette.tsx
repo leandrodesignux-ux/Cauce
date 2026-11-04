@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightLeft, CircleDot, CircleHelp, Droplet, FlaskConical, RotateCcw, Table2, User } from "lucide-react";
+import { ArrowRightLeft, CircleDot, CircleHelp, Droplet, FlaskConical, Pause, Radio, RotateCcw, Table2, User } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, type ReactNode } from "react";
 import { create } from "zustand";
@@ -12,6 +12,7 @@ import { VISTAS } from "./shell/vistas";
 import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
 import { causaVisible } from "@/config/pozas";
 import { useOnboarding } from "./onboarding/Onboarding";
+import { useDemoVivo } from "@/lib/stores";
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
 
 type Paleta = { abierta: boolean; abrir: () => void; fijar: (abierta: boolean) => void };
@@ -27,6 +28,8 @@ export function CommandPalette() {
   const router = useRouter();
   const pathname = usePathname();
   const { fugas, experimentos, leads } = useDatos();
+  const demoActiva = useDemoVivo((s) => s.activo);
+  const demoPausada = useDemoVivo((s) => s.pausado);
   const { estado, actualizar, restablecer } = useFiltros();
   const abierta = usePaleta((s) => s.abierta);
   const fijar = usePaleta((s) => s.fijar);
@@ -136,6 +139,24 @@ export function CommandPalette() {
                 {causaVisible(f)}
               </Item>
             ))}
+          </Grupo>
+
+          <Grupo titulo="Demo en vivo">
+            {(!demoActiva || demoPausada) && (
+              <Item valor="iniciar demo en vivo" palabras={["demo", "en vivo", "simular", "reanudar"]} onSelect={() => (fijar(false), useDemoVivo.getState().iniciar())} icono={<Radio />}>
+                {demoActiva ? "Reanudar demo" : "Iniciar demo en vivo"}
+              </Item>
+            )}
+            {demoActiva && !demoPausada && (
+              <Item valor="pausar demo" palabras={["demo", "pausa"]} onSelect={() => (fijar(false), useDemoVivo.getState().pausar())} icono={<Pause />}>
+                Pausar demo
+              </Item>
+            )}
+            {demoActiva && (
+              <Item valor="reiniciar demo" palabras={["demo", "reiniciar", "volver a empezar"]} onSelect={() => (fijar(false), useDemoVivo.getState().reiniciar())} icono={<RotateCcw />}>
+                Reiniciar demo
+              </Item>
+            )}
           </Grupo>
 
           <Grupo titulo="Ayuda">

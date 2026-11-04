@@ -26,6 +26,7 @@
   --color-tarjeta: var(--tarjeta);
   --color-tarjeta-borde: var(--tarjeta-borde);
   --color-tinta: var(--tinta);
+  --color-vivo: var(--vivo);
   --color-tinta-cuerpo: var(--tinta-cuerpo);
   --color-tinta-2: var(--tinta-2);
   --color-tenue: var(--tenue);
@@ -292,6 +293,44 @@
 @keyframes aviso-vaciar {
   to {
     transform: scaleX(0);
+  }
+}
+
+/* Modo demo en vivo: punto verde con un pulso suave (la única animación en loop: indica estado). Quieto en pausa y con reduced motion. */
+.punto-vivo {
+  position: relative;
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--vivo);
+}
+.punto-vivo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--vivo);
+  animation: pulso-vivo 2s var(--curva-salida) infinite;
+}
+.punto-vivo[data-pausado]::after {
+  animation: none;
+  opacity: 0;
+}
+@keyframes pulso-vivo {
+  from {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .punto-vivo::after {
+    animation: none;
+    opacity: 0;
   }
 }
 

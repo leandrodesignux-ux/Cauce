@@ -1,19 +1,21 @@
 "use client";
 
-import { ArrowRightLeft, CircleHelp, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowRightLeft, CircleHelp, Radio, Search, SlidersHorizontal } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { usePaleta } from "@/components/CommandPalette";
 import { useOnboarding } from "@/components/onboarding/Onboarding";
 import { HojaFiltros } from "@/components/filtros/FilterBar";
+import { useDemoVivo } from "@/lib/stores";
 import { useAccionesCauce } from "./acciones";
 import { BotonRedondo } from "./BotonRedondo";
 import { SwitchTema } from "./SwitchTema";
 
-/** Móvil (<768 px): barra flotante compacta y centrada (material denso) con buscar, filtros y comparar (en el home), cómo funciona y tema. */
+/** Móvil (<768 px): barra flotante compacta y centrada (material denso) con buscar, filtros y comparar (en el home), demo en vivo, cómo funciona y tema. */
 export function BarraMovil() {
   const pathname = usePathname();
   const abrirPaleta = usePaleta((s) => s.abrir);
   const abrirOnboarding = useOnboarding((s) => s.abrir);
+  const demoActiva = useDemoVivo((s) => s.activo);
   return (
     <nav
       aria-label="Acciones rápidas"
@@ -23,6 +25,15 @@ export function BarraMovil() {
         <Search aria-hidden />
       </BotonRedondo>
       {pathname === "/" && <AccionesHome />}
+      <BotonRedondo
+        etiqueta={demoActiva ? "Apagar demo en vivo" : "Activar demo en vivo"}
+        lado="top"
+        superficie="cromo"
+        presionado={demoActiva}
+        onClick={() => (demoActiva ? useDemoVivo.getState().detener() : useDemoVivo.getState().iniciar())}
+      >
+        <Radio aria-hidden />
+      </BotonRedondo>
       <BotonRedondo etiqueta="Cómo funciona" lado="top" superficie="cromo" onClick={abrirOnboarding}>
         <CircleHelp aria-hidden />
       </BotonRedondo>

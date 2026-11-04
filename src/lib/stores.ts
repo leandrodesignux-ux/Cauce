@@ -6,6 +6,7 @@
 import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { type DatosDemo, type EstadoDemo, avanzar, esSimulado, estadoInicial } from "./demoVivo";
 
 type Marcas = Record<string, string>; // leadId → fecha ISO de la acción
 
@@ -73,6 +74,44 @@ export function useRescatadosHoy(): number {
   return useSesion((s) => Object.values(s.rescatados).filter(esHoy).length);
 }
 
+type DemoVivo = {
+  activo: boolean;
+  pausado: boolean;
+  estado: EstadoDemo;
+  /** Activa la demo (o la reanuda si estaba en pausa). */
+  iniciar: () => void;
+  pausar: () => void;
+  /** Vuelve al tick 0 y limpia las marcas de rescate/descarte de los leads simulados. */
+  reiniciar: () => void;
+  /** Apaga la demo: las cifras vuelven a las de los datos reales. */
+  detener: () => void;
+  /** Un tick del motor (lo llama el intervalo de Proveedores). */
+  avanzar: (datos: DatosDemo, ahora: number) => void;
+};
+
+function limpiarMarcasSimuladas() {
+  const { rescatados, descartados, restaurar } = useSesion.getState();
+  const ids = [...Object.keys(rescatados), ...Object.keys(descartados)].filter(esSimulado);
+  if (ids.length) restaurar(ids);
+}
+
+/** Modo demo en vivo: no se persiste (cada carga empieza apagada salvo con ?demo=1). */
+export const useDemoVivo = create<DemoVivo>()((set) => ({
+  activo: false,
+  pausado: false,
+  estado: estadoInicial(),
+  iniciar: () => set({ activo: true, pausado: false }),
+  pausar: () => set({ pausado: true }),
+  reiniciar: () => {
+    limpiarMarcasSimuladas();
+    set({ estado: estadoInicial(), pausado: false });
+  },
+  detener: () => {
+    limpiarMarcasSimuladas();
+    set({ activo: false, pausado: false, estado: estadoInicial() });
+  },
+  avanzar: (datos, ahora) => set((s) => ({ estado: avanzar(s.estado, datos, ahora) })),
+}));
 
 export function rehidratarStores(): void {
   void useSesion.persist.rehydrate();
