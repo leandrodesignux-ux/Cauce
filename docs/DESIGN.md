@@ -73,7 +73,7 @@ El home es el **Recorrido**: un resumen de tres cifras, las 8 etapas agrupadas e
 | Sheet y drawer | 20 px en el borde visible | popover | `shadow-flotante` |
 | Avisos | 10 px | activo | `shadow-flotante` |
 
-Quedan redondos (`rounded-full`) solo los botones de ícono circulares, los puntos del onboarding, los avatares e íconos en círculo y el checkbox.
+Quedan redondos (`rounded-full`) solo los botones de ícono circulares, los puntos del escenario del onboarding, los avatares e íconos en círculo y el checkbox.
 
 `vidrio` es una utilidad propia (`globals.css`): `--panel` + borde `--panel-borde` + `backdrop-filter: blur(var(--vidrio))`.
 
@@ -163,6 +163,16 @@ Nada se anima solo. Las animaciones responden a acciones y se deciden por frecue
 | Barras del desglose | `transform: translateX`, nunca `width` | `--duracion-media`, `ease-salida` |
 | Hover de filas, tiles y chips | Solo color | 150–160 ms |
 
+**Onboarding** (la única pieza con coreografía; recetas de motionsites-web-builder adaptadas a `motion/react`):
+
+- Entradas blur-rise: opacidad, `y` 20 px y `blur(10px)` → reposo en 0.6–0.8 s con `--curva-entrada` `cubic-bezier(0.22, 1, 0.36, 1)`; los 8 nodos, escalonados 80 ms. El blur va solo en el HTML (nombres, cifras, chip y textos), nunca como filtro SVG.
+- Título del acto palabra por palabra (100 ms de escalonado) y el texto 0.2 s después. Contadores con count-up ease-out cúbico de 1.2 s.
+- Cambio entre actos: los actos cambian el estado del mismo SVG. Volver o saltar reconstruye el estado final en 0.4 s con `--curva-estado` `cubic-bezier(0.4, 0, 0.2, 1)`, sin replay.
+- Puntos: un solo loop en el frameloop de motion, que mueve hasta 36 círculos (20 en móvil) sobre posiciones precalculadas con `getPointAtLength`; `will-change` solo en esa capa. Se detienen con la pausa, con la pestaña oculta y al cerrar. Es el único movimiento ambiental: sin pulsos ni fondos animados. La fuga de mayor valor recibe un realce único en el acto 2.
+- El autoplay lo lleva la animación CSS `llenar-segmento` del segmento activo (`animation-play-state` sigue a la pausa).
+- Ver mi recorrido: el diálogo sale con escala 0.96, `blur(8px)` y opacidad 0 en 0.35 s mientras `<main id="contenido">` recibe `data-entrada` y se asienta (escala 1.02 → 1, `blur(6px)` → 0, `--duracion-entrada` 600 ms).
+- Con reduced motion: sin autoplay (sin botón de pausa), sin puntos en movimiento ni count-up. Cada acto muestra su composición final, el cambio es un crossfade de 150 ms y la salida no lleva blur ni escala.
+
 **Curvas propias** (las de CSS son débiles): `--curva-salida` `cubic-bezier(0.23, 1, 0.32, 1)` para entrar y salir, `--curva-movimiento` `cubic-bezier(0.77, 0, 0.175, 1)` para lo que se mueve en pantalla y `--curva-cajon` `cubic-bezier(0.32, 0.72, 0, 1)` para sheets. En Tailwind: `ease-salida`, `ease-movimiento`, `ease-cajon`. Nunca `ease-in` en UI, nunca `transition-all` (siempre propiedades explícitas) y solo se animan `transform` y `opacity` (más colores en hovers).
 
 Con `prefers-reduced-motion` todo aparece en su estado final: la escala al presionar va bajo `motion-safe:`, y una regla global anula las animaciones de tw-animate-css, vaul y sonner, y la barra de tiempo del aviso. Los hovers ya van detrás de `@media (hover: hover)` (lo hace Tailwind v4), así que no quedan pegados en pantallas táctiles.
@@ -185,7 +195,7 @@ Las primitivas salen de shadcn/ui (`src/components/ui`); colores y variantes se 
 | Paso a simular | `Select` | 7 transiciones. |
 | Páginas del feed de Rescate | `Pagination` | Botones (la URL cambia sin navegar), copy en español. |
 | Paleta ⌘K | `CommandDialog` | Incluye "Ver cómo funciona". |
-| Onboarding (3 slides) | `Dialog` sin botón de cierre propio | "Saltar" arriba a la derecha; ← → y Esc; fade/slide de 180 ms con `ease-salida`, inmediato con reduced motion. Ilustración con íconos lucide sobre una tarjeta `muted`. |
+| Onboarding (escenario de 3 actos) | `Dialog` sin botón de cierre propio (`sm:max-w-5xl`, alto `min(680px, 88dvh)`; pantalla completa en móvil), fondo `bg-tarjeta` con borde `tarjeta-borde` | Arriba, progreso de 3 segmentos + Saltar; al centro, `EscenaCauce` (SVG 16:9; vertical en móvil); abajo, título y texto del acto, y Anterior · Pausar · Siguiente / Ver mi recorrido. Copy y duraciones en `onboarding/actos.ts`; autoplay y pausa en `useActos`. |
 | Modelo de pérdida en Rescate | `Dialog` ("Cómo se calcula") | Sliders y fórmula sin cambios. |
 | Vista de experimentos | `ToggleGroup variant="segmentado"`: Tarjetas · Tabla · Timeline | Tarjetas por defecto. |
 | Parámetros numéricos | `Slider` | |
