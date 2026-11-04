@@ -10,7 +10,7 @@ import { finLectura, inicioLectura, situacion } from "@/lib/experimentos";
 import { formatearPp, formatearSemana } from "@/lib/formato";
 import { serieSemanal } from "@/lib/selectors";
 import type { Experimento } from "@/lib/tipos";
-import { ChipEstado, PredichoObservado, tonoObservado } from "./comunes";
+import { PredichoObservado, tonoObservado } from "./comunes";
 
 // El relleno de la barra usa el tono base (no la variante de texto).
 const RELLENO_OBSERVADO: Record<string, string> = {
@@ -20,7 +20,10 @@ const RELLENO_OBSERVADO: Record<string, string> = {
   "text-tinta-2": "bg-tenue",
 };
 
-/** Detalle de un experimento: hipótesis, métrica, resultado y la transición en el recorrido. */
+/**
+ * Detalle de un experimento, en dos columnas desde md: hipótesis y métrica | resultado y transición.
+ * El estado va en el encabezado del panel; acá queda la situación (en curso, en lectura, cuándo termina).
+ */
 export function DetalleExperimento({ e }: { e: Experimento }) {
   const { flujo, semanas, ultimaSemana } = useDatos();
   const s = situacion(e);
@@ -38,64 +41,69 @@ export function DetalleExperimento({ e }: { e: Experimento }) {
   const escala = Math.max(Math.abs(e.prediccionPp), Math.abs(e.observadoPp ?? 0), 0.1);
 
   return (
-    <div className="flex flex-col gap-7">
-      <div className="flex flex-wrap items-center gap-2">
-        <ChipEstado estado={e.estado} />
-        <span className="text-sm text-tinta-2">{s.texto}</span>
+    <div className="grid gap-7 md:grid-cols-2 md:gap-10">
+      <div className="flex min-w-0 flex-col gap-7">
+        <p className="text-sm text-tinta-2">{s.texto}</p>
+
+        <Bloque titulo="Hipótesis">
+          <p className="text-base">{e.hipotesis}</p>
+          <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
+            <dt className="text-tinta-2">Palanca</dt>
+            <dd>{e.palanca}</dd>
+            <dt className="text-tinta-2">Métrica</dt>
+            <dd>{e.metrica}</dd>
+            <dt className="text-tinta-2">Despliegue</dt>
+            <dd className="cifra">{formatearSemana(e.despliegue)}</dd>
+            <dt className="text-tinta-2">Lectura</dt>
+            <dd className="cifra">
+              {formatearSemana(inicioLectura(e))} – {formatearSemana(finLectura(e))}{" "}
+              <span className="font-sans text-tinta-2">
+                (semanas {e.ventanaSemanas[0]}–{e.ventanaSemanas[1]})
+              </span>
+            </dd>
+          </dl>
+        </Bloque>
       </div>
 
-      <Bloque titulo="Hipótesis">
-        <p className="text-base">{e.hipotesis}</p>
-        <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
-          <dt className="text-tinta-2">Palanca</dt>
-          <dd>{e.palanca}</dd>
-          <dt className="text-tinta-2">Métrica</dt>
-          <dd>{e.metrica}</dd>
-          <dt className="text-tinta-2">Despliegue</dt>
-          <dd className="cifra">{formatearSemana(e.despliegue)}</dd>
-          <dt className="text-tinta-2">Lectura</dt>
-          <dd className="cifra">
-            {formatearSemana(inicioLectura(e))} – {formatearSemana(finLectura(e))}{" "}
-            <span className="font-sans text-tinta-2">
-              (semanas {e.ventanaSemanas[0]}–{e.ventanaSemanas[1]})
-            </span>
-          </dd>
-        </dl>
-      </Bloque>
+      <div className="flex min-w-0 flex-col gap-7">
+        <Bloque titulo="Predicho vs. observado">
+          <div className="flex flex-col gap-3">
+            <Barra etiqueta="Predicho" valor={e.prediccionPp} escala={escala} clase="bg-linea-fuerte" texto={formatearPp(e.prediccionPp)} />
+            <Barra
+              etiqueta="Observado"
+              valor={e.observadoPp ?? 0}
+              escala={escala}
+              clase={e.observadoPp === undefined ? "bg-transparent" : RELLENO_OBSERVADO[tonoObservado(e)]}
+              texto={e.observadoPp === undefined ? "Sin lectura todavía" : formatearPp(e.observadoPp)}
+            />
+            <PredichoObservado e={e} compacto />
+            <p className="text-xs text-tinta-2">
+              Observado = conversión en la ventana de lectura menos la de las 6 semanas previas al despliegue, sobre todo el tráfico.
+            </p>
+          </div>
+        </Bloque>
 
-      <Bloque titulo="Predicho vs. observado">
-        <div className="flex flex-col gap-3">
-          <Barra etiqueta="Predicho" valor={e.prediccionPp} escala={escala} clase="bg-linea-fuerte" texto={formatearPp(e.prediccionPp)} />
-          <Barra
-            etiqueta="Observado"
-            valor={e.observadoPp ?? 0}
-            escala={escala}
-            clase={e.observadoPp === undefined ? "bg-transparent" : RELLENO_OBSERVADO[tonoObservado(e)]}
-            texto={e.observadoPp === undefined ? "Sin lectura todavía" : formatearPp(e.observadoPp)}
+        <Bloque titulo={`${nombreEtapa(e.transicion.desde)} → ${nombreEtapa(e.transicion.hacia)}`} nota="Conversión semanal, 26 semanas">
+          <TendenciaSemanal
+            puntos={serie}
+            formato={(v) => `${v.toFixed(1)} %`}
+            marcadores={serie.some((p) => p.semana === e.despliegue) ? [{ semana: e.despliegue, etiqueta: "Despliegue" }] : []}
+            franja={{
+              desde: inicioLectura(e),
+              hasta: finLectura(e),
+              etiqueta: "Lectura",
+            }}
+            descripcion={`Conversión semanal de ${nombreEtapa(e.transicion.desde)} a ${nombreEtapa(e.transicion.hacia)} en 26 semanas, con el despliegue y la ventana de lectura marcados`}
           />
-          <PredichoObservado e={e} compacto />
-          <p className="text-xs text-tinta-2">
-            Observado = conversión en la ventana de lectura menos la de las 6 semanas previas al despliegue, sobre todo el tráfico.
-          </p>
-        </div>
-      </Bloque>
-
-      <Bloque titulo={`${nombreEtapa(e.transicion.desde)} → ${nombreEtapa(e.transicion.hacia)}`} nota="Conversión semanal, 26 semanas">
-        <TendenciaSemanal
-          puntos={serie}
-          formato={(v) => `${v.toFixed(1)} %`}
-          marcadores={serie.some((p) => p.semana === e.despliegue) ? [{ semana: e.despliegue, etiqueta: "Despliegue" }] : []}
-          franja={{ desde: inicioLectura(e), hasta: finLectura(e), etiqueta: "Lectura" }}
-          descripcion={`Conversión semanal de ${nombreEtapa(e.transicion.desde)} a ${nombreEtapa(e.transicion.hacia)} en 26 semanas, con el despliegue y la ventana de lectura marcados`}
-        />
-        <Link
-          href={`/?transicion=${e.transicion.desde}-${e.transicion.hacia}`}
-          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-azul-texto hover:underline"
-        >
-          Ver la transición en el recorrido
-          <ArrowUpRight className="size-4" aria-hidden />
-        </Link>
-      </Bloque>
+          <Link
+            href={`/?transicion=${e.transicion.desde}-${e.transicion.hacia}`}
+            className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-azul-texto hover:underline"
+          >
+            Ver la transición en el recorrido
+            <ArrowUpRight className="size-4" aria-hidden />
+          </Link>
+        </Bloque>
+      </div>
     </div>
   );
 }

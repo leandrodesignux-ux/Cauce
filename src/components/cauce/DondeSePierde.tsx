@@ -18,15 +18,7 @@ import { type OnResaltar, type Resaltado, propsResaltar } from "./resaltado";
  * Hover o foco en una fuga resaltan sus etapas en el recorrido; con una etapa resaltada, las fugas de su
  * transición se marcan y el resto baja de opacidad.
  */
-export function DondeSePierde({
-  journey,
-  resaltado,
-  onResaltar,
-}: {
-  journey: Journey;
-  resaltado: Resaltado;
-  onResaltar: OnResaltar;
-}) {
+export function DondeSePierde({ journey, resaltado, onResaltar }: { journey: Journey; resaltado: Resaltado; onResaltar: OnResaltar }) {
   const { fugas, experimentos } = useDatos();
   const tarjetas = useMemo(
     () =>
@@ -38,8 +30,7 @@ export function DondeSePierde({
           return {
             ...p,
             fuga,
-            experimento:
-              experimentos.find((e) => e.id === fuga.experimentoId) ?? null,
+            experimento: experimentos.find((e) => e.id === fuga.experimentoId) ?? null,
           };
         }),
     [journey.pozas, fugas, experimentos],
@@ -48,8 +39,7 @@ export function DondeSePierde({
   return (
     <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {tarjetas.map((t) => {
-        const deEtapa =
-          resaltado?.origen === "etapa" ? resaltado.etapas[0] : null;
+        const deEtapa = resaltado?.origen === "etapa" ? resaltado.etapas[0] : null;
         const marcada = deEtapa !== null && t.fuga.desde === deEtapa;
         return (
           <li
@@ -73,30 +63,20 @@ export function DondeSePierde({
               <div className="min-w-0 flex-1">
                 <p className="font-medium">{t.nombre}</p>
                 <p className="text-xs text-tinta-2">
-                  Entre {nombreEtapa(t.fuga.desde)} y{" "}
-                  {nombreEtapa(t.fuga.hacia)}
+                  Entre {nombreEtapa(t.fuga.desde)} y {nombreEtapa(t.fuga.hacia)}
                 </p>
               </div>
               {t.experimento && <ChipEstado estado={t.experimento.estado} />}
             </div>
             <div className="flex items-end justify-between gap-3">
               <p>
-                <span className="cifra block text-xl font-semibold">
-                  {formatearMxnCorto(t.valor)}
-                </span>
+                <span className="cifra block text-xl font-semibold">{formatearMxnCorto(t.valor)}</span>
                 <span className="cifra block text-xs text-tinta-2">
-                  {formatearEntero(t.volumen)}{" "}
-                  {t.id === FUGA_MODELO_PERDIDA ? "sin atender" : "perdidos"}
+                  {formatearEntero(t.volumen)} {t.id === FUGA_MODELO_PERDIDA ? "sin atender" : "perdidos"}
                 </span>
               </p>
-              <Button
-                asChild
-                variant={t.id === FUGA_MODELO_PERDIDA ? "coral" : "outline"}
-              >
-                <Link
-                  href={`/fugas?poza=${t.id}`}
-                  aria-label={`Ver leads de ${t.nombre}`}
-                >
+              <Button asChild variant={t.id === FUGA_MODELO_PERDIDA ? "coral" : "outline"}>
+                <Link href={`/fugas?poza=${t.id}`} aria-label={`Ver leads de ${t.nombre}`}>
                   Ver leads
                 </Link>
               </Button>
