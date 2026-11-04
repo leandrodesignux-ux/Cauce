@@ -92,7 +92,8 @@ export function SimuladorMejora({
             <b className="cifra font-semibold text-azul-texto">{formatearPct(tasa === null ? null : Math.min(1, tasa + efectivos / 100))}</b>
           </p>
           <p className="text-tinta-2">
-            <span className="cifra font-semibold text-tinta-cuerpo">+{formatearEntero(Math.round(r.extra))}</span> personas más llegan a {nombreEtapa(t.hacia)}
+            {/* Con pocas personas, un decimal: así cuadra con los cierres (extra × probabilidad). */}
+            <span className="cifra font-semibold text-tinta-cuerpo">+{r.extra < 100 ? decimales(r.extra, 1) : formatearEntero(Math.round(r.extra))}</span> personas más llegan a {nombreEtapa(t.hacia)}
           </p>
         </div>
         <dl aria-live="polite" className="grid gap-4 sm:grid-cols-2">
