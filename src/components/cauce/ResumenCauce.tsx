@@ -2,28 +2,33 @@
 
 import { ArrowRight, Droplets, FlaskConical, UserCheck, type LucideIcon } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useReducedMotion } from "motion/react";
+import { type ReactNode, useMemo } from "react";
 import { useDatos } from "@/components/Proveedores";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
 import { useFantasmasPendientes } from "@/hooks/useFantasmasPendientes";
+import { useTween } from "@/hooks/useTween";
 import { formatearEntero, formatearMxnCorto } from "@/lib/formato";
 import { type Journey, experimentosActivos } from "@/lib/journey";
 import { useRescatadosHoy } from "@/lib/stores";
 
-/** Resumen del home: tres cifras clave, cada una lleva a la vista donde se actúa sobre ella. */
+/** Resumen del home: tres cifras clave, cada una lleva a la vista donde se actúa sobre ella. Al cambiar filtros, interpolan 300 ms. */
 export function ResumenCauce({ journey }: { journey: Journey }) {
   const { experimentos } = useDatos();
   const pendientes = useFantasmasPendientes().length;
   const rescatadosHoy = useRescatadosHoy();
   const activos = experimentosActivos(experimentos);
   const fugas = journey.pozas.filter((p) => p.valor > 0).length;
+  const reducir = useReducedMotion() ?? false;
+  const objetivo = useMemo(() => [journey.valorEnRiesgo, pendientes], [journey.valorEnRiesgo, pendientes]);
+  const [valor, porRescatar] = useTween(objetivo, 300, reducir);
 
   return (
     <section aria-label="Resumen" className="grid gap-3 sm:grid-cols-3">
-      <Cifra href="/fugas" Icono={Droplets} tono="coral" etiqueta="Valor en riesgo" valor={formatearMxnCorto(journey.valorEnRiesgo)}>
+      <Cifra href="/fugas" Icono={Droplets} tono="coral" etiqueta="Valor en riesgo" valor={formatearMxnCorto(Math.round(valor))}>
         En {fugas} {fugas === 1 ? "fuga" : "fugas"}
       </Cifra>
-      <Cifra href={`/fugas?poza=${FUGA_MODELO_PERDIDA}`} Icono={UserCheck} tono="azul" etiqueta="Leads por rescatar" valor={formatearEntero(pendientes)}>
+      <Cifra href={`/fugas?poza=${FUGA_MODELO_PERDIDA}`} Icono={UserCheck} tono="azul" etiqueta="Leads por rescatar" valor={formatearEntero(Math.round(porRescatar))}>
         <span className="cifra">{formatearEntero(rescatadosHoy)}</span> rescatados hoy
       </Cifra>
       <Cifra href="/experimentos" Icono={FlaskConical} tono="azul" etiqueta="Experimentos activos" valor={formatearEntero(activos)}>
@@ -51,7 +56,7 @@ function Cifra({
   return (
     <Link
       href={href}
-      className="group flex items-center gap-4 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta motion-safe:transition-[background-color,transform] motion-safe:duration-(--duracion-presion) motion-safe:ease-salida motion-safe:active:scale-[0.98] hover:bg-muted md:p-5"
+      className={`tarjeta-clicable group flex items-center gap-4 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta md:p-5 ${tono === "coral" ? "tarjeta-coral" : ""}`}
     >
       <span aria-hidden className={`grid size-11 shrink-0 place-items-center rounded-full ${tono === "azul" ? "bg-azul-suave text-azul-texto" : "bg-coral-suave text-coral-texto"}`}>
         <Icono className="size-5" strokeWidth={1.7} />

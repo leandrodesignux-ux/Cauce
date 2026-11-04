@@ -2,7 +2,7 @@
 
 import { FASES, ORDEN_ETAPAS, TRANSICIONES } from "../config/etapas";
 import { NOMBRE_CORTO_POZA, causaVisible } from "../config/pozas";
-import { type Filtros, periodoAnterior, tasaTransicion, valorEnRiesgoPorPoza, valorEnRiesgoTotal, volumenPorEtapa } from "./selectors";
+import { type Filtros, type Volumen, periodoAnterior, tasaTransicion, valorEnRiesgoPorPoza, valorEnRiesgoTotal, volumenPorEtapa } from "./selectors";
 import type { EstadoExperimento, EtapaId, Experimento, Fuga, SemanaEtapa } from "./tipos";
 
 export type EtapaJourney = {
@@ -138,4 +138,16 @@ export function csvJourney(journey: Journey, nombres: Record<EtapaId, string>): 
   filas.push(["Poza", "Etapa de origen", "Perdidos", "Valor estimado (MXN)"]);
   for (const p of journey.pozas) filas.push([p.causa, nombres[ORDEN_ETAPAS[p.desde]], p.volumen, p.valor]);
   return filas.map((f) => f.map(celda).join(",")).join("\n");
+}
+
+/** Volumen por etapa del período, reconstruido desde el journey (para los selectores de avance y simulación). */
+export function volumenDeJourney(journey: Journey): Volumen {
+  return Object.fromEntries(journey.etapas.map((e) => [e.id, e.volumen])) as Volumen;
+}
+
+/** Índice (en TRANSICIONES) de la transición con más valor en riesgo, sumando sus fugas. 0 si nada tiene valor. */
+export function transicionConMasValor(pozas: readonly PozaJourney[]): number {
+  const valor = TRANSICIONES.map((_, i) => pozas.filter((p) => p.desde === i).reduce((s, p) => s + p.valor, 0));
+  const max = Math.max(...valor);
+  return max > 0 ? valor.indexOf(max) : 0;
 }

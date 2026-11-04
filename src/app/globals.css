@@ -312,3 +312,44 @@
     display: none;
   }
 }
+
+/*
+ * Tarjeta clicable (etapas, fugas, experimentos, resumen, siguiente paso): un mismo hover y un mismo foco.
+ * Hover: sube 2 px, borde azul (coral con `tarjeta-coral`) y sombra flotante. Foco: anillo en --activo.
+ * Con `has-[...]` el foco también se ve cuando lo recibe un botón interno que cubre la tarjeta.
+ */
+@utility tarjeta-clicable {
+  --tarjeta-hover: var(--azul);
+  transition-property: translate, scale, border-color, box-shadow, background-color, opacity;
+  transition-duration: var(--duracion-presion);
+  transition-timing-function: var(--curva-salida);
+
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--tarjeta-hover);
+      box-shadow: var(--sombra-flotante);
+      translate: 0 -2px;
+    }
+  }
+  &:active {
+    scale: 0.98;
+  }
+  &:focus-visible,
+  &:has(:focus-visible) {
+    outline: 2px solid var(--activo);
+    outline-offset: 2px;
+    border-color: var(--tarjeta-hover);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: border-color, box-shadow, background-color, opacity;
+    &:hover,
+    &:active {
+      translate: none;
+      scale: none;
+    }
+  }
+}
+
+@utility tarjeta-coral {
+  --tarjeta-hover: var(--coral);
+}

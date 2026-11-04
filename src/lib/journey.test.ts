@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { ORDEN_ETAPAS } from "../config/etapas";
 import { formatearMxnCompacto, formatearPuntos } from "./formato";
-import { csvJourney, experimentoDestacado, experimentosActivos, experimentosDelBoard, iniciales, pendientesDePoza, valorPorFase, type Journey, type PozaJourney } from "./journey";
+import { csvJourney, experimentoDestacado, experimentosActivos, experimentosDelBoard, iniciales, pendientesDePoza, transicionConMasValor, valorPorFase, type Journey, type PozaJourney } from "./journey";
 import type { EtapaId, Experimento } from "./tipos";
 
 const poza = (id: string, desde: EtapaId, valor: number): PozaJourney => ({ id, desde: ORDEN_ETAPAS.indexOf(desde), volumen: 1, valor, nombre: id, causa: id });
@@ -95,5 +95,12 @@ describe("formatos del board", () => {
     const csv = csvJourney(journey, nombres);
     assert.match(csv, /^Etapa,Volumen/);
     assert.match(csv, /"Cancelada, sin aviso",visita,1,1000/);
+  });
+});
+
+describe("simulador del recorrido", () => {
+  it("elige la transición con más valor sumando sus fugas", () => {
+    assert.equal(transicionConMasValor([poza("a", "evaluacion", 300), poza("b", "evaluacion", 300), poza("c", "calificacion", 500)]), 2);
+    assert.equal(transicionConMasValor([poza("a", "evaluacion", 0)]), 0);
   });
 });

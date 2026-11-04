@@ -61,10 +61,10 @@ export function LeadsSinAtender() {
       {filas.length === 0 ? (
         <p className="px-1 py-6 text-sm text-tinta-2">No quedan leads sin atender. Los rescatados se pueden revisar en Rescate.</p>
       ) : (
-        <Table>
+        <Table marco>
           <TableHeader className="max-md:hidden">
             <TableRow>
-              <TableHead>Lead</TableHead>
+              <TableHead className="pl-5">Lead</TableHead>
               <TableHead>Intención</TableHead>
               <TableHead>Sin atención</TableHead>
               <TableHead>Busca</TableHead>
@@ -78,22 +78,22 @@ export function LeadsSinAtender() {
               const dias = diasSinActividad(l);
               const b = banda(l.score);
               return (
-                <TableRow key={l.id} className="max-md:grid max-md:grid-cols-[1fr_auto] max-md:items-center max-md:gap-x-3 max-md:gap-y-2 max-md:py-3">
-                  <TableRowHead className="font-medium whitespace-nowrap max-md:p-0">{l.nombre}</TableRowHead>
-                  <TableCell className="max-md:p-0 max-md:text-right">
+                <TableRow key={l.id} className="max-md:grid max-md:grid-cols-[1fr_auto] max-md:items-center max-md:gap-x-3 max-md:gap-y-2 max-md:px-4 max-md:py-3">
+                  <TableRowHead className="font-medium whitespace-nowrap max-md:p-0 md:py-3 md:pl-5">{l.nombre}</TableRowHead>
+                  <TableCell className="max-md:p-0 max-md:text-right md:py-3">
                     <Badge variant={b}>
                       {ETIQUETA_BANDA[b]} <span className="cifra">{l.score}</span>
                     </Badge>
                   </TableCell>
-                  <TableCell className="max-md:p-0">
+                  <TableCell className="max-md:p-0 md:py-3">
                     <Badge variant={dias > DIAS_VENTANA_CRITICA ? "atrasado" : "critica"} className="cifra">
                       {dias} {dias === 1 ? "día" : "días"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="whitespace-nowrap text-tinta-2 max-md:hidden">
+                  <TableCell className="whitespace-nowrap text-tinta-2 max-md:hidden md:py-3">
                     {NOMBRE_SECTOR[l.sector]} · {l.estado}
                   </TableCell>
-                  <TableCell className="max-md:p-0 max-md:text-right md:text-right">
+                  <TableCell className="max-md:p-0 max-md:text-right md:py-3 md:pr-5 md:text-right">
                     <Button variant="coral" size="sm" data-rescatar={l.id} aria-label={`Rescatar a ${l.nombre}`} onClick={() => alRescatar(l.id, l.nombre)}>
                       Rescatar
                     </Button>
