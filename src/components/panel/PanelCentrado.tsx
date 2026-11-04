@@ -10,7 +10,7 @@ import { useMedia } from "@/hooks/useMedia";
 type Titulo = ComponentType<{ children: ReactNode; className?: string }>;
 
 /**
- * Detalle centrado (experimentos). ≥768 px: Dialog de hasta 880 px y 85 dvh, con el encabezado fijo
+ * Detalle centrado (experimentos). ≥768 px: Dialog de hasta 760 px y 85 dvh, con el encabezado fijo
  * (título, estado y cerrar) y el contenido con scroll propio. Móvil: Drawer desde abajo.
  * Se abre sin Trigger (desde una tarjeta, fila o barra), así que al cerrar devuelve el foco a quien lo tenía.
  */
@@ -83,7 +83,7 @@ export function PanelCentrado({
   if (tablet) {
     return (
       <Dialog open={abierto} onOpenChange={alCambiar}>
-        <DialogContent showCloseButton={false} className="flex max-h-[85dvh] flex-col gap-0 p-0 sm:max-w-[880px]" {...foco}>
+        <DialogContent showCloseButton={false} className="flex max-h-[85dvh] flex-col gap-0 p-0 sm:max-w-[760px]" {...foco}>
           {contenido(DialogTitle)}
         </DialogContent>
       </Dialog>
