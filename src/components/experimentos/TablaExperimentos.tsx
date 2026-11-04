@@ -102,7 +102,7 @@ export function TarjetasExperimentos({
             data-exp={e.id}
             onClick={() => onAbrir(e.id)}
             aria-expanded={seleccionado === e.id}
-            className={`flex h-full w-full flex-col gap-2 rounded-tile border p-4 text-left shadow-tarjeta ${seleccionado === e.id ? "border-azul bg-azul-suave" : "border-tarjeta-borde bg-tarjeta"}`}
+            className={`tarjeta-clicable flex h-full w-full flex-col gap-2 rounded-tile border p-4 text-left shadow-tarjeta outline-none ${seleccionado === e.id ? "border-azul bg-azul-suave" : "border-tarjeta-borde bg-tarjeta"}`}
           >
             <span className="flex items-start justify-between gap-3">
               <span>

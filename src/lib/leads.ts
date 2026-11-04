@@ -39,3 +39,15 @@ export function sinLineaDeTiempo(leads: readonly Lead[]): LeadFeed[] {
     return resto as LeadFeed;
   });
 }
+
+export type Distribucion = { banda: Record<Banda, number>; antiguedad: Record<RangoAntiguedad, number> };
+
+/** Pendientes de una fuga por intención (banda de score) y por antigüedad: las barras del banner de /fugas. */
+export function distribucionLeads(leads: readonly Pick<Lead, "score" | "ultimaActividad">[]): Distribucion {
+  const d: Distribucion = { banda: { alto: 0, medio: 0, bajo: 0 }, antiguedad: { critica: 0, reciente: 0, antigua: 0 } };
+  for (const l of leads) {
+    d.banda[banda(l.score)]++;
+    d.antiguedad[rangoAntiguedad(diasSinActividad(l))]++;
+  }
+  return d;
+}

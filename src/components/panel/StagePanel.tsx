@@ -10,7 +10,7 @@ import { useMedia } from "@/hooks/useMedia";
 type Titulo = ComponentType<{ children: ReactNode; className?: string }>;
 
 /**
- * Panel de etapa, transición o experimento. ≥768 px: Sheet a la derecha (440 px en escritorio, 60 % en tablet).
+ * Panel de etapa o transición del Recorrido (los experimentos usan PanelCentrado). ≥768 px: Sheet a la derecha (440 px en escritorio, 60 % en tablet).
  * Móvil (<768 px): Drawer desde abajo. Es modal y atrapa el foco; se abre sin Trigger (desde una fila del
  * board o de la tabla), así que al cerrar devuelve el foco al elemento que lo tenía al abrir.
  */

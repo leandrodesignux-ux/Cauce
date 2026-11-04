@@ -6,26 +6,26 @@ import { cn } from "@/lib/utils"
 import { Toggle as TogglePrimitive } from "radix-ui"
 
 const toggleVariants = cva(
-  "group/toggle inline-flex items-center justify-center gap-1 rounded-full text-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-(--duracion-presion) ease-salida outline-none motion-safe:active:scale-[0.97] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/toggle inline-flex items-center justify-center gap-1 rounded-boton text-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-(--duracion-presion) ease-salida outline-none motion-safe:active:scale-[0.97] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default:
           "bg-transparent hover:bg-muted hover:text-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
-        // Chips y alternadores de Cauce: pill sólida en reposo (viven dentro de paneles y popovers), pill negra (blanca en oscuro) si está activa.
+        // Chips y alternadores de Cauce: pill sólida en reposo (viven dentro de paneles y popovers), color activo (índigo; lavanda en oscuro) si está activa.
         outline:
-          "rounded-full border border-linea bg-tarjeta text-tinta-2 hover:border-linea-fuerte hover:text-tinta data-[state=on]:border-activo data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",
+          "rounded-boton border border-linea bg-tarjeta text-tinta-2 hover:border-linea-fuerte hover:text-tinta data-[state=on]:border-activo data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",
         // Chip de alerta (ventana crítica): borde coral en reposo, pill coral sólida si está activa.
         alerta:
-          "rounded-full border border-coral bg-tarjeta text-tinta hover:bg-coral-suave data-[state=on]:border-coral-relleno data-[state=on]:bg-coral-relleno data-[state=on]:text-sobre-relleno",
-        // Control segmentado (vistas, período, tabla/timeline): pill negra para el activo dentro de una pill vidriada.
+          "rounded-boton border border-coral bg-tarjeta text-tinta hover:bg-coral-suave data-[state=on]:border-coral-relleno data-[state=on]:bg-coral-relleno data-[state=on]:text-sobre-relleno",
+        // Control segmentado (vistas, período, tabla/timeline): el activo en color activo dentro de un contenedor vidriado.
         segmentado:
-          "h-full rounded-full px-4 text-tinta-2 hover:text-tinta data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",
+          "h-full rounded-[calc(var(--radio-boton)-4px)] px-4 text-tinta-2 hover:text-tinta data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",
       },
       size: {
         default:
           "h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        sm: "h-7 min-w-7 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        sm: "h-7 min-w-7 rounded-control px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-9 min-w-9 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
       },
     },

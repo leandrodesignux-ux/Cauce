@@ -220,3 +220,47 @@ export function modeloPerdida(p: ParametrosPerdida): ResultadoPerdida {
   const contratos = citas * p.citaAContrato;
   return { citas, contratos, montoMxn: Math.round(contratos * p.comisionMxn) };
 }
+
+// ---------------------------------------------------------------------------
+// Recorrido (home): métrica de fase, avance de etapa y simulador de mejora
+
+/**
+ * Métrica de una fase del recorrido (etapas agrupadas, en orden): volumen de la primera etapa de la fase
+ * siguiente sobre el de la primera etapa de esta fase. En la última fase: su última etapa sobre la primera
+ * (cierre / visita). null si no hay volumen de origen.
+ */
+export function tasaDeFase(volumen: Volumen, fases: readonly { etapas: readonly EtapaId[] }[], indice: number): number | null {
+  const fase = fases[indice];
+  const origen = volumen[fase.etapas[0]];
+  if (origen <= 0) return null;
+  const siguiente = fases[indice + 1];
+  return (siguiente ? volumen[siguiente.etapas[0]] : volumen[fase.etapas[fase.etapas.length - 1]]) / origen;
+}
+
+/** Cuántos de una etapa pasan a la siguiente y cuántos se quedan. null en la última etapa. */
+export function avanceDeEtapa(volumen: Volumen, etapa: EtapaId): { avanzan: number; seQuedan: number } | null {
+  const siguiente = ORDEN_ETAPAS[ORDEN_ETAPAS.indexOf(etapa) + 1];
+  if (!siguiente) return null;
+  const avanzan = Math.min(volumen[siguiente], volumen[etapa]);
+  return { avanzan, seQuedan: volumen[etapa] - avanzan };
+}
+
+export type SimulacionMejora = {
+  /** Leads extra que pasan la transición: volumen[desde] × puntos / 100. */
+  extra: number;
+  /** Probabilidad de cerrar una vez en `hacia`, con las tasas observadas. */
+  probabilidad: number;
+  cierres: number;
+  mxn: number;
+};
+
+/**
+ * Si la transición mejora `puntos` puntos porcentuales: volumen[desde] × (puntos / 100) ×
+ * probabilidadCierreDesde(volumen, hacia) cierres extra en el período, por la comisión en MXN.
+ */
+export function simularMejora(volumen: Volumen, t: Transicion, puntos: number, comisionMxn: number): SimulacionMejora {
+  const extra = volumen[t.desde] * (puntos / 100);
+  const probabilidad = probabilidadCierreDesde(volumen, t.hacia);
+  const cierres = extra * probabilidad;
+  return { extra, probabilidad, cierres, mxn: Math.round(cierres * comisionMxn) };
+}

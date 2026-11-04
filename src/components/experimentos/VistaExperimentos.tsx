@@ -3,7 +3,7 @@
 import { FlaskConical, GanttChart, LayoutGrid, Table2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, type ReactNode } from "react";
-import { StagePanel } from "@/components/panel/StagePanel";
+import { PanelCentrado } from "@/components/panel/PanelCentrado";
 import { useDatos } from "@/components/Proveedores";
 import { SiguientePaso } from "@/components/shell/SiguientePaso";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
@@ -13,6 +13,7 @@ import { nombreEtapa } from "@/config/etapas";
 import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
 import type { EstadoExperimento } from "@/lib/tipos";
 import { reemplazarUrl } from "@/lib/url";
+import { ChipEstado } from "./comunes";
 import { DetalleExperimento } from "./DetalleExperimento";
 import { TablaExperimentos, TarjetasExperimentos } from "./TablaExperimentos";
 import { TimelineExperimentos } from "./TimelineExperimentos";
@@ -128,15 +129,16 @@ export function VistaExperimentos() {
         <SiguientePaso desde="/experimentos" />
       </div>
 
-      <StagePanel
+      <PanelCentrado
         abierto={exp !== null}
         clave={exp?.id ?? null}
         titulo={exp?.nombre ?? ""}
         subtitulo={exp ? `${nombreEtapa(exp.transicion.desde)} → ${nombreEtapa(exp.transicion.hacia)}` : undefined}
+        estado={exp ? <ChipEstado estado={exp.estado} /> : undefined}
         onCerrar={cerrar}
       >
         {exp && <DetalleExperimento e={exp} />}
-      </StagePanel>
+      </PanelCentrado>
     </div>
   );
 }

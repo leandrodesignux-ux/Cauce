@@ -1,17 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Space_Grotesk } from "next/font/google";
+import { Geist } from "next/font/google";
 import { Proveedores } from "@/components/Proveedores";
 import { AppShell } from "@/components/shell/AppShell";
 import { COLOR } from "@/config/colores";
 import { datosCompactos } from "@/lib/datos";
 import "./globals.css";
 
-// Ambas son variables: se carga el eje de peso completo (Space Grotesk 500/600, Geist 400/500).
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-});
-
+// Una sola familia, variable: se carga el eje de peso completo (400 a 700) para texto, títulos y cifras.
 const geist = Geist({
   variable: "--font-geist",
   subsets: ["latin"],
@@ -50,7 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="es-MX"
       suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${geist.variable} h-full antialiased`}
+      className={`${geist.variable} h-full antialiased`}
     >
       <body className="min-h-full">
         <Proveedores datos={datosCompactos()}>

@@ -2,9 +2,12 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { PARAMETROS_PERDIDA_INICIALES as P } from "../config/modelo";
 import {
+  avanceDeEtapa,
   modeloPerdida,
   periodoAnterior,
   periodoDesdePreset,
+  simularMejora,
+  tasaDeFase,
   tasaTransicion,
   valorEnRiesgoPorPoza,
   volumenVacio,
@@ -56,5 +59,38 @@ describe("valorEnRiesgoPorPoza", () => {
     const [poza] = valorEnRiesgoPorPoza([], [fuga], { periodo: periodoDesdePreset("30d", "2026-10-26") });
     assert.equal(poza.valorMxn, 347_220);
     assert.equal(poza.volumen, 643);
+  });
+});
+
+describe("recorrido: fases, avance y simulador", () => {
+  const v = { ...volumenVacio(), descubrimiento: 1000, exploracion: 600, evaluacion: 300, contacto: 120, calificacion: 100, asignacion: 80, visita: 40, cierre: 10 };
+  const fases = [
+    { etapas: ["descubrimiento", "exploracion", "evaluacion"] as const },
+    { etapas: ["contacto", "calificacion", "asignacion"] as const },
+    { etapas: ["visita", "cierre"] as const },
+  ];
+
+  it("la métrica de fase es la primera etapa de la siguiente sobre la primera de esta; en Cerrar, cierre / visita", () => {
+    assert.equal(tasaDeFase(v, fases, 0), 0.12);
+    assert.equal(tasaDeFase(v, fases, 1), 40 / 120);
+    assert.equal(tasaDeFase(v, fases, 2), 0.25);
+    assert.equal(tasaDeFase(volumenVacio(), fases, 0), null);
+  });
+
+  it("avance de etapa: avanzan los de la siguiente y se quedan el resto; nada en Cierre", () => {
+    assert.deepEqual(avanceDeEtapa(v, "evaluacion"), { avanzan: 120, seQuedan: 180 });
+    assert.equal(avanceDeEtapa(v, "cierre"), null);
+  });
+
+  it("simularMejora: volumen[desde] × puntos / 100 × probabilidad de cierre desde hacia × comisión", () => {
+    const r = simularMejora(v, { desde: "evaluacion", hacia: "contacto" }, 2, 18_000);
+    // 300 × 0.02 = 6 extra; desde Contacto: 100/120 × 80/100 × 40/80 × 10/40 = 1/12.
+    assert.equal(r.extra, 6);
+    assert.ok(Math.abs(r.probabilidad - 1 / 12) < 1e-12);
+    assert.ok(Math.abs(r.cierres - 0.5) < 1e-12);
+    assert.equal(r.mxn, 9_000);
+    // Visita → Cierre: llegar a Cierre ya es cerrar.
+    assert.equal(simularMejora(v, { desde: "visita", hacia: "cierre" }, 10, 18_000).cierres, 4);
+    assert.equal(simularMejora(v, { desde: "visita", hacia: "cierre" }, 0, 18_000).mxn, 0);
   });
 });

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { ChipEstado } from "@/components/experimentos/comunes";
 import { nombreEtapa } from "@/config/etapas";
 import { formatearPuntos } from "@/lib/formato";
-import type { EtapaId, Experimento } from "@/lib/tipos";
+import type { Experimento } from "@/lib/tipos";
+import { type OnResaltar, propsResaltar } from "./resaltado";
 
 /**
  * Hasta tres experimentos (el destacado primero). Hover o foco resaltan la etapa que atacan en el recorrido;
@@ -15,7 +16,7 @@ export function ExperimentosHome({
   onResaltar,
 }: {
   experimentos: readonly Experimento[];
-  onResaltar: (etapa: EtapaId | null) => void;
+  onResaltar: OnResaltar;
 }) {
   return (
     <ul className="grid gap-3 md:grid-cols-3">
@@ -23,11 +24,8 @@ export function ExperimentosHome({
         <li key={e.id} className="flex">
           <Link
             href={`/experimentos?exp=${e.id}`}
-            onMouseEnter={() => onResaltar(e.transicion.desde)}
-            onMouseLeave={() => onResaltar(null)}
-            onFocus={() => onResaltar(e.transicion.desde)}
-            onBlur={() => onResaltar(null)}
-            className="flex w-full flex-col gap-3 rounded-tile border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta outline-2 outline-offset-0 outline-transparent motion-safe:transition-[outline-color,transform] motion-safe:duration-(--duracion-presion) motion-safe:ease-salida motion-safe:active:scale-[0.98] hover:outline-azul"
+            {...propsResaltar(onResaltar, { etapas: [e.transicion.desde], origen: "experimento" })}
+            className="tarjeta-clicable flex w-full flex-col gap-3 rounded-tile border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta"
           >
             <span className="flex items-start justify-between gap-3">
               <span className="font-medium text-balance">{e.nombre}</span>

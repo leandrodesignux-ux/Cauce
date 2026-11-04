@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useReducedMotion } from "motion/react";
 import { useCallback, useMemo, useState } from "react";
+import { ORDEN_ETAPAS } from "@/config/etapas";
 import { useDatos } from "@/components/Proveedores";
 import { ContenidoPanel, encabezadoPanel } from "@/components/panel/ContenidoPanel";
 import { StagePanel } from "@/components/panel/StagePanel";
@@ -10,32 +12,48 @@ import { Button } from "@/components/ui/button";
 import { useJourney } from "@/hooks/useJourney";
 import { useSeleccion } from "@/hooks/useSeleccion";
 import { formatearRangoSemanas } from "@/lib/formato";
-import { experimentosDelBoard } from "@/lib/journey";
+import { experimentosDelBoard, transicionConMasValor } from "@/lib/journey";
 import type { EtapaId } from "@/lib/tipos";
 import { DataTableCauce } from "./DataTableCauce";
 import { DondeSePierde } from "./DondeSePierde";
 import { ExperimentosHome } from "./ExperimentosHome";
 import { JourneyBoard } from "./JourneyBoard";
 import { LeadsSinAtender } from "./LeadsSinAtender";
+import type { Resaltado } from "./resaltado";
 import { ResumenCauce } from "./ResumenCauce";
 import { SeccionHome } from "./SeccionHome";
+import { ID_SIMULADOR, SimuladorMejora } from "./SimuladorMejora";
 
 /** Experimentos que se muestran en el home (el destacado primero). */
 const EXPERIMENTOS_HOME = 3;
 
 /**
- * Recorrido (home), en el orden de lectura: título, resumen, recorrido por etapas, dónde se pierde,
- * experimentos, leads sin atender y siguiente paso.
+ * Recorrido (home), en el orden de lectura: título, resumen, recorrido por fases, simulador, dónde se pierde,
+ * experimentos, leads sin atender y siguiente paso. El resaltado (hover o foco en etapa, fuga, fase o
+ * experimento) y la transición del simulador son estado local: no van a la URL.
  */
 export function VistaCauce() {
   const { experimentos } = useDatos();
   const { journey, estado, filtros, restablecer } = useJourney();
   const { seleccion, seleccionar } = useSeleccion();
-  const [resaltada, setResaltada] = useState<EtapaId | null>(null);
+  const [resaltado, setResaltado] = useState<Resaltado>(null);
+  const [transicionElegida, setTransicion] = useState<number | null>(null);
+  const reducir = useReducedMotion() ?? false;
+  const transicion = transicionElegida ?? transicionConMasValor(journey.pozas);
 
   const tiles = useMemo(() => experimentosDelBoard(experimentos, EXPERIMENTOS_HOME), [experimentos]);
 
   const abrirEtapa = useCallback((etapa: EtapaId) => seleccionar({ tipo: "etapa", etapa }), [seleccionar]);
+
+  /** Preselecciona la transición que sale de la etapa, lleva el simulador a la vista y enfoca su selector. */
+  const simular = useCallback(
+    (desde: EtapaId) => {
+      setTransicion(ORDEN_ETAPAS.indexOf(desde));
+      document.getElementById("t-simulador")?.scrollIntoView({ behavior: reducir ? "auto" : "smooth", block: "start" });
+      document.getElementById(ID_SIMULADOR)?.focus({ preventScroll: true });
+    },
+    [reducir],
+  );
 
   /** Cierra el panel y devuelve el foco a la tarjeta de la etapa (en la tabla no hay tarjeta: el panel lo devuelve solo). */
   const cerrarPanel = useCallback(() => {
@@ -86,13 +104,30 @@ export function VistaCauce() {
             pozas={journey.pozas}
           />
         ) : (
-          <JourneyBoard journey={journey} comparar={estado.comparar} resaltada={resaltada} onAbrirEtapa={abrirEtapa} />
+          <JourneyBoard
+            journey={journey}
+            comparar={estado.comparar}
+            resaltado={resaltado}
+            onResaltar={setResaltado}
+            onAbrirEtapa={abrirEtapa}
+            onSimular={simular}
+          />
         )}
       </SeccionHome>
 
       {!seco && !estado.tabla && (
+        <SeccionHome
+          id="t-simulador"
+          titulo="¿Qué pasa si mejora un paso?"
+          descripcion="Elija un paso y cuántos puntos mejora su conversión: los cierres y la comisión extra salen de las tasas del período."
+        >
+          <SimuladorMejora journey={journey} transicion={transicion} onTransicion={setTransicion} />
+        </SeccionHome>
+      )}
+
+      {!seco && !estado.tabla && (
         <SeccionHome id="t-pierde" titulo="Dónde se pierde" descripcion="Cada fuga con su valor estimado en el período, de la más cara a la más barata.">
-          <DondeSePierde journey={journey} />
+          <DondeSePierde journey={journey} resaltado={resaltado} onResaltar={setResaltado} />
         </SeccionHome>
       )}
 
@@ -111,7 +146,7 @@ export function VistaCauce() {
           </Button>
         }
       >
-        <ExperimentosHome experimentos={tiles} onResaltar={setResaltada} />
+        <ExperimentosHome experimentos={tiles} onResaltar={setResaltado} />
       </SeccionHome>
 
       <LeadsSinAtender />

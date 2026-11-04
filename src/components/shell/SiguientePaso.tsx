@@ -17,7 +17,7 @@ export function SiguientePaso({ desde, className }: { desde: string; className?:
     <nav aria-label="Siguiente paso" className={className}>
       <Link
         href={siguiente.href}
-        className="group flex items-center gap-4 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-5 shadow-tarjeta motion-safe:transition-[background-color,transform] motion-safe:duration-(--duracion-presion) motion-safe:ease-salida motion-safe:active:scale-[0.99] hover:bg-muted md:p-6"
+        className="tarjeta-clicable group flex items-center gap-4 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-5 shadow-tarjeta md:p-6"
       >
         <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-full bg-azul-suave text-azul-texto">
           <siguiente.Icono className="size-5" strokeWidth={1.7} />

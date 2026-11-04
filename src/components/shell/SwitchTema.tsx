@@ -27,7 +27,7 @@ function useTema() {
   return { oscuro: montado && resolvedTheme === "dark", cambiar };
 }
 
-/** Rail: el par luna/sol. El modo vigente queda en pill negra (blanca en oscuro). La elección persiste. */
+/** Rail: el par luna/sol. El modo vigente queda en color activo (índigo; lavanda en oscuro). La elección persiste. */
 export function ParTema() {
   const { oscuro, cambiar } = useTema();
   return (

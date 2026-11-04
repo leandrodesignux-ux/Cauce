@@ -54,8 +54,8 @@
   /* Neutro tintado (badges neutros, hover de controles) */
   --neutro-suave: color-mix(in srgb, var(--tinta-2) 10%, transparent);
 
-  /* Activo: pill negra en claro, blanca en oscuro */
-  --activo: #0f1014;
+  /* Activo: índigo profundo en claro, lavanda clara en oscuro (pestaña, segmento y nav activos, foco, aviso) */
+  --activo: #34436b;
   --sobre-activo: #ffffff;
   /* Texto sobre -relleno (azul y coral): blanco en ambos modos */
   --sobre-relleno: #ffffff;
@@ -64,7 +64,8 @@
   --tinta-profunda: #0f1014;
 
   /* Tipografía (las variables --font-* las inyecta next/font en <html>) */
-  --fuente-cifra: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  /* Todo en Geist: las cifras se distinguen por tabular-nums y los títulos por el tracking negativo. */
+  --fuente-cifra: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --fuente-ui: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 
   --peso-regular: 400;
@@ -84,11 +85,14 @@
   --interlineado-cifra: 1.1;
 
   /* Radios por jerarquía */
-  --radio-panel: 32px;
-  --radio-tarjeta: 26px;
-  --radio-tile: 22px;
-  --radio-fila: 18px;
-  --radio-control: 12px;
+  --radio-panel: 20px;
+  --radio-tarjeta: 16px;
+  --radio-tile: 12px;
+  --radio-fila: 10px;
+  --radio-control: 8px;
+  /* Botones con texto, toggles, pestañas, nav y barra de selección. Los botones de ícono circulares siguen redondos. */
+  --radio-boton: 10px;
+  --radio-badge: 6px;
 
   /* Desenfoque del vidrio: más grueso cuanto más grande o más arriba está la superficie */
   --vidrio: 18px;
@@ -179,7 +183,7 @@
   --coral-relleno: #c2453c;
   --coral-suave: #3d2a2d;
 
-  --activo: #f2f3f6;
+  --activo: #cfd8f3;
   --sobre-activo: #0f1014;
 
   --sombra-tarjeta: 0 8px 24px rgb(0 0 0 / 0.35);

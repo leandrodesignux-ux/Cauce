@@ -30,7 +30,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           toast: "toast-cauce shadow-lg! gap-4! py-3! pr-2! pl-4! overflow-hidden",
           title: "text-sm! font-normal!",
           actionButton:
-            "bg-transparent! text-(--normal-text)! h-auto! rounded-full! px-3! py-1! text-sm! font-semibold! underline underline-offset-2 hover:bg-sobre-activo/10!",
+            "bg-transparent! text-(--normal-text)! h-auto! rounded-control! px-3! py-1! text-sm! font-semibold! underline underline-offset-2 hover:bg-sobre-activo/10!",
         },
       }}
       {...props}

@@ -106,7 +106,23 @@ const pares: [texto: string, fondo: string][] = [
   ["accent-foreground", "accent/background"],
   ["sidebar-foreground", "sidebar"],
   ["sidebar-primary-foreground", "sidebar-primary"],
+  // Fase 10, color activo índigo: pestaña, segmento, nav y aviso; el número de la nav y "Limpiar" van al 70 %.
+  ["sobre-activo", "activo"],
+  ["sobre-activo@70", "activo"],
+  // Contador de pendientes dentro de una pestaña activa y botón Rescatar dentro de la barra de selección.
+  ["sobre-relleno", "coral-relleno"],
+  // Badges y botones sobre la tabla en tarjeta (Leads sin atender): días, score y Rescatar.
+  ["coral-texto", "coral-suave/tarjeta"],
+  ["azul-texto", "azul-suave/tarjeta"],
 ];
+
+/** Texto, opcionalmente con alfa ("sobre-activo@70"), ya compuesto sobre el fondo. */
+function texto(spec: string, abajo: Rgba, vars: Record<string, string>): Rgba {
+  const [token, pct] = spec.split("@");
+  const color = resolver(`var(--${token})`, vars);
+  if (pct) color[3] = Number(pct) / 100;
+  return sobre(color, abajo);
+}
 
 let fallas = 0;
 for (const [modo, vars] of [
@@ -115,7 +131,8 @@ for (const [modo, vars] of [
 ] as const) {
   console.log(`\nModo ${modo}`);
   for (const [t, f] of pares) {
-    const r = contraste(resolver(`var(--${t})`, vars), fondo(f, vars));
+    const abajo = fondo(f, vars);
+    const r = contraste(texto(t, abajo, vars), abajo);
     const ok = r >= MINIMO;
     if (!ok) fallas++;
     console.log(`  ${ok ? "ok   " : "FALLA"} ${r.toFixed(2).padStart(5)}:1  ${t.padEnd(26)} sobre ${f}`);

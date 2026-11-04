@@ -3,6 +3,7 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import type { Banda, RangoAntiguedad } from "@/lib/leads";
+import { leerPagina } from "@/lib/paginacion";
 import { reemplazarUrl } from "@/lib/url";
 
 export type Bandeja = "pendientes" | "rescatados" | "descartados";
@@ -13,13 +14,18 @@ export type FiltrosFugas = {
   antiguedad: RangoAntiguedad | null;
   bandeja: Bandeja;
   lead: string | null;
+  /** Página del feed (10 por página), desde 1. */
+  pagina: number;
 };
 
 const BANDAS: Banda[] = ["alto", "medio", "bajo"];
 const RANGOS: RangoAntiguedad[] = ["critica", "reciente", "antigua"];
 const BANDEJAS: Bandeja[] = ["pendientes", "rescatados", "descartados"];
 
-/** Filtros del feed de /fugas, en la URL para que se puedan compartir. */
+/**
+ * Filtros del feed de /fugas, en la URL para que se puedan compartir. Cambiar fuga, bandeja o un filtro
+ * vuelve a la página 1 (salvo que el mismo cambio fije la página).
+ */
 export function useFiltrosFugas(pozas: readonly string[], porDefecto: string) {
   const params = useSearchParams();
   const pathname = usePathname();
@@ -35,6 +41,7 @@ export function useFiltrosFugas(pozas: readonly string[], porDefecto: string) {
       antiguedad: antiguedad && RANGOS.includes(antiguedad) ? antiguedad : null,
       bandeja: bandeja && BANDEJAS.includes(bandeja) ? bandeja : "pendientes",
       lead: params.get("lead"),
+      pagina: leerPagina(params.get("pagina")),
     };
   }, [params, pozas, porDefecto]);
 
@@ -47,6 +54,9 @@ export function useFiltrosFugas(pozas: readonly string[], porDefecto: string) {
       if ("antiguedad" in cambios) poner("antiguedad", cambios.antiguedad);
       if ("bandeja" in cambios) poner("bandeja", cambios.bandeja === "pendientes" ? null : cambios.bandeja);
       if ("lead" in cambios) poner("lead", cambios.lead);
+      const reinicia = "poza" in cambios || "bandeja" in cambios || "banda" in cambios || "antiguedad" in cambios;
+      if ("pagina" in cambios) poner("pagina", cambios.pagina && cambios.pagina > 1 ? String(cambios.pagina) : null);
+      else if (reinicia) base.delete("pagina");
       reemplazarUrl(pathname, base);
     },
     [pathname],

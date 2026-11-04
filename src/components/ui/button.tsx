@@ -3,10 +3,10 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { Slot } from "radix-ui"
 
-// Cauce: botones en pill. Las acciones de la UI (rail, barra móvil, encabezados de panel) son
-// círculos vidriados (`vidrio` + `redondo`); el estado activo es la pill negra (blanca en oscuro).
+// Cauce: botones con radio contenido (--radio-boton). Las acciones de la UI (rail, barra móvil, encabezados
+// de panel) son círculos vidriados (`vidrio` + `redondo`); el estado activo va en --activo.
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-(--duracion-presion) ease-salida outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 motion-safe:active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-boton border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-(--duracion-presion) ease-salida outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 motion-safe:active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -21,7 +21,7 @@ const buttonVariants = cva(
         sutil:
           "text-muted-foreground hover:bg-neutro-suave hover:text-foreground aria-expanded:bg-neutro-suave aria-expanded:text-foreground",
         // Superficie vidriada sobre el degradé: botones redondos del rail y chips de filtro.
-        // Activo (aria-pressed o data-activo) = pill negra.
+        // Activo (aria-pressed o data-activo) = color activo.
         vidrio:
           "vidrio text-tinta hover:bg-tarjeta aria-expanded:bg-tarjeta aria-pressed:border-activo aria-pressed:bg-activo aria-pressed:text-sobre-activo data-[activo=true]:border-activo data-[activo=true]:bg-activo data-[activo=true]:text-sobre-activo",
         // Botón redondo dentro de un panel vidriado: superficie sólida (nunca vidrio sobre vidrio).
@@ -50,7 +50,7 @@ const buttonVariants = cva(
         "icon-sm": "size-7",
         "icon-lg": "size-10",
         // Botón circular de acción (rail, barra móvil, encabezado de panel).
-        redondo: "size-12 [&_svg:not([class*='size-'])]:size-5",
+        redondo: "size-12 rounded-full [&_svg:not([class*='size-'])]:size-5",
       },
     },
     defaultVariants: {

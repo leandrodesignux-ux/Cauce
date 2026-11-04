@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 
 /**
  * Botón circular vidriado con tooltip: las acciones del rail, la barra móvil y los encabezados de panel.
- * `presionado` lo vuelve un alternador (aria-pressed → pill negra). Acepta ser hijo de un Trigger con asChild.
+ * `presionado` lo vuelve un alternador (aria-pressed → color activo). Acepta ser hijo de un Trigger con asChild.
  * `superficie` evita apilar vidrio sobre vidrio: en un panel va sólido y en la barra móvil, sin superficie.
  */
 export function BotonRedondo({

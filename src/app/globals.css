@@ -115,7 +115,8 @@
   --text-3xl--line-height: var(--interlineado-cuerpo);
   --text-3xl--letter-spacing: -0.025em;
 
-  /* Radios: --radius (12 px) para controles y menús; panel, tarjeta, tile y fila por jerarquía. Pills: rounded-full. */
+  /* Radios: --radius (8 px) para controles y menús; panel, tarjeta, tile y fila por jerarquía; boton (10 px) y badge (6 px).
+     rounded-full solo en botones de ícono circulares, puntos, avatares y el checkbox. */
   --radius-*: initial;
   --radius-sm: calc(var(--radius) - 6px);
   --radius-md: calc(var(--radius) - 4px);
@@ -128,6 +129,8 @@
   --radius-tile: var(--radio-tile);
   --radius-tarjeta: var(--radio-tarjeta);
   --radius-panel: var(--radio-panel);
+  --radius-boton: var(--radio-boton);
+  --radius-badge: var(--radio-badge);
 
   /* Curvas de motion como utilidades: ease-salida, ease-movimiento, ease-cajon. */
   --ease-salida: var(--curva-salida);
@@ -149,7 +152,7 @@
 }
 
 /*
- * Números y KPIs: Space Grotesk con cifras tabulares e interlineado 1.1.
+ * Números y KPIs: Geist con cifras tabulares e interlineado 1.1.
  * Setear --tw-leading hace que gane sobre el interlineado de text-*
  * sin importar el orden de las clases.
  */
@@ -158,6 +161,18 @@
   font-variant-numeric: tabular-nums;
   --tw-leading: var(--interlineado-cifra);
   line-height: var(--interlineado-cifra);
+}
+
+/*
+ * Títulos (font-cifra / font-heading): tracking -0.02em. Se fija --tw-tracking para que gane sobre el
+ * tracking de text-* sin importar el orden de las clases.
+ */
+@layer utilities {
+  .font-cifra,
+  .font-heading {
+    --tw-tracking: -0.02em;
+    letter-spacing: -0.02em;
+  }
 }
 
 /* Superficie vidriada (paneles, nav, chips, botones redondos): blanco translúcido sobre el degradé. */
@@ -296,4 +311,45 @@
   .toast-cauce::after {
     display: none;
   }
+}
+
+/*
+ * Tarjeta clicable (etapas, fugas, experimentos, resumen, siguiente paso): un mismo hover y un mismo foco.
+ * Hover: sube 2 px, borde azul (coral con `tarjeta-coral`) y sombra flotante. Foco: anillo en --activo.
+ * Con `has-[...]` el foco también se ve cuando lo recibe un botón interno que cubre la tarjeta.
+ */
+@utility tarjeta-clicable {
+  --tarjeta-hover: var(--azul);
+  transition-property: translate, scale, border-color, box-shadow, background-color, opacity;
+  transition-duration: var(--duracion-presion);
+  transition-timing-function: var(--curva-salida);
+
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--tarjeta-hover);
+      box-shadow: var(--sombra-flotante);
+      translate: 0 -2px;
+    }
+  }
+  &:active {
+    scale: 0.98;
+  }
+  &:focus-visible,
+  &:has(:focus-visible) {
+    outline: 2px solid var(--activo);
+    outline-offset: 2px;
+    border-color: var(--tarjeta-hover);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: border-color, box-shadow, background-color, opacity;
+    &:hover,
+    &:active {
+      translate: none;
+      scale: none;
+    }
+  }
+}
+
+@utility tarjeta-coral {
+  --tarjeta-hover: var(--coral);
 }

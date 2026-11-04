@@ -7,7 +7,7 @@ import { Slot } from "radix-ui"
  * Pills de Cauce (docs/DESIGN.md): tres intensidades por tono.
  * - relleno: fondo -relleno con texto blanco (lo más fuerte: score alto, más de 3 días sin atención).
  * - suave: fondo -suave con texto -texto.
- * - activo: pill negra (blanca en oscuro), como el estado activo del resto de la UI.
+ * - activo: color activo (índigo; lavanda en oscuro), como el estado activo del resto de la UI.
  * El texto siempre nombra el estado: el color nunca va solo.
  */
 const TONO = {
@@ -20,7 +20,7 @@ const TONO = {
 } as const
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-6.5 w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full px-3 text-xs font-semibold whitespace-nowrap focus-visible:ring-[3px] focus-visible:ring-ring/50 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "group/badge inline-flex h-6.5 w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-badge px-2.5 text-xs font-semibold whitespace-nowrap focus-visible:ring-[3px] focus-visible:ring-ring/50 [&>svg]:pointer-events-none [&>svg]:size-3!",
   {
     variants: {
       variant: {
