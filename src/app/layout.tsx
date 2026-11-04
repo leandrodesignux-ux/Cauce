@@ -40,6 +40,8 @@ export const metadata: Metadata = {
 // Claro por defecto; <ColorDeBarra> lo actualiza al cambiar de tema con el switch.
 export const viewport: Viewport = {
   themeColor: COLOR.fondoB,
+  // Sin cover, env(safe-area-inset-*) vale 0 y la barra flotante queda bajo el indicador de inicio.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -33,7 +33,7 @@ export function TiraFantasmas() {
     <div
       role="group"
       aria-label="Fantasmas por rescatar"
-      className="flex max-w-full items-center gap-3.5 overflow-x-auto rounded-full border border-tarjeta-borde bg-tarjeta py-2 pr-4.5 pl-2.5 max-md:w-full"
+      className="flex max-w-full items-center gap-3.5 overflow-x-auto overscroll-x-contain rounded-full border border-tarjeta-borde bg-tarjeta py-2 pr-4.5 pl-2.5 [scrollbar-width:none] max-md:order-last max-md:col-span-2 max-md:w-full"
     >
       <span className="text-xs whitespace-nowrap text-tinta-2">Por rescatar</span>
       <ul className="flex pb-1.5">

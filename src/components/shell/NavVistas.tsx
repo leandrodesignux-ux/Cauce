@@ -4,12 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { VISTAS, vistaActiva } from "./vistas";
 
-/** Las tres vistas como una pill vidriada; la activa en pill negra. En móvil ocupa todo el ancho. */
-export function NavVistas({ className }: { className?: string }) {
+/**
+ * Las tres vistas como una pill vidriada; la activa en pill negra. En móvil ocupa todo el ancho y queda
+ * fija arriba (`denso`: material más opaco, el contenido pasa por debajo) para no perder la ubicación al bajar.
+ */
+export function NavVistas({ className, denso = false }: { className?: string; denso?: boolean }) {
   const pathname = usePathname();
   return (
     <nav aria-label="Vistas" className={className}>
-      <ul className="vidrio flex gap-1 rounded-full p-1">
+      <ul className={`flex gap-1 rounded-full p-1 ${denso ? "vidrio-denso shadow-tarjeta" : "vidrio"}`}>
         {VISTAS.map(({ href, nombre }) => {
           const activa = vistaActiva(pathname, href);
           return (

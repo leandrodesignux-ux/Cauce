@@ -190,7 +190,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold tracking-tight md:text-2xl">Pozas y rescate</h1>
+          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Pozas y rescate</h1>
           <p className="mt-1.5 max-w-xl text-pretty text-tinta-2">
             Lo que se escapa del cauce, cuánto vale y qué leads con intención conviene rescatar primero.
           </p>

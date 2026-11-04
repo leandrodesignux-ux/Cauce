@@ -43,14 +43,14 @@ export function VistaCauce() {
 
   return (
     <div className="flex flex-col">
-      <h1 className="mt-2 mb-1.5 font-cifra text-xl leading-tight font-bold tracking-tight text-balance md:text-2xl">Journey de adquisición</h1>
+      <h1 className="mt-2 mb-1.5 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Journey de adquisición</h1>
       <p className="mb-6 max-w-5xl text-pretty text-tinta-2">
         {formatearRangoSemanas(estado.periodo.desde, estado.periodo.hasta)}. De la primera visita al contrato: cuánto avanza en cada paso, dónde se
         pierde y qué se está haciendo para recuperarlo.
       </p>
 
       <section aria-labelledby="t-journey" className="vidrio rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
-        <div className="mb-6 flex flex-wrap items-center gap-5 px-1 pt-1 md:p-0">
+        <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-4 px-1 pt-1 md:flex md:flex-wrap md:gap-5 md:p-0">
           <div>
             <h2 id="t-journey" className="font-cifra text-lg font-semibold">
               Recorrido del lead
@@ -61,11 +61,11 @@ export function VistaCauce() {
             </p>
           </div>
           <TiraFantasmas />
-          <div className="flex gap-2.5 md:ml-auto">
-            <BotonRedondo etiqueta="Comparar con período anterior" lado="bottom" presionado={comparar} onClick={alternarComparar}>
+          <div className="ml-auto flex gap-2.5">
+            <BotonRedondo etiqueta="Comparar con período anterior" lado="bottom" superficie="tarjeta" presionado={comparar} onClick={alternarComparar}>
               <ArrowRightLeft aria-hidden />
             </BotonRedondo>
-            <BotonRedondo etiqueta="Ver como tabla" lado="bottom" presionado={tabla} onClick={alternarTabla}>
+            <BotonRedondo etiqueta="Ver como tabla" lado="bottom" superficie="tarjeta" presionado={tabla} onClick={alternarTabla}>
               <Table2 aria-hidden />
             </BotonRedondo>
           </div>

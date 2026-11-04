@@ -52,6 +52,7 @@ El home es un **journey board**: el recorrido del lead en tres tarjetas (Atraer,
 - **Space Grotesk** (500/600/700): título de vista (700, 40 px; 30 px en móvil), títulos de panel (600, 20 px) y todas las cifras, con `tabular-nums`.
 - **Geist** (400/500/600): interfaz, cuerpo (14 px), tablas, etiquetas.
 - Escala (rem): 0.75 · 0.875 · 1 · 1.25 · 1.75 · 2.5 · 3.5 = `text-xs` … `text-3xl`. Interlineado de cuerpo 1.45; `.cifra` lo baja a 1.1.
+- Tracking por tamaño, nunca uno solo: `text-xs` +0.01em, cuerpo 0, `text-xl` −0.01em, `text-2xl` −0.02em, `text-3xl` −0.025em (va en la escala, no en cada título). Títulos con `text-balance`, párrafos con `text-pretty`.
 - Sentence case, sin mayúsculas sostenidas.
 - Montos: `$2.31 M MXN` en resúmenes, `$352 K` en filas del board, `$1,287,400 MXN` en detalle. Tasas con un decimal (`61.5 %`), deltas en puntos porcentuales (`↑ 0.2 pp`).
 
@@ -71,6 +72,14 @@ El home es un **journey board**: el recorrido del lead en tres tarjetas (Atraer,
 | Avisos | 18 px | activo | `shadow-flotante` |
 
 `vidrio` es una utilidad propia (`globals.css`): `--panel` + borde `--panel-borde` + `backdrop-filter: blur(var(--vidrio))`.
+
+## Materiales
+
+- `vidrio` (paneles, rail, chips de filtro sobre el degradé): `--panel`, desenfoque de 18 px con saturación al 180 % y el borde superior más claro (`--panel-brillo`), como luz que toca el material.
+- `vidrio-denso` (cromo flotante: nav fija y barra móvil): `--panel-denso`, más opaco y con 28 px de desenfoque, porque el contenido pasa por debajo y tiene que leerse.
+- **Nunca vidrio sobre vidrio.** Dentro de un panel, los botones redondos van sólidos (`BotonRedondo superficie="tarjeta"`) y los chips (`Toggle`) son pills de tarjeta. Dentro de la barra móvil, los botones no tienen superficie propia (`superficie="cromo"`).
+- Con `prefers-reduced-transparency: reduce`, ambos materiales pasan a `--tarjeta` sin desenfoque. Con `prefers-contrast: more`, el borde pasa a `--linea-fuerte`.
+- El cambio de tema funde en 220 ms con View Transitions en vez de saltar de brillo (con reduced motion, o sin soporte, cambia directo).
 
 ## Layout
 
@@ -96,7 +105,7 @@ El home es un **journey board**: el recorrido del lead en tres tarjetas (Atraer,
 
 **Board:** tres columnas iguales con 40 px de separación; los experimentos en una fila completa debajo (en ≥1500 px pasan a una cuarta columna). Entre 768 y 1180 px, dos columnas y la fila inferior apilada.
 
-**Móvil (<768 px):** sin rail. Nav de vistas a todo el ancho, chips con scroll horizontal, board en una columna con la etiqueta de fase arriba de cada tarjeta, y una barra flotante abajo (buscar, filtros, comparar, tema) en `vidrio`, a 16 px de los bordes. El contenido deja 96 px abajo para la barra.
+**Móvil (<768 px):** sin rail. La nav de vistas queda **fija arriba** en `vidrio-denso` (dónde estoy y a dónde ir, siempre a la vista) y el contenido se funde antes de llegar a ella; abajo, los chips del home con scroll horizontal (snap, sin barra de scroll). La barra flotante es **compacta y centrada** (buscar, filtros, comparar y tema en el home; buscar y tema en el resto), también en `vidrio-denso`, con un fundido inferior para que el contenido no choque con ella. Respeta las safe areas (`viewport-fit=cover` + `env(safe-area-inset-*)`). En el encabezado del board, título y botones comparten fila y la tira de fantasmas va debajo a todo el ancho. Táctil: sin destello gris al tocar, `touch-action: manipulation` (sin espera de doble toque) y el input de ⌘K a 16 px para que iOS no haga zoom.
 
 ## Journey board
 

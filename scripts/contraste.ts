@@ -78,6 +78,7 @@ const TEXTOS_NEUTROS = ["tinta", "tinta-2"];
 const FONDOS_NEUTROS = [
   "fondo-a", "fondo-b", "fondo-c", // degradé
   "panel/fondo-a", "panel/fondo-c", // paneles vidriados sobre los extremos del degradé
+  "panel-denso/fondo-a", "panel-denso/fondo-c", // cromo flotante (nav fija, barra móvil)
   "tarjeta", "muted",
   "neutro-suave/tarjeta", "azul-suave/tarjeta", "coral-suave/tarjeta", // filas en hover y pills suaves
 ];

@@ -58,7 +58,7 @@ export function VistaExperimentos() {
     <div className="flex flex-1">
       <div className="flex min-w-0 flex-1 flex-col gap-6">
         <header>
-          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold tracking-tight md:text-2xl">Registro de hipótesis</h1>
+          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Registro de hipótesis</h1>
           <p className="mt-1.5 max-w-3xl text-pretty text-tinta-2">
             Cada iniciativa declara antes de desplegarse qué espera mover y cuándo se va a poder leer. Así se sabe si lo que se dijo que iba a pasar,
             pasó.
