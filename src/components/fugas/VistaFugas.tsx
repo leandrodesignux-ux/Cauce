@@ -1,7 +1,6 @@
 "use client";
 
-import { Calculator, Inbox, Keyboard, SearchX } from "lucide-react";
-import Link from "next/link";
+import { Calculator, Inbox, SearchX } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
@@ -11,35 +10,37 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Toggle } from "@/components/ui/toggle";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { nombreEtapa } from "@/config/etapas";
 import { FUGA_MODELO_PERDIDA } from "@/config/modelo";
 import { NOMBRE_CORTO_POZA, causaVisible } from "@/config/pozas";
-import { formatearEntero, formatearMxn } from "@/lib/formato";
-import { type Banda, type LeadFeed, type RangoAntiguedad, banda, diasSinActividad, rangoAntiguedad } from "@/lib/leads";
+import { formatearEntero } from "@/lib/formato";
+import { type LeadFeed, banda, diasSinActividad, distribucionLeads, rangoAntiguedad } from "@/lib/leads";
+import { POR_PAGINA, numerosDePagina, paginar } from "@/lib/paginacion";
 import { periodoDesdePreset, valorEnRiesgoPorPoza } from "@/lib/selectors";
 import { useSesion } from "@/lib/stores";
+import { BannerFuga } from "./BannerFuga";
 import { LeadFeedItem, type Accion, type EstadoLead } from "./LeadFeedItem";
 import { LossModel } from "./LossModel";
 import { type Bandeja, useFiltrosFugas } from "./useFiltrosFugas";
 
-const BANDAS: { id: Banda; nombre: string }[] = [
-  { id: "alto", nombre: "Alto ≥70" },
-  { id: "medio", nombre: "Medio 40–69" },
-  { id: "bajo", nombre: "Bajo <40" },
-];
-const RANGOS: { id: RangoAntiguedad; nombre: string }[] = [
-  { id: "critica", nombre: "≤3 días · ventana crítica" },
-  { id: "reciente", nombre: "4–14 días" },
-  { id: "antigua", nombre: "Más de 14 días" },
-];
 const BANDEJAS: { id: Bandeja; nombre: string }[] = [
   { id: "pendientes", nombre: "Pendientes" },
   { id: "rescatados", nombre: "Rescatados" },
   { id: "descartados", nombre: "Descartados" },
 ];
 const ESTADO_DE_BANDEJA: Record<Bandeja, EstadoLead> = { pendientes: "pendiente", rescatados: "rescatado", descartados: "descartado" };
+const BANDEJA_DE_ESTADO: Record<EstadoLead, Bandeja> = { pendiente: "pendientes", rescatado: "rescatados", descartado: "descartados" };
 
 export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
   const { flujo, fugas, experimentos, ultimaSemana } = useDatos();
@@ -82,6 +83,39 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
         .sort((a, b) => b.score - a.score || diasSinActividad(a) - diasSinActividad(b)),
     [enBandeja, filtros.banda, filtros.antiguedad],
   );
+
+  // Página actual (10 por página), acotada: si una acción vacía la última página, se ve la anterior.
+  const pag = paginar(visibles.length, filtros.pagina);
+  const enPagina = useMemo(() => visibles.slice(pag.desde, pag.hasta), [visibles, pag.desde, pag.hasta]);
+  const pendientesEnPoza = useMemo(() => enPoza.filter((l) => estadoDe(l.id) === "pendiente"), [enPoza, estadoDe]);
+  const distribucion = useMemo(() => distribucionLeads(pendientesEnPoza), [pendientesEnPoza]);
+  const conteoBandeja = useMemo(() => {
+    const c: Record<Bandeja, number> = { pendientes: 0, rescatados: 0, descartados: 0 };
+    for (const l of enPoza) c[BANDEJA_DE_ESTADO[estadoDe(l.id)]]++;
+    return c;
+  }, [enPoza, estadoDe]);
+
+  // La URL sigue a la página efectiva (p. ej. después de rescatar el último lead de la última página).
+  useEffect(() => {
+    if (visibles.length > 0 && filtros.pagina !== pag.pagina) actualizar({ pagina: pag.pagina });
+  }, [visibles.length, filtros.pagina, pag.pagina, actualizar]);
+
+  // El foco pasa al primer lead de la nueva página cuando ya está pintada (la URL se actualiza después del clic).
+  const focoTrasPaginar = useRef<string | null>(null);
+  useEffect(() => {
+    const id = focoTrasPaginar.current;
+    if (!id || !enPagina.some((l) => l.id === id)) return;
+    focoTrasPaginar.current = null;
+    const el = document.querySelector<HTMLElement>(`[data-lead="${id}"]`);
+    el?.focus({ preventScroll: true });
+    el?.scrollIntoView({ block: "nearest" });
+  }, [enPagina]);
+
+  const irAPagina = (n: number) => {
+    setSeleccion(new Set());
+    focoTrasPaginar.current = visibles[(n - 1) * POR_PAGINA]?.id ?? null;
+    actualizar({ pagina: n });
+  };
 
   const enfocar = useCallback((id: string | undefined) => {
     if (!id) return;
@@ -139,16 +173,16 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
     [visibles],
   );
 
-  // Atajos: J/K para moverse (Shift extiende la selección), R rescata, D descarta, Esc limpia la selección.
+  // Atajos: J/K para moverse dentro de la página (Shift extiende la selección), R rescata, D descarta, Esc limpia la selección.
   useEffect(() => {
     const alPresionar = (e: KeyboardEvent) => {
       const destino = e.target as HTMLElement;
       if (e.metaKey || e.ctrlKey || e.altKey || destino.closest("input, textarea, select, [role=slider], [role=dialog], [cmdk-root]")) return;
       const tecla = e.key.toLowerCase();
-      const indice = visibles.findIndex((l) => l.id === enfocado);
+      const indice = enPagina.findIndex((l) => l.id === enfocado);
       if (tecla === "j" || tecla === "k") {
         e.preventDefault();
-        const siguiente = visibles[Math.max(0, Math.min(visibles.length - 1, indice === -1 ? 0 : indice + (tecla === "j" ? 1 : -1)))];
+        const siguiente = enPagina[Math.max(0, Math.min(enPagina.length - 1, indice === -1 ? 0 : indice + (tecla === "j" ? 1 : -1)))];
         if (!siguiente) return;
         if (e.shiftKey) {
           setSeleccion((s) => new Set([...s, ...(enfocado ? [enfocado] : []), siguiente.id]));
@@ -167,7 +201,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
     };
     window.addEventListener("keydown", alPresionar);
     return () => window.removeEventListener("keydown", alPresionar);
-  }, [visibles, enfocado, seleccion, filtros.bandeja, aplicar, enfocar]);
+  }, [enPagina, enfocado, seleccion, filtros.bandeja, aplicar, enfocar]);
 
   // Llegada desde ⌘K o desde el recorrido con ?lead=: lo lleva a la vista y le da el foco.
   useEffect(() => {
@@ -212,78 +246,53 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
               );
             })}
           </TabsList>
-          <TabsContent value={filtros.poza} className="flex flex-col gap-4 px-1 pt-2 md:px-0">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-              <p className="text-sm">
-                <span className="font-medium">{causaVisible(poza)}</span>
-                <span className="text-tinta-2">
-                  {" "}
-                  · {nombreEtapa(poza.desde)} → {nombreEtapa(poza.hacia)}
-                </span>
-              </p>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                <p className="cifra text-sm text-tinta-2">
-                  Valor estimado: <span className="font-semibold text-tinta">{formatearMxn(valorPoza.valorMxn)}</span> ·{" "}
-                  {formatearEntero(valorPoza.volumen)} {poza.id === FUGA_MODELO_PERDIDA ? "sin atender" : "perdidos"} en 30 días
-                </p>
-                {poza.id === FUGA_MODELO_PERDIDA && <ComoSeCalcula />}
-              </div>
-            </div>
+          <TabsContent value={filtros.poza} className="flex flex-col gap-4 pt-2">
+            <BannerFuga
+              fuga={poza}
+              valorMxn={valorPoza.valorMxn}
+              volumen={valorPoza.volumen}
+              esModelo={poza.id === FUGA_MODELO_PERDIDA}
+              experimento={experimento ?? null}
+              distribucion={enPoza.length > 0 ? distribucion : null}
+              filtroBanda={filtros.banda}
+              filtroAntiguedad={filtros.antiguedad}
+              onFiltrar={(cambios) => {
+                setSeleccion(new Set());
+                actualizar(cambios);
+              }}
+              comoSeCalcula={poza.id === FUGA_MODELO_PERDIDA ? <ComoSeCalcula /> : undefined}
+            />
 
             {enPoza.length === 0 ? (
-              <Vacio icono={<Inbox />}>
-                Esta fuga mide sesiones anónimas: no hay leads con datos de contacto para rescatar.
-                {experimento && (
-                  <>
-                    {" "}
-                    El experimento{" "}
-                    <Link href={`/experimentos?exp=${experimento.id}`} className="text-azul-texto underline underline-offset-2">
-                      {experimento.nombre}
-                    </Link>{" "}
-                    ataca esta fuga.
-                  </>
-                )}
-              </Vacio>
+              <Vacio icono={<Inbox />}>Esta fuga mide sesiones anónimas: no hay leads con datos de contacto para rescatar.</Vacio>
             ) : (
               <>
-                <div className="flex flex-col gap-3">
-                  <GrupoChips etiqueta="Bandeja">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <ToggleGroup
+                    type="single"
+                    variant="segmentado"
+                    value={filtros.bandeja}
+                    onValueChange={(v) => {
+                      if (!v) return;
+                      setSeleccion(new Set());
+                      actualizar({ bandeja: v as Bandeja });
+                    }}
+                    aria-label="Bandeja"
+                    className="w-full sm:w-auto"
+                  >
                     {BANDEJAS.map((b) => (
-                      <Chip key={b.id} activo={filtros.bandeja === b.id} onClick={() => actualizar({ bandeja: b.id })}>
+                      <ToggleGroupItem key={b.id} value={b.id} className="flex-1 gap-1.5 px-2 sm:flex-none sm:px-4">
                         {b.nombre}
-                        <span className="cifra text-xs opacity-70">{enPoza.filter((l) => estadoDe(l.id) === ESTADO_DE_BANDEJA[b.id]).length}</span>
-                      </Chip>
+                        <span className="cifra text-xs opacity-80">{conteoBandeja[b.id]}</span>
+                      </ToggleGroupItem>
                     ))}
-                  </GrupoChips>
-                  <div className="flex flex-wrap gap-x-6 gap-y-3">
-                    <GrupoChips etiqueta="Score">
-                      {BANDAS.map((b) => (
-                        <Chip key={b.id} activo={filtros.banda === b.id} onClick={() => actualizar({ banda: filtros.banda === b.id ? null : b.id })}>
-                          {b.nombre}
-                        </Chip>
-                      ))}
-                    </GrupoChips>
-                    <GrupoChips etiqueta="Antigüedad">
-                      {RANGOS.map((r) => (
-                        <Chip
-                          key={r.id}
-                          activo={filtros.antiguedad === r.id}
-                          destacado={r.id === "critica"}
-                          onClick={() => actualizar({ antiguedad: filtros.antiguedad === r.id ? null : r.id })}
-                        >
-                          {r.nombre}
-                        </Chip>
-                      ))}
-                    </GrupoChips>
-                  </div>
+                  </ToggleGroup>
+                  {visibles.length > 0 && (
+                    <p aria-live="polite" className="cifra text-sm text-tinta-2">
+                      Mostrando {formatearEntero(pag.desde + 1)}–{formatearEntero(pag.hasta)} de {formatearEntero(visibles.length)}
+                    </p>
+                  )}
                 </div>
-
-                <p className="hidden items-center gap-2 text-xs text-tinta-2 md:flex">
-                  <Keyboard className="size-3.5" aria-hidden />
-                  <Tecla>J</Tecla>
-                  <Tecla>K</Tecla> para moverse · <Tecla>R</Tecla> rescatar · <Tecla>D</Tecla> descartar · <Tecla>Shift</Tecla> para seleccionar
-                  varios · <Tecla>Esc</Tecla> limpia la selección
-                </p>
 
                 {visibles.length === 0 ? (
                   <Vacio icono={filtrosActivos ? <SearchX /> : <Inbox />}>
@@ -292,7 +301,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                       : `Todavía no hay leads ${filtros.bandeja} en esta fuga.`}{" "}
                     {filtrosActivos ? (
                       <button type="button" onClick={() => actualizar({ banda: null, antiguedad: null })} className="text-azul-texto underline underline-offset-2">
-                        Quitar filtros de score y antigüedad
+                        Quitar filtros
                       </button>
                     ) : filtros.bandeja !== "pendientes" ? (
                       <button type="button" onClick={() => actualizar({ bandeja: "pendientes" })} className="text-azul-texto underline underline-offset-2">
@@ -301,10 +310,10 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                     ) : null}
                   </Vacio>
                 ) : (
-                  <div className="relative">
+                  <div className="relative flex flex-col gap-4">
                     <ul aria-label={`Leads en ${NOMBRE_CORTO_POZA[poza.id] ?? causaVisible(poza)}`} className="overflow-hidden rounded-tarjeta border border-tarjeta-borde bg-tarjeta shadow-tarjeta">
                       <AnimatePresence initial={false} custom={ultimaAccion}>
-                        {visibles.map((l) => (
+                        {enPagina.map((l) => (
                           <LeadFeedItem
                             key={l.id}
                             lead={l}
@@ -318,6 +327,30 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                         ))}
                       </AnimatePresence>
                     </ul>
+
+                    {pag.paginas > 1 && (
+                      <Pagination>
+                        <PaginationContent>
+                          <PaginationItem>
+                            <PaginationPrevious disabled={pag.pagina === 1} onClick={() => irAPagina(pag.pagina - 1)} />
+                          </PaginationItem>
+                          {numerosDePagina(pag.pagina, pag.paginas).map((n, i) => (
+                            <PaginationItem key={n === "…" ? `salto-${i}` : n}>
+                              {n === "…" ? (
+                                <PaginationEllipsis />
+                              ) : (
+                                <PaginationLink isActive={n === pag.pagina} aria-label={`Página ${n}`} onClick={() => irAPagina(n)}>
+                                  {n}
+                                </PaginationLink>
+                              )}
+                            </PaginationItem>
+                          ))}
+                          <PaginationItem>
+                            <PaginationNext disabled={pag.pagina === pag.paginas} onClick={() => irAPagina(pag.pagina + 1)} />
+                          </PaginationItem>
+                        </PaginationContent>
+                      </Pagination>
+                    )}
 
                     {seleccion.size > 0 && (
                       <div
@@ -379,27 +412,6 @@ function ComoSeCalcula() {
       </DialogContent>
     </Dialog>
   );
-}
-
-function GrupoChips({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {
-  return (
-    <div role="group" aria-label={etiqueta} className="flex flex-wrap items-center gap-2">
-      <span className="mr-1 text-xs text-tinta-2">{etiqueta}</span>
-      {children}
-    </div>
-  );
-}
-
-function Chip({ activo, destacado, onClick, children }: { activo: boolean; destacado?: boolean; onClick: () => void; children: ReactNode }) {
-  return (
-    <Toggle variant={destacado ? "alerta" : "outline"} pressed={activo} onPressedChange={onClick}>
-      {children}
-    </Toggle>
-  );
-}
-
-function Tecla({ children }: { children: ReactNode }) {
-  return <kbd className="rounded border border-linea px-1 font-sans text-[length:var(--texto-xs)]">{children}</kbd>;
 }
 
 function Vacio({ icono, children }: { icono: ReactNode; children: ReactNode }) {
