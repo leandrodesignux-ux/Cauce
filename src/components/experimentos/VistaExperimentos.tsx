@@ -50,7 +50,7 @@ export function VistaExperimentos() {
   const cerrar = () => {
     const id = exp?.id;
     poner({ exp: null });
-    // Tabla y fichas móviles comparten data-exp: se enfoca la que está visible.
+    // Tabla y tarjetas móviles comparten data-exp: se enfoca la que está visible.
     if (id)
       requestAnimationFrame(() =>
         [...document.querySelectorAll<HTMLElement>(`[data-exp="${id}"]`)].find((el) => el.offsetParent !== null)?.focus(),

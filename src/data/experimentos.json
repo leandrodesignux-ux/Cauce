@@ -2,7 +2,7 @@
   {
     "id": "busqueda-guiada",
     "nombre": "Búsqueda guiada en Browse Pages de pago",
-    "palanca": "Producto · Browse Pages",
+    "palanca": "Producto · Listado",
     "transicion": {
       "desde": "exploracion",
       "hacia": "evaluacion"
@@ -21,7 +21,7 @@
   {
     "id": "spots-no-disponibles",
     "nombre": "Flujo de spots no disponibles",
-    "palanca": "Producto · Ficha de espacio",
+    "palanca": "Producto · Página de producto",
     "transicion": {
       "desde": "evaluacion",
       "hacia": "contacto"
@@ -58,7 +58,7 @@
   {
     "id": "templates-ficha",
     "nombre": "Templates de ficha por sector",
-    "palanca": "Contenido · Fichas",
+    "palanca": "Contenido · Páginas de producto",
     "transicion": {
       "desde": "evaluacion",
       "hacia": "contacto"
@@ -76,7 +76,7 @@
   {
     "id": "ficha-complejo-seo",
     "nombre": "Ficha de complejo con jerarquía SEO",
-    "palanca": "SEO · Fichas de complejo",
+    "palanca": "SEO · Páginas de producto",
     "transicion": {
       "desde": "descubrimiento",
       "hacia": "exploracion"
