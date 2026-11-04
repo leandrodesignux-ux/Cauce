@@ -20,7 +20,7 @@ const TONO = {
 } as const
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-6.5 w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full px-3 text-xs font-semibold whitespace-nowrap focus-visible:ring-[3px] focus-visible:ring-ring/50 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "group/badge inline-flex h-6.5 w-fit shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-badge px-2.5 text-xs font-semibold whitespace-nowrap focus-visible:ring-[3px] focus-visible:ring-ring/50 [&>svg]:pointer-events-none [&>svg]:size-3!",
   {
     variants: {
       variant: {

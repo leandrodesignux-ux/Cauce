@@ -323,26 +323,26 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                       <div
                         role="region"
                         aria-label="Acciones para la selección"
-                        className="sticky bottom-[calc(var(--alto-barra-movil)+28px)] z-10 mt-3 flex flex-wrap items-center gap-3 rounded-full bg-activo py-2 pr-2 pl-5 text-sm text-sobre-activo shadow-flotante md:bottom-4"
+                        className="sticky bottom-[calc(var(--alto-barra-movil)+28px)] z-10 mt-3 flex flex-wrap items-center gap-3 rounded-boton bg-activo py-2 pr-2 pl-5 text-sm text-sobre-activo shadow-flotante md:bottom-4"
                       >
                         <span className="cifra flex-1">
                           {seleccion.size} seleccionado{seleccion.size === 1 ? "" : "s"}
                         </span>
                         {filtros.bandeja === "pendientes" ? (
                           <>
-                            <button type="button" onClick={() => aplicar("rescatar", [...seleccion])} className="rounded-full bg-coral-relleno px-4 py-1.5 font-semibold text-sobre-relleno">
+                            <button type="button" onClick={() => aplicar("rescatar", [...seleccion])} className="rounded-control bg-coral-relleno px-4 py-1.5 font-semibold text-sobre-relleno">
                               Rescatar {seleccion.size} lead{seleccion.size === 1 ? "" : "s"}
                             </button>
-                            <button type="button" onClick={() => aplicar("descartar", [...seleccion])} className="rounded-full px-3 py-1.5 hover:bg-sobre-activo/10">
+                            <button type="button" onClick={() => aplicar("descartar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-sobre-activo/10">
                               Descartar
                             </button>
                           </>
                         ) : (
-                          <button type="button" onClick={() => aplicar("restaurar", [...seleccion])} className="rounded-full px-3 py-1.5 hover:bg-sobre-activo/10">
+                          <button type="button" onClick={() => aplicar("restaurar", [...seleccion])} className="rounded-control px-3 py-1.5 hover:bg-sobre-activo/10">
                             Devolver a la fuga
                           </button>
                         )}
-                        <button type="button" onClick={() => setSeleccion(new Set())} className="rounded-full px-3 py-1.5 text-sobre-activo/70 hover:bg-sobre-activo/10">
+                        <button type="button" onClick={() => setSeleccion(new Set())} className="rounded-control px-3 py-1.5 text-sobre-activo/70 hover:bg-sobre-activo/10">
                           Limpiar
                         </button>
                       </div>
