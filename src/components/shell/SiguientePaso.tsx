@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { IconoCirculo } from "@/components/ui/icono-circulo";
 import Link from "next/link";
 import { VISTAS } from "./vistas";
 
@@ -19,9 +20,7 @@ export function SiguientePaso({ desde, className }: { desde: string; className?:
         href={siguiente.href}
         className="tarjeta-clicable group flex items-center gap-4 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-5 shadow-tarjeta md:p-6"
       >
-        <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-full bg-azul-suave text-azul-texto">
-          <siguiente.Icono className="size-5" strokeWidth={1.7} />
-        </span>
+        <IconoCirculo Icono={siguiente.Icono} />
         <span className="min-w-0 flex-1">
           <span className="block text-xs text-tinta-2">
             Siguiente paso · <span className="cifra">{siguiente.numero}</span> {siguiente.nombre}

@@ -1,5 +1,6 @@
 "use client";
 
+import { IconoCirculo } from "@/components/ui/icono-circulo";
 import { ArrowRight, Droplets, FlaskConical, UserCheck, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useReducedMotion } from "motion/react";
@@ -58,9 +59,7 @@ function Cifra({
       href={href}
       className={`tarjeta-clicable group flex items-center gap-4 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-4 shadow-tarjeta md:p-5 ${tono === "coral" ? "tarjeta-coral" : ""}`}
     >
-      <span aria-hidden className={`grid size-11 shrink-0 place-items-center rounded-full ${tono === "azul" ? "bg-azul-suave text-azul-texto" : "bg-coral-suave text-coral-texto"}`}>
-        <Icono className="size-5" strokeWidth={1.7} />
-      </span>
+      <IconoCirculo Icono={Icono} tono={tono} />
       <span className="min-w-0 flex-1">
         <span className="block text-xs text-tinta-2">{etiqueta}</span>
         <span className="cifra block text-xl font-semibold">{valor}</span>
