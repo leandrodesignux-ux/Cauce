@@ -64,7 +64,7 @@ export function DataTableCauce({
                 {ETAPAS[p.desde].nombre} → {ETAPAS[p.desde + 1].nombre}
               </TableCell>
               <TableCell className="cifra text-right">{formatearEntero(p.volumen)}</TableCell>
-              <TableCell className="cifra text-right text-tinta">{formatearMxn(p.valor)}</TableCell>
+              <TableCell className="cifra text-right text-tinta-cuerpo">{formatearMxn(p.valor)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

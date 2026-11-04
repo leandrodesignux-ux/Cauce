@@ -199,7 +199,7 @@ function TarjetaEtapa({
           data-etapa={etapa.id}
           onClick={onAbrir}
           aria-label={`${NOMBRE_ETAPA[etapa.id]}: ${formatearEntero(etapa.volumen)}. ${tasa}.${avance ? ` Avanzan ${formatearEntero(avance.avanzan)}, se quedan ${formatearEntero(avance.seQuedan)}.` : ""} Ver el detalle de la etapa.`}
-          className="block max-w-full truncate text-left text-sm font-medium text-tinta outline-none after:absolute after:inset-0 after:rounded-tile"
+          className="block max-w-full truncate text-left text-sm font-medium text-tinta-cuerpo outline-none after:absolute after:inset-0 after:rounded-tile"
         >
           {NOMBRE_ETAPA[etapa.id]}
         </button>

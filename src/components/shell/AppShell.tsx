@@ -26,7 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main id="contenido" className="flex min-w-0 flex-1 flex-col">
           {children}
         </main>
-        <p className="mt-10 text-center text-xs text-tinta-2 md:hidden">Prototipo con datos demo</p>
+        <p className="mt-10 text-center text-xs text-tinta-cuerpo md:hidden">Prototipo con datos demo</p>
       </div>
       {/* Borde inferior: el contenido se funde antes de la barra flotante en vez de chocar con ella. */}
       <div aria-hidden className="pointer-events-none fixed inset-x-0 bottom-0 z-20 h-32 bg-linear-to-t from-fondo-c via-fondo-c/85 to-transparent md:hidden" />

@@ -226,7 +226,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
     <div className="flex flex-col gap-6">
       <header>
         <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Rescate de leads</h1>
-        <p className="mt-1.5 max-w-2xl text-pretty text-tinta-2">Cuánto vale cada fuga y qué leads con intención conviene rescatar primero.</p>
+        <p className="mt-1.5 max-w-2xl text-pretty text-tinta-cuerpo">Cuánto vale cada fuga y qué leads con intención conviene rescatar primero.</p>
       </header>
 
       <section aria-label="Fugas" className="vidrio flex flex-col gap-4 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
@@ -288,7 +288,7 @@ export function VistaFugas({ leads }: { leads: LeadFeed[] }) {
                     ))}
                   </ToggleGroup>
                   {visibles.length > 0 && (
-                    <p aria-live="polite" className="cifra text-sm text-tinta-2">
+                    <p aria-live="polite" className="cifra text-sm text-tinta-cuerpo">
                       Mostrando {formatearEntero(pag.desde + 1)}–{formatearEntero(pag.hasta)} de {formatearEntero(visibles.length)}
                     </p>
                   )}

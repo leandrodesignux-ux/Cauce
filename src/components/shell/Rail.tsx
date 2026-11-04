@@ -38,7 +38,7 @@ export function Rail() {
         <ParTema />
         <Tooltip>
           <TooltipTrigger asChild>
-            <span tabIndex={0} className="cifra rounded-badge border border-dashed border-tenue px-2 py-0.5 text-xs text-tinta-2">
+            <span tabIndex={0} className="cifra rounded-badge border border-dashed border-tenue px-2 py-0.5 text-xs text-tinta-cuerpo">
               Demo
             </span>
           </TooltipTrigger>

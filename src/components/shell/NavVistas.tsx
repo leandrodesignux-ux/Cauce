@@ -21,10 +21,10 @@ export function NavVistas({ className, denso = false }: { className?: string; de
                 href={href}
                 aria-current={activa ? "page" : undefined}
                 className={`flex h-10 flex-1 items-center justify-center rounded-[calc(var(--radio-boton)-4px)] px-2 font-medium motion-safe:transition-[color,background-color,transform] motion-safe:duration-(--duracion-presion) motion-safe:ease-salida motion-safe:active:scale-[0.97] md:px-5 ${
-                  activa ? "bg-activo text-sobre-activo" : "text-tinta-2 hover:bg-tarjeta hover:text-tinta"
+                  activa ? "bg-activo text-sobre-activo" : "text-tinta-cuerpo hover:bg-tarjeta hover:text-tinta"
                 }`}
               >
-                <span aria-hidden className={`cifra mr-1.5 ${activa ? "text-sobre-activo/70" : "text-tinta-2"}`}>
+                <span aria-hidden className={`cifra mr-1.5 ${activa ? "text-sobre-activo/70" : "text-tinta-cuerpo"}`}>
                   {numero}
                 </span>
                 {nombre}

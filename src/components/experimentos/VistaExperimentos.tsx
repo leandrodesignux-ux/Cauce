@@ -62,7 +62,7 @@ export function VistaExperimentos() {
       <div className="flex min-w-0 flex-1 flex-col gap-6">
         <header>
           <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Experimentos</h1>
-          <p className="mt-1.5 max-w-3xl text-pretty text-tinta-2">Qué paso espera mejorar cada experimento, cuándo se podrá medir y si funcionó.</p>
+          <p className="mt-1.5 max-w-3xl text-pretty text-tinta-cuerpo">Qué paso espera mejorar cada experimento, cuándo se podrá medir y si funcionó.</p>
         </header>
 
         <section aria-label="Experimentos" className="vidrio flex flex-col gap-5 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">

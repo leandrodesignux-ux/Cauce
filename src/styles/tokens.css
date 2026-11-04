@@ -10,7 +10,9 @@
  * - azul y coral base: solo líneas y trazos (espina, fugas, conectores, bordes, arcos).
  * - -texto: letras en ese tono. Siempre sobre tarjeta o sobre su -suave, nunca sobre el degradé.
  * - -relleno: pills sólidas con texto blanco (--sobre-relleno).
- * Sobre el degradé y los paneles vidriados solo va texto neutro (tinta, tinta-2).
+ * Tinta en tres pasos: tinta (títulos h1–h3 y cifras principales), tinta-cuerpo (cuerpo, valores de tablas, nombres
+ * en tarjetas) y tinta-2 (secundario, metadata, labels). tinta-2 solo sobre tarjeta o fondo-a; sobre el degradé
+ * y los paneles vidriados el secundario usa tinta-cuerpo.
  * `npm run contraste` verifica cada par en claro y oscuro.
  */
 
@@ -32,7 +34,8 @@
 
   /* Texto neutro */
   --tinta: #111318;
-  --tinta-2: #4b5160;
+  --tinta-cuerpo: #363c49;
+  --tinta-2: #5a6171;
   --tenue: #5f6576;
 
   /* Líneas */
@@ -130,9 +133,9 @@
 :root,
 .dark {
   --background: var(--fondo-b);
-  --foreground: var(--tinta);
+  --foreground: var(--tinta-cuerpo);
   --card: var(--tarjeta);
-  --card-foreground: var(--tinta);
+  --card-foreground: var(--tinta-cuerpo);
   --popover: var(--tarjeta);
   --popover-foreground: var(--tinta);
   --primary: var(--activo);
@@ -177,7 +180,8 @@
   --tarjeta-borde: #2a2f3b;
 
   --tinta: #eef0f4;
-  --tinta-2: #c3c8d2;
+  --tinta-cuerpo: #d6dae2;
+  --tinta-2: #a9afbb;
   --tenue: #a3aab8;
 
   --linea: #2c3240;
