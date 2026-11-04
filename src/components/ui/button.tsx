@@ -21,7 +21,7 @@ const buttonVariants = cva(
         sutil:
           "text-muted-foreground hover:bg-neutro-suave hover:text-foreground aria-expanded:bg-neutro-suave aria-expanded:text-foreground",
         // Superficie vidriada sobre el degradé: botones redondos del rail y chips de filtro.
-        // Activo (aria-pressed o data-activo) = pill negra.
+        // Activo (aria-pressed o data-activo) = color activo.
         vidrio:
           "vidrio text-tinta hover:bg-tarjeta aria-expanded:bg-tarjeta aria-pressed:border-activo aria-pressed:bg-activo aria-pressed:text-sobre-activo data-[activo=true]:border-activo data-[activo=true]:bg-activo data-[activo=true]:text-sobre-activo",
         // Botón redondo dentro de un panel vidriado: superficie sólida (nunca vidrio sobre vidrio).

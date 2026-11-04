@@ -12,13 +12,13 @@ const toggleVariants = cva(
       variant: {
         default:
           "bg-transparent hover:bg-muted hover:text-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
-        // Chips y alternadores de Cauce: pill sólida en reposo (viven dentro de paneles y popovers), pill negra (blanca en oscuro) si está activa.
+        // Chips y alternadores de Cauce: pill sólida en reposo (viven dentro de paneles y popovers), color activo (índigo; lavanda en oscuro) si está activa.
         outline:
           "rounded-boton border border-linea bg-tarjeta text-tinta-2 hover:border-linea-fuerte hover:text-tinta data-[state=on]:border-activo data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",
         // Chip de alerta (ventana crítica): borde coral en reposo, pill coral sólida si está activa.
         alerta:
           "rounded-boton border border-coral bg-tarjeta text-tinta hover:bg-coral-suave data-[state=on]:border-coral-relleno data-[state=on]:bg-coral-relleno data-[state=on]:text-sobre-relleno",
-        // Control segmentado (vistas, período, tabla/timeline): pill negra para el activo dentro de una pill vidriada.
+        // Control segmentado (vistas, período, tabla/timeline): el activo en color activo dentro de un contenedor vidriado.
         segmentado:
           "h-full rounded-[calc(var(--radio-boton)-4px)] px-4 text-tinta-2 hover:text-tinta data-[state=on]:bg-activo data-[state=on]:text-sobre-activo",
       },

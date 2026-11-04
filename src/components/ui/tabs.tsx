@@ -30,7 +30,7 @@ const tabsListVariants = cva(
       variant: {
         default: "bg-muted",
         line: "gap-1 border-b border-border bg-transparent",
-        // Pozas y vistas internas: pill de tarjeta con la pestaña activa en pill negra.
+        // Pozas y vistas internas: pill de tarjeta con la pestaña activa en color activo.
         pill: "gap-1 rounded-boton border border-tarjeta-borde bg-tarjeta p-1 group-data-horizontal/tabs:h-12",
       },
       // Color del subrayado de la pestaña activa (variante line): azul por defecto, coral para pozas.

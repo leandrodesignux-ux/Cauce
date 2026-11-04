@@ -55,7 +55,7 @@ export function BannerFuga({
     <div className="grid gap-6 rounded-tarjeta border border-tarjeta-borde bg-tarjeta p-5 shadow-tarjeta md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:gap-10">
       <div className="flex flex-col items-start gap-1">
         <p className="text-sm text-tinta-2">Valor estimado</p>
-        <p className="cifra text-3xl font-semibold">{formatearMxn(valorMxn)}</p>
+        <p className="cifra text-2xl font-semibold md:text-3xl">{formatearMxn(valorMxn)}</p>
         <p className="text-sm text-tinta-2">
           <span className="cifra">{formatearEntero(volumen)}</span> {esModelo ? "sin atender" : "perdidos"} en 30 días · {nombreEtapa(fuga.desde)} →{" "}
           {nombreEtapa(fuga.hacia)}

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { VISTAS, vistaActiva } from "./vistas";
 
 /**
- * Las tres vistas como una pill vidriada, numeradas en el orden de la demo; la activa en pill negra. En móvil ocupa todo el ancho y queda
+ * Las tres vistas como una pill vidriada, numeradas en el orden de la demo; la activa en color activo. En móvil ocupa todo el ancho y queda
  * fija arriba (`denso`: material más opaco, el contenido pasa por debajo) para no perder la ubicación al bajar.
  */
 export function NavVistas({ className, denso = false }: { className?: string; denso?: boolean }) {

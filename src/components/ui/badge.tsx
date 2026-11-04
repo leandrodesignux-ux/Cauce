@@ -7,7 +7,7 @@ import { Slot } from "radix-ui"
  * Pills de Cauce (docs/DESIGN.md): tres intensidades por tono.
  * - relleno: fondo -relleno con texto blanco (lo más fuerte: score alto, más de 3 días sin atención).
  * - suave: fondo -suave con texto -texto.
- * - activo: pill negra (blanca en oscuro), como el estado activo del resto de la UI.
+ * - activo: color activo (índigo; lavanda en oscuro), como el estado activo del resto de la UI.
  * El texto siempre nombra el estado: el color nunca va solo.
  */
 const TONO = {
