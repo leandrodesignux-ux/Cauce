@@ -5,6 +5,7 @@ import {
   avanceDeEtapa,
   modeloPerdida,
   observadoDeSerie,
+  rendimientoPorPunto,
   periodoAnterior,
   periodoDesdePreset,
   simularMejora,
@@ -120,5 +121,25 @@ describe("observadoDeSerie", () => {
   it("ignora semanas sin dato", () => {
     const conHueco = serie.map((p) => (p.semana === "2026-09-28" ? { ...p, valor: null } : p));
     assert.equal(observadoDeSerie(conHueco, "2026-09-07", [2, 3]), 1);
+  });
+});
+
+describe("rendimientoPorPunto", () => {
+  const v = { descubrimiento: 1000, exploracion: 500, evaluacion: 200, contacto: 100, calificacion: 50, asignacion: 40, visita: 20, cierre: 10 };
+  const r = rendimientoPorPunto(v);
+  it("una fila por transición, con su tasa actual", () => {
+    assert.equal(r.length, 7);
+    assert.equal(r[0].tasaActual, 0.5);
+  });
+  it("1 punto = volumen de origen / 100 personas, por la probabilidad de cerrar desde el destino", () => {
+    // Visita → Cierre: 20 / 100 = 0.2 personas; llegar a Cierre ya es cerrar.
+    assert.equal(r[6].personasPorPunto, 0.2);
+    assert.equal(r[6].cierresPorPunto, 0.2);
+    // Asignación → Visita: 40 / 100 = 0.4 personas × (10 / 20) = 0.2 cierres.
+    assert.equal(r[5].personasPorPunto, 0.4);
+    assert.equal(r[5].cierresPorPunto, 0.2);
+  });
+  it("coincide con simularMejora para 1 punto", () => {
+    for (const fila of r) assert.equal(fila.cierresPorPunto, simularMejora(v, fila.transicion, 1, 1_000).cierres);
   });
 });

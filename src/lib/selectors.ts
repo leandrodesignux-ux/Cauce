@@ -283,3 +283,20 @@ export function simularMejora(volumen: Volumen, t: Transicion, puntos: number, c
   const cierres = extra * probabilidad;
   return { extra, probabilidad, cierres, usd: Math.round(cierres * comisionUsd) };
 }
+
+export type RendimientoTransicion = {
+  transicion: Transicion;
+  tasaActual: number | null;
+  /** Personas extra que pasan la transición por cada punto (pp) de mejora. */
+  personasPorPunto: number;
+  /** Cierres extra en el período por cada punto de mejora. */
+  cierresPorPunto: number;
+};
+
+/** Cuánto rinde mejorar 1 punto cada una de las 7 transiciones (personas y cierres extra), con simularMejora. */
+export function rendimientoPorPunto(volumen: Volumen): RendimientoTransicion[] {
+  return TRANSICIONES.map((t) => {
+    const r = simularMejora(volumen, t, 1, 0);
+    return { transicion: t, tasaActual: tasaTransicion(volumen, t), personasPorPunto: r.extra, cierresPorPunto: r.cierres };
+  });
+}

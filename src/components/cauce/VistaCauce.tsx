@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useJourney } from "@/hooks/useJourney";
 import { useSeleccion } from "@/hooks/useSeleccion";
 import { formatearRangoSemanas } from "@/lib/formato";
-import { experimentosDelBoard, transicionConMasValor } from "@/lib/journey";
+import { experimentosDelBoard } from "@/lib/journey";
 import type { EtapaId } from "@/lib/tipos";
 import { ActividadEnVivo } from "./ActividadEnVivo";
 import { DataTableCauce } from "./DataTableCauce";
@@ -24,7 +24,7 @@ import { LeadsSinAtender } from "./LeadsSinAtender";
 import type { Resaltado } from "./resaltado";
 import { ResumenCauce } from "./ResumenCauce";
 import { SeccionHome } from "./SeccionHome";
-import { ID_SIMULADOR, SimuladorMejora } from "./SimuladorMejora";
+import { ID_SIMULADOR, SimuladorMejora, transicionDeMayorRendimiento } from "./SimuladorMejora";
 
 /** Experimentos que se muestran en el home (el destacado primero). */
 const EXPERIMENTOS_HOME = 3;
@@ -41,7 +41,7 @@ export function VistaCauce() {
   const [resaltado, setResaltado] = useState<Resaltado>(null);
   const [transicionElegida, setTransicion] = useState<number | null>(null);
   const reducir = useReducedMotion() ?? false;
-  const transicion = transicionElegida ?? transicionConMasValor(journey.pozas);
+  const transicion = transicionElegida ?? transicionDeMayorRendimiento(journey);
 
   const tiles = useMemo(() => experimentosDelBoard(experimentos, EXPERIMENTOS_HOME), [experimentos]);
 
@@ -52,7 +52,8 @@ export function VistaCauce() {
     (desde: EtapaId) => {
       setTransicion(ORDEN_ETAPAS.indexOf(desde));
       document.getElementById("t-simulador")?.scrollIntoView({ behavior: reducir ? "auto" : "smooth", block: "start" });
-      document.getElementById(ID_SIMULADOR)?.focus({ preventScroll: true });
+      // Enfoca la fila preseleccionada del ranking cuando ya está pintada.
+      requestAnimationFrame(() => document.querySelector<HTMLElement>(`#${ID_SIMULADOR} [aria-checked=true]`)?.focus({ preventScroll: true }));
     },
     [reducir],
   );
