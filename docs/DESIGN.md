@@ -4,7 +4,7 @@
 
 Referencia visual obligatoria: [`docs/referencia/cauce-home-referencia.html`](referencia/cauce-home-referencia.html). Si algo de este documento no alcanza para decidir, la referencia manda.
 
-El home es un **journey board**: el recorrido del lead en tres tarjetas (Atraer, Convertir, Cerrar) con las etapas en filas, las fugas colgando debajo de su etapa y conectores que dibujan el flujo. La interfaz es clara y táctil: fondo con un degradé frío, paneles de vidrio, tarjetas blancas muy redondeadas, el estado activo como una pill negra y acciones en botones circulares. Dos colores con significado fijo: **azul** para lo que avanza y **coral** para lo que se pierde. Todo lo demás es neutro.
+El home es el **Recorrido**: un resumen de tres cifras, las 8 etapas como un stepper agrupado por fase (Atraer, Convertir, Cerrar), dónde se pierde la demanda, los experimentos y los leads sin atender, en ese orden de lectura. La interfaz es clara y táctil: fondo con un degradé frío, paneles de vidrio, tarjetas blancas muy redondeadas, el estado activo como una pill negra y acciones en botones circulares. Dos colores con significado fijo: **azul** para lo que avanza y **coral** para lo que se pierde. Todo lo demás es neutro.
 
 ## Color
 
@@ -19,7 +19,7 @@ El home es un **journey board**: el recorrido del lead en tres tarjetas (Atraer,
 | `--tinta-2` | `#4B5160` | `#C3C8D2` | Texto secundario, etiquetas, encabezados de tabla |
 | `--tenue` | `#5F6576` | `#A3AAB8` | Bordes en hover, trazos neutros (nunca texto chico) |
 | `--linea` · `--linea-fuerte` | `#DDE2EA` · `#C3CAD7` | `#2C3240` · `#3A4152` | Separadores; bordes de inputs y botones "ir" |
-| `--azul` | `#7E95DA` | `#8EA3E6` | Espina del board, conectores, arcos, bordes de resaltado |
+| `--azul` | `#7E95DA` | `#8EA3E6` | Chevrons y bordes de resaltado, contornos |
 | `--azul-texto` | `#3651A8` | `#9DB0EE` | Texto en azul: deltas positivos, links, iniciales de avatar |
 | `--azul-relleno` | `#3D5BC0` | `#3D5BC0` | Pills sólidas con texto blanco (score alto, días dentro de la ventana) |
 | `--azul-suave` | `#E3E8F7` | `#2A3350` | Fondo de íconos de etapa, hover de filas, pills suaves |
@@ -34,7 +34,7 @@ El home es un **journey board**: el recorrido del lead en tres tarjetas (Atraer,
 
 **Reglas de color:**
 
-- `--azul` y `--coral` base: **solo líneas y trazos** (espina, fugas, conectores, arcos de medidores, bordes de resaltado, contorno de íconos de fuga).
+- `--azul` y `--coral` base: **solo líneas y trazos** (bordes de resaltado, contorno de íconos de fuga, indicadores).
 - `-texto`: para letras en ese tono, y siempre sobre `--tarjeta`, `--muted` o su propio `-suave`.
 - `-relleno`: para pills y botones sólidos, siempre con texto blanco (`--sobre-relleno`).
 - **Nunca texto de color directo sobre el degradé** ni sobre un panel vidriado: ahí solo va `--tinta` o `--tinta-2`.
@@ -85,39 +85,39 @@ El home es un **journey board**: el recorrido del lead en tres tarjetas (Atraer,
 
 ```
 ┌────┬─────────────────────────────────────────────────────────────────────┐
-│ ◖  │ (Cauce) Fugas  Experimentos           Período 30 días  Canal Todos …  │
-│ ⌕  │ Journey de adquisición                                               │
+│ ◖  │ (1 Recorrido) 2 Rescate  3 Experimentos     Período 30 días  Canal … │
+│ ⌕  │ Recorrido de adquisición                                             │
 │ ☰  │ 5 oct – 1 nov 2026. De la primera visita al contrato…                │
-│ ⇄  │ ╭─ Recorrido del lead ── $2.31 M en riesgo ── (RI)(MR)(PG)… +143 ⇄ ▦ ─╮│
-│ ▦  │ │ ╭ Atraer ─────╮   ╭ Convertir ──╮   ╭ Cerrar ─────╮                ││
-│ ⇪  │ │ │ ● Descub.   │○─○│ ● Contacto  │○─○│ ● Visita    │                ││
-│    │ │ │ │           │   │ ┊ ◌ fuga    │   │ ┊ ◌ fuga    │                ││
-│    │ │ │ ● Explor.   │   │ ● Calific.  │   │ ● Cierre    │                ││
-│    │ │ │ ┊ ◌ fuga    │   │ ┊ ◌ Fantasmas [Rescatar]      │                ││
-│    │ │ ╰─────────────╯   ╰─────────────╯   ╰─────────────╯                ││
-│    │ │ Experimentos: [■ leyendo] [ ] [ ] [ ] [ ] [ ]                         ││
-│ ☾  │ ╰──────────────────────────────────────────────────────────────────────╯│
-│ ☀  │ ╭ Fantasmas por rescatar ──────────╮ ╭ Valor en riesgo ───────────╮    │
+│ ⇄  │ [ Valor en riesgo → ] [ Leads por rescatar → ] [ Experimentos activos → ]│
+│ ▦  │ ╭ Recorrido ──────────────────────────────────────────────────────╮ │
+│ ⇪  │ │ Atraer                  Convertir                 Cerrar        │ │
+│    │ │ [Desc.]›[Expl.]›[Eval.] ›[Cont.]›[Calif.]›[Asig.] ›[Visita]›[Cierre]│
+│    │ ╰─────────────────────────────────────────────────────────────────╯ │
+│    │ ╭ Dónde se pierde ─ [fuga $] [fuga $] [fuga $] … ─────────────────╮ │
+│ ?  │ ╭ Experimentos ─── [exp] [exp] [exp] ──────── Ver todos ──────────╮ │
+│ ☾  │ ╭ Leads sin atender ── tabla de 4 con Rescatar ── Ver los N ──────╮ │
+│ ☀  │ [ Siguiente paso · 2 Rescate: Ver los leads por rescatar  → ]       │
 └────┴─────────────────────────────────────────────────────────────────────┘
 ```
 
-**Escritorio (≥768 px):** rail izquierdo de 88 px, fijo, con la marca y botones circulares: buscar (⌘K), filtros, comparar con período anterior, ver como tabla y exportar (los tres últimos solo en el home); abajo, el par luna/sol (el modo vigente en pill negra) y el sello de datos demo. Arriba del contenido: la nav de vistas como pill vidriada (el activo en pill negra) y, en el home, los filtros como chips a la derecha (`Período 30 días`, `Canal Todos`…).
+**Escritorio (≥768 px):** rail izquierdo de 88 px, fijo, con la marca y botones circulares: buscar (⌘K), filtros, comparar con período anterior, ver como tabla y exportar (los cuatro solo en el home); abajo, cómo funciona (reabre el onboarding), el par luna/sol (el modo vigente en pill negra) y el sello de datos demo. Arriba del contenido: la nav de vistas como pill vidriada, numerada (1 Recorrido, 2 Rescate, 3 Experimentos, el número en `tinta-2`; el activo en pill negra) y, en el home, los filtros como chips a la derecha (`Período 30 días`, `Canal Todos`…).
 
-**Board:** tres columnas iguales con 40 px de separación; los experimentos en una fila completa debajo (en ≥1500 px pasan a una cuarta columna). Entre 768 y 1180 px, dos columnas y la fila inferior apilada.
+**Stepper del recorrido:** las 8 etapas en una fila en escritorio (fases en columnas `3fr 3fr 2fr`), en dos filas en tablet (Atraer y Convertir arriba, Cerrar abajo) y como lista vertical en móvil. Las demás secciones del home son grillas de tarjetas de 1, 2 o 3 columnas.
 
-**Móvil (<768 px):** sin rail. La nav de vistas queda **fija arriba** en `vidrio-denso` (dónde estoy y a dónde ir, siempre a la vista) y el contenido se funde antes de llegar a ella; abajo, los chips del home con scroll horizontal (snap, sin barra de scroll). La barra flotante es **compacta y centrada** (buscar, filtros, comparar y tema en el home; buscar y tema en el resto), también en `vidrio-denso`, con un fundido inferior para que el contenido no choque con ella. Respeta las safe areas (`viewport-fit=cover` + `env(safe-area-inset-*)`). En el encabezado del board, título y botones comparten fila y la tira de fantasmas va debajo a todo el ancho. Táctil: sin destello gris al tocar, `touch-action: manipulation` (sin espera de doble toque) y el input de ⌘K a 16 px para que iOS no haga zoom.
+**Móvil (<768 px):** sin rail. La nav de vistas queda **fija arriba** en `vidrio-denso` (dónde estoy y a dónde ir, siempre a la vista) y el contenido se funde antes de llegar a ella; abajo, los chips del home con scroll horizontal (snap, sin barra de scroll). La barra flotante es **compacta y centrada** (buscar, filtros, comparar, cómo funciona y tema en el home; buscar, cómo funciona y tema en el resto), también en `vidrio-denso`, con un fundido inferior para que el contenido no choque con ella. Respeta las safe areas (`viewport-fit=cover` + `env(safe-area-inset-*)`). Táctil: sin destello gris al tocar, `touch-action: manipulation` (sin espera de doble toque) y el input de ⌘K a 16 px para que iOS no haga zoom.
 
-## Journey board
+## Recorrido (home)
 
-- Cada **fila de etapa**: ícono en círculo (`--azul-suave`, trazo `--azul-texto`), nombre en `tinta-2`, volumen en cifra de 20 px, tasa de avance a la etapa siguiente y delta en pp contra el período anterior (Cierre muestra su porcentaje del total), y un círculo "ir". Abre el panel de la etapa.
-- Cada **fila de fuga**: indentada 22 px debajo de su etapa de origen, ícono de gota con contorno coral punteado, causa, perdidos y monto. Abre `/fugas?poza=…`. La de Fantasmas trae el botón **Rescatar** (pill coral) que va a la poza.
-- **Conectores** (`components/cauce/conectores.ts`, SVG superpuesto sin eventos): espina azul de 2 px entre íconos de etapa de la misma tarjeta; entre tarjetas, una curva (o una recta vertical si están apiladas) con puntos de 4 px en los bordes; fugas en coral punteado (1.5 px, `4 4`) que caen verticales 10 px a la derecha de la espina y se encadenan si hay varias. Se miden con `ResizeObserver` y se recalculan al cambiar tema, filtros o tamaño.
-- **Experimentos**: tiles con nombre, estado y la predicción en pp (`prediccionPp`). Hover o foco resaltan la fila de la etapa que atacan (borde azul y fondo `--azul-suave`); clic lleva al detalle. El tile en pill negra es el experimento más reciente en estado "Leyendo".
-- **Por rescatar**: avatares con las iniciales de los 7 fantasmas pendientes con mayor score; el badge son los días sin atención (coral si son más de 3). Clic abre el lead en /fugas.
+Una sección por idea, en orden de lectura; cada una es un panel `vidrio` (`SeccionHome`: título, una línea y una acción opcional) con tarjetas sólidas adentro.
 
-## Medidores
+- **Resumen**: tres tarjetas clicables (`ResumenCauce`) con ícono en círculo suave, etiqueta en `tinta-2`, cifra de 28 px y una línea de contexto. Valor en riesgo (coral), Leads por rescatar (azul, con rescatados hoy) y Experimentos activos (azul).
+- **Recorrido** (`JourneyBoard`): stepper de tarjetas de etapa (radio de tile, 22 px) agrupadas por fase, con un chevron `tenue` entre tarjetas. Cada tarjeta: ícono en círculo `--azul-suave`, nombre en `tinta-2`, volumen en cifra de 20 px, "X % avanza" y el delta en puntos (azul si sube, coral si baja, con flecha). Hover en `--azul-suave`; el experimento con hover o foco la marca con borde azul. Sin SVG: el orden lo dan la grilla y los chevrons.
+- **Dónde se pierde** (`DondeSePierde`): tarjetas por fuga con ícono de gota de contorno coral punteado, "Entre {etapa} y {etapa}", el valor en cifra de 28 px, los perdidos y **Ver leads** (outline; coral en leads sin atender). El estado del experimento asociado va como `Badge`.
+- **Experimentos** (`ExperimentosHome`): hasta 3 tarjetas con nombre, `Badge` de estado y "Busca +X puntos de {etapa} a {etapa}".
+- **Leads sin atender** (`LeadsSinAtender`): la tabla de 4 con Rescatar en coral.
+- **Siguiente paso** (`SiguientePaso`, también al final de Rescate y Experimentos): tarjeta clicable con el ícono de la vista siguiente, "Siguiente paso · N Nombre", la acción en cifra de 20 px, la descripción y una flecha en círculo `activo`.
 
-Semicírculos SVG propios (no shadcn) de 22 px de grosor sobre un arco en `--linea`. Valor en riesgo por fase: tres tramos (Atraer en coral-relleno, Convertir en coral, Cerrar en azul) con leyenda en porcentaje. Rescatados hoy: un tramo en azul-relleno sobre los fantasmas del día. Cada medidor lleva `role="img"` y un `aria-label` con las cifras.
+En texto corrido se escribe "puntos" (`formatearPuntos`); "pp" queda para cifras y celdas de tabla.
 
 ## Motion
 
@@ -148,11 +148,14 @@ Las primitivas salen de shadcn/ui (`src/components/ui`); colores y variantes se 
 |---|---|---|
 | Acción circular (rail, barra móvil, encabezado de panel) | `Button variant="vidrio" size="redondo"` | `aria-pressed` o `data-activo` la vuelve pill negra. |
 | Chip de filtro | `Button variant="filtro" size="lg"` + `DropdownMenu` / `Popover` | Etiqueta en tinta-2, valor en `<b>`. |
-| Nav de vistas, tabla/timeline, pozas | `ToggleGroup variant="segmentado"` / links con el mismo estilo / `Tabs variant="pill"` | Activo en pill negra. |
+| Nav de vistas, tarjetas/tabla/timeline, fugas | `ToggleGroup variant="segmentado"` / links con el mismo estilo / `Tabs variant="pill"` | Activo en pill negra. |
 | Alternadores sueltos y chips de /fugas y /experimentos | `Toggle` / `ToggleGroup variant="outline"` | Pill vidriada; activa en negro. |
 | Hoja de filtros (móvil) | `Drawer` | El rail abre la misma hoja en un `Popover`. |
 | Panel de etapa y de experimento | ≥768 px: `Sheet` a la derecha (440 px en ≥1280, 60 % en tablet); <768: `Drawer` | Devuelve el foco a la fila que lo abrió. |
-| Paleta ⌘K | `CommandDialog` | |
+| Paleta ⌘K | `CommandDialog` | Incluye "Ver cómo funciona". |
+| Onboarding (3 slides) | `Dialog` sin botón de cierre propio | "Saltar" arriba a la derecha; ← → y Esc; fade/slide de 180 ms con `ease-salida`, inmediato con reduced motion. Ilustración con íconos lucide sobre una tarjeta `muted`. |
+| Modelo de pérdida en Rescate | `Dialog` ("Cómo se calcula") | Sliders y fórmula sin cambios. |
+| Vista de experimentos | `ToggleGroup variant="segmentado"`: Tarjetas · Tabla · Timeline | Tarjetas por defecto. |
 | Parámetros numéricos | `Slider` | |
 | Datos tabulares | `Table` (`marco` = tarjeta de 26 px) | Cifras con `.cifra`, a la derecha. |
 | Avisos con deshacer | `sonner` | Abajo al centro, pill activa, 5 s, uno por vez. |
@@ -160,7 +163,7 @@ Las primitivas salen de shadcn/ui (`src/components/ui`); colores y variantes se 
 | Ayuda sobre íconos | `Tooltip` | En todos los botones circulares. |
 | Sin resultados | `Empty` | |
 
-**No son shadcn:** el journey board (grillas, filas y el SVG de conectores), los medidores y el `RiverChart` (fuera del home; se conserva hasta nuevo aviso).
+**No son shadcn:** el stepper del recorrido y las tarjetas del home (grillas propias con tokens) y el `RiverChart` (fuera del home; se conserva hasta nuevo aviso).
 
 ### Badges
 

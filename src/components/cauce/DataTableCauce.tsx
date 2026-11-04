@@ -47,10 +47,10 @@ export function DataTableCauce({
       </Table>
 
       <Table marco className="min-w-[560px]">
-        <TableCaption>Pozas: lo que se escapa en cada transición</TableCaption>
+        <TableCaption>Fugas: lo que se pierde en cada transición</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>Poza</TableHead>
+            <TableHead>Fuga</TableHead>
             <TableHead>Transición</TableHead>
             <TableHead className="text-right">Perdidos</TableHead>
             <TableHead className="text-right">Valor estimado</TableHead>
