@@ -86,7 +86,12 @@ export function experimentosDelBoard(experimentos: readonly Experimento[], maxim
     .slice(0, maximo);
 }
 
-/** El tile en pill negra: el experimento más reciente en estado "leyendo". */
+/** Experimentos activos: desplegados (en curso) o en ventana de lectura. */
+export function experimentosActivos(experimentos: readonly Experimento[]): number {
+  return experimentos.filter((e) => e.estado === "en_curso" || e.estado === "leyendo").length;
+}
+
+/** El experimento destacado: el más reciente en estado "leyendo". */
 export function experimentoDestacado(experimentos: readonly Experimento[]): string | null {
   const leyendo = experimentos.filter((e) => e.estado === "leyendo").sort((x, y) => y.despliegue.localeCompare(x.despliegue));
   return leyendo[0]?.id ?? null;

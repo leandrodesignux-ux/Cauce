@@ -36,6 +36,11 @@ export function formatearPp(pp: number | null): string {
   return `${signo}${unDecimal.format(Math.abs(pp))} pp`;
 }
 
+/** Puntos porcentuales en texto corrido: "+1.8 puntos" (en celdas de tabla se usa formatearPp). */
+export function formatearPuntos(pp: number | null): string {
+  return formatearPp(pp).replace(" pp", " puntos");
+}
+
 const fechaCorta = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short", timeZone: "UTC" });
 const fechaConAnio = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 
