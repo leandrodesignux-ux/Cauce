@@ -1,6 +1,6 @@
 "use client";
 
-import { FlaskConical, GanttChart, Table2 } from "lucide-react";
+import { FlaskConical, GanttChart, LayoutGrid, Table2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, type ReactNode } from "react";
 import { StagePanel } from "@/components/panel/StagePanel";
@@ -14,7 +14,7 @@ import { ETIQUETA_ESTADO_EXPERIMENTO } from "@/config/experimentos";
 import type { EstadoExperimento } from "@/lib/tipos";
 import { reemplazarUrl } from "@/lib/url";
 import { DetalleExperimento } from "./DetalleExperimento";
-import { TablaExperimentos } from "./TablaExperimentos";
+import { TablaExperimentos, TarjetasExperimentos } from "./TablaExperimentos";
 import { TimelineExperimentos } from "./TimelineExperimentos";
 
 const ESTADOS = Object.keys(ETIQUETA_ESTADO_EXPERIMENTO) as EstadoExperimento[];
@@ -24,7 +24,8 @@ export function VistaExperimentos() {
   const params = useSearchParams();
   const pathname = usePathname();
 
-  const vista = params.get("vista") === "timeline" ? "timeline" : "tabla";
+  // Sin ?vista = tarjetas; ?vista=tabla y ?vista=timeline siguen funcionando.
+  const vista = params.get("vista") === "timeline" ? "timeline" : params.get("vista") === "tabla" ? "tabla" : "tarjetas";
   const estado = ESTADOS.find((e) => e === params.get("estado")) ?? null;
   const exp = experimentos.find((e) => e.id === params.get("exp")) ?? null;
 
@@ -59,11 +60,8 @@ export function VistaExperimentos() {
     <div className="flex flex-1">
       <div className="flex min-w-0 flex-1 flex-col gap-6">
         <header>
-          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Registro de hipótesis</h1>
-          <p className="mt-1.5 max-w-3xl text-pretty text-tinta-2">
-            Cada iniciativa declara antes de desplegarse qué espera mover y cuándo se va a poder leer. Así se sabe si lo que se dijo que iba a pasar,
-            pasó.
-          </p>
+          <h1 className="mt-2 font-cifra text-xl leading-tight font-bold text-balance md:text-2xl">Experimentos</h1>
+          <p className="mt-1.5 max-w-3xl text-pretty text-tinta-2">Qué paso espera mejorar cada experimento, cuándo se podrá medir y si funcionó.</p>
         </header>
 
         <section aria-label="Experimentos" className="vidrio flex flex-col gap-5 rounded-tarjeta p-3 shadow-tarjeta md:rounded-panel md:p-7">
@@ -87,8 +85,12 @@ export function VistaExperimentos() {
               spacing={1}
               aria-label="Vista"
               value={vista}
-              onValueChange={(v) => v && poner({ vista: v === "timeline" ? "timeline" : null })}
+              onValueChange={(v) => v && poner({ vista: v === "tarjetas" ? null : v })}
             >
+              <ToggleGroupItem value="tarjetas">
+                <LayoutGrid data-icon="inline-start" />
+                Tarjetas
+              </ToggleGroupItem>
               <ToggleGroupItem value="tabla">
                 <Table2 data-icon="inline-start" />
                 Tabla
@@ -114,6 +116,8 @@ export function VistaExperimentos() {
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>
+          ) : vista === "tarjetas" ? (
+            <TarjetasExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
           ) : vista === "tabla" ? (
             <TablaExperimentos experimentos={visibles} seleccionado={exp?.id ?? null} onAbrir={abrir} />
           ) : (
